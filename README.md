@@ -4,8 +4,6 @@ This repository is a Tensorflow implementation of the paper **"Autoencoder based
 
 [ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm)
 
-If you use Tensorflow 0.x, x being the subversion index, select the code in the folder "kodak_tensorflow_0.11.0". If you use Tensorflow 1.x, select the code in the folder "kodak_tensorflow_1.4.0".
-
 ## Dependencies
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
   * numpy (version >= 1.11.0)
@@ -16,3 +14,18 @@ If you use Tensorflow 0.x, x being the subversion index, select the code in the 
   * six
   * glymur, see [GlymurAdvancedInstallationWebPage](https://glymur.readthedocs.io/en/v0.8.7/detailed_installation.html)
   * ImageMagick, see [ImageMagickWebPage](https://www.imagemagick.org)
+  
+## Code
+Clone this repository into the current folder.
+```bash
+git clone https://github.com/thstkdgus35/EDSR-PyTorch
+```
+If your version of Tensorflow is 0.x, x being the subversion index, use the code in the folder "kodak_tensorflow_0.11.0".
+```bash
+cd kodak_tensorflow_0.11.0
+```
+If your version of Tensorflow is 1.x, use the code in the folder "kodak_tensorflow_1.4.0".
+```bash
+cd kodak_tensorflow_1.4.0
+```
+
