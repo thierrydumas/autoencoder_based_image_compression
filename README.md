@@ -37,5 +37,5 @@ cd lossless
 python setup.py build_ext --inplace
 ```
 1. Compilation of HEVC/H.265.
-On Ubuntu, use the Makefile at "HM-16.15/build/linux/makefile". On Windows, use Visual Studio 2015 and the solution file at "HM-16.15/build/HM_vc2015.sln". See [HEVCSoftwareWebPage](https://hevc.hhi.fraunhofer.de/) for more information.
+On Ubuntu, use the Makefile at "HM-16.15/build/linux/makefile". On Windows, use Visual Studio 2015 and the solution file at "HM-16.15/build/HM_vc2015.sln". For more information, see [HEVCSoftwareWebPage](https://hevc.hhi.fraunhofer.de/).
 
