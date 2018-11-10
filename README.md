@@ -2,7 +2,7 @@
 
 This repository is a Tensorflow implementation of the paper **"Autoencoder based image compression: can the learning be quantization independent?"**, **ICASSP 2018**. The code is tested on Linux and Windows.
 
-[ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm) | [Bibtex](#Citing)
+[ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm) | [BibTex](#Citing)
 
 ## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
@@ -68,9 +68,9 @@ Another piece of code is a simple example for introducing the code of the paper.
 
 ## Citing
 ```
-@article{yu2018generative,
-  title={Generative Image Inpainting with Contextual Attention},
-  author={Yu, Jiahui and Lin, Zhe and Yang, Jimei and Shen, Xiaohui and Lu, Xin and Huang, Thomas S},
-  journal={arXiv preprint arXiv:1801.07892},
-  year={2018}
+@InProceedings{autoencoder_based_icassp2018,
+  author = {Dumas, Thierry and Roumy, Aline and Gullemot, Christine},
+  title = {Autoencoder based image compression: can the learning be quantization independent?},
+  booktitle = {ICASSP},
+  year = {2017}
 }
