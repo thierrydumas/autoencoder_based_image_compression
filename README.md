@@ -45,7 +45,7 @@ cd ../
 ```sh
 python creating_kodak.py
 ```
-2. Comparaison of several trained autoencoders, JPEG2000, and H.265 in terms of rate-distortion on the Kodak test set.
+2. Comparison of several trained autoencoders, JPEG2000, and H.265 in terms of rate-distortion on the Kodak test set.
 ```sh
 python reconstructing_eae_kodak.py
 ```
