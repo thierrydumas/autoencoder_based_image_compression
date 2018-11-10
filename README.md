@@ -2,7 +2,7 @@
 
 This repository is a Tensorflow implementation of the paper **"Autoencoder based image compression: can the learning be quantization independent?"**, **ICASSP 2018**. The code is tested on Linux and Windows.
 
-[ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm)
+[ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm) | [Bibtex](#Citing)
 
 ## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
@@ -65,3 +65,12 @@ The documentation "documentation_kodak/documentation_code.html" describes all th
 
 ## Starting from a simple example
 Another piece of code is a simple example for introducing the code of the paper. This piece of code is stored in the folder "svhn". Its documentation is in the file "documentation_svhn/documetation_code.html". If you feel comfortable with autoencoders, this piece of code can be skipped. Its purpose is to clarify the training of a rate-distortion optimized autoencoder. That is why a simple rate-distortion optimized autoencoder with very few hidden units is trained on tiny images (32x32 SVHN digits).
+
+## Citing
+```
+@article{yu2018generative,
+  title={Generative Image Inpainting with Contextual Attention},
+  author={Yu, Jiahui and Lin, Zhe and Yang, Jimei and Shen, Xiaohui and Lu, Xin and Huang, Thomas S},
+  journal={arXiv preprint arXiv:1801.07892},
+  year={2018}
+}
