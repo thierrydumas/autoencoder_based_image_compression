@@ -18,7 +18,7 @@ This repository is a Tensorflow implementation of the paper **"Autoencoder based
 ## Code
 Clone this repository into the current folder.
 ```sh
-https://github.com/thierrydumas/autoencoder_based_image_compression.git
+git clone https://github.com/thierrydumas/autoencoder_based_image_compression.git
 ```
 If your version of Tensorflow is 0.x, x being the subversion index, use the code in the folder "kodak_tensorflow_0.11.0".
 ```sh
@@ -37,5 +37,6 @@ cd lossless
 python setup.py build_ext --inplace
 ```
 1. Compilation of HEVC/H.265.
-On Ubuntu, use the Makefile at "HM-16.15/build/linux/makefile". On Windows, use Visual Studio 2015 and the solution file at "HM-16.15/build/HM_vc2015.sln". For more information, see [HEVCSoftwareWebPage](https://hevc.hhi.fraunhofer.de/).
+  * For Linux, use the Makefile at "HM-16.15/build/linux/makefile".
+  * For Windows, use Visual Studio 2015 and the solution file at "HM-16.15/build/HM_vc2015.sln". For more information, see [HEVCSoftwareWebPage](https://hevc.hhi.fraunhofer.de/).
 
