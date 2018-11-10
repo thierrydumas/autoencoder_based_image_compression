@@ -40,3 +40,13 @@ cd ../
     * For Linux, use the Makefile at "HM-16.15/build/linux/makefile".
     * For Windows, use Visual Studio 2015 and the solution file at "HM-16.15/build/HM_vc2015.sln". For more information, see [HEVCSoftwareWebPage](https://hevc.hhi.fraunhofer.de/).
 
+## Quick start: reproducing the results of the paper
+0. Creation of the Kodak test set containing 24 luminance images.
+```sh
+python creating_kodak.py
+```
+1. Comparaison of several trained autoencoders, JPEG2000, and HEVC in terms of rate-distortion on the Kodak test set.
+```sh
+python reconstructing_eae_kodak.py
+```
+
