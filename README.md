@@ -19,6 +19,7 @@ This repository is a Tensorflow implementation of the paper **"Autoencoder based
 Clone this repository into the current folder.
 ```sh
 git clone https://github.com/thierrydumas/autoencoder_based_image_compression.git
+cd autoencoder_based_image_compression
 ```
 If your version of Tensorflow is 0.x, x being the subversion index, use the code in the folder "kodak_tensorflow_0.11.0".
 ```sh

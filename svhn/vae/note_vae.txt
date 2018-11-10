@@ -1,0 +1,14 @@
+NOTE ON THE VARIATIONAL AUTOENCODER
+
+(i) In the objective function, there are two distinct terms:
+the opposite of the variational lower bound and the l2-norm
+weight decay. In the opposite of the variational lower bound,
+there are two distinct terms: the scaled Kullback-Lieber
+divergence of the approximate posterior from the prior and
+the error between the visible units and their reconstruction.
+
+(ii) When the number of recognition hidden units is 300 and
+the number of latent variables is 25, the number of parameters
+of the variational autoencoder is 1869422.
+
+

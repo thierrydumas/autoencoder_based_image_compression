@@ -1,0 +1,20 @@
+NOTE ON THE LIBRARY THAT CONTAINS COMMON TOOLS
+
+The quantization bin widths are used in the functions:
+    (i) `average_entropies`
+    (ii) `count_symbols`
+    (iii) `discrete_entropy`
+    (v) `quantize_per_map`
+    (vi) `rate_3d`
+The function `quantize_per_map` is directly called by the function
+`average_entropies`.
+The function `count_symbols` is directly called by the function
+`discrete_entropy`.
+The function `discrete_entropy` is directly called by the
+functions `average_entropies` and `rate_3d`.
+To ensure that the quantization bin widths are strictly
+positive every time they are used, one assertion is required
+in the function `quantize_per_map` and another one
+is required in the function `count_symbols`.
+
+

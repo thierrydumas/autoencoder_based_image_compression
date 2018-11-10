@@ -1,0 +1,26 @@
+NOTE ON THE ENTROPY AUTOENCODER
+
+(i) In the objective function to be minimized
+over the entropy autoencoder parameters, there
+are two distinct terms: the entropy-reconstruction
+loss and the l2-norm weight decay. In the
+entropy-reconstruction loss, there are two distinct
+terms: the scaled approximate entropy of the quantized
+latent variables and the error between the visible units
+and their reconstruction.
+
+(ii) When the number of encoder hidden units is 300
+and the number of latent variables is 200, the number
+of parameters of the entropy autoencoder (weights and
+biases) is 1967072. This calculation does not include
+either the parameters of the piecewise linear function
+or the quantization bin width.
+
+(iii) Crucial detail! For the weights connecting the
+encoder hidden units to the latent variables and the
+weights connecting the latent variables perturbed by
+uniform noise to the decoder hidden units, the standard
+deviation of the normal distribution at initialization
+is 0.05.
+
+

@@ -1,0 +1,15 @@
+NOTE ON CYTHON
+
+Type equivalence: Numpy -> C++
+------------------------------
+numpy.float64 -> double
+numpy.float32 -> float
+numpy.uint64 -> unsigned long
+numpy.uint32 -> unsigned int
+numpy.uint16 -> unsigned short
+numpy.int64 -> long
+numpy.int32 -> int
+numpy.int16 -> short
+numpy.uint8 -> unsigned char
+
+

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        
+        <!-- The following link explains the difference between CSS pixels and device
+        pixels http://www.quirksmode.org/blog/archives/2010/04/a_pixel_is_not.html -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <!-- The structural elements (<aside>, <article>, <footer>, ...)
+        are not supported by the versions of IE older than IE 8 or as old
+        as IE 8 -->
+        <!--[if lte IE 8]>
+            <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <![endif]-->
+        
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <title>Documentation of the code of the paper</title>
+    </head>
+    
+    <body>
+        <header>
+            <h1>Documentation of the code of the paper</h1>
+        </header>
+        
+        <section>
+            <h2 id="prerequisites">Prerequisites</h2>
+            <ul>
+                <li>Python (the code was tested using Python 2.7.9 and Python 3.6.3)</li>
+                <li>numpy (version >= 1.11.0)</li>
+                <li>Tensorflow with GPU support, see <a href="https://www.tensorflow.org/install/" target="_blank">TensorflowInstallationWebPage</a>
+                (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python
+                3.6.3, the code was tested using Tensorflow 1.4.0)</li>
+                <li>cython</li>
+                <li>matplotlib</li>
+                <li>scipy</li>
+                <li>six</li>
+                <li>glymur, see <a href="https://glymur.readthedocs.io/en/v0.8.7/detailed_installation.html" target="_blank">GlymurAdvancedInstallationWebPage</a></li>
+                <li>ImageMagick, see <a href="https://www.imagemagick.org" target="_blank">ImageMagickWebPage</a></li>
+            </ul>
+            <h2 class="compilation_functionalities">Compilation</h2>
+            <ol>
+                <li>
+                    <h3>Compilation of the C++ lossless coder via Cython.</h3>
+                    <div class="code"><b>cd lossless</b><br>
+                    <b>python setup.py build_ext --inplace</b><br>
+                    <b>cd ../</b></div>
+                </li>
+                <li>
+                    <h3>Compilation of HEVC/H.265.</h3>
+                    <p>On Linux, use the Makefile at "HM-16.15/build/linux/makefile".
+                    On Windows, use Visual Studio 2015 and the solution file at
+                    "HM-16.15/build/HM_vc2015.sln". For more information, see
+                    <a href="https://hevc.hhi.fraunhofer.de/" target="_blank">HEVCSoftwareWebPage</a>.</p>
+                </li>
+            </ol>
+            <h2 class="compilation_functionalities">Main functionalities</h2>
+            <ol>
+                <li>
+                    <h3>How to test the library that contains tool functions?</h3>
+                    <p>Each function in this library can be tested by passing
+                    its name as the argument of the script "test_tools.py". For instance,</p>
+                    <div class="code"><b>python test_tools.py average_entropies</b></div>
+                </li>
+                <li>
+                    <h3>How to test the library that contains Tensorflow utilities?</h3>
+                    <p>Each function in this library can be tested by passing
+                    its name as the argument of the script "test_tf_utils.py".
+                    For instance,</p>
+                    <div class="code"><b>python test_tf_utils.py differential_entropy</b></div>
+                </li>
+                <li>
+                    <h3>How to test the library that contains HEVC/H.265 utilities?</h3>
+                    <p>Each function in this library can be tested by passing
+                    its name as the argument of the script "test_hevc_utils.py".
+                    For instance,</p>
+                    <div class="code"><b>python test_hevc_utils.py compute_rate_psnr</b></div>
+                </li>
+                <li>
+                    <h3>How to test the libraries in the folder "lossless"?</h3>
+                    <p>Each function in these libraries can be tested by passing
+                    its name as the argument of the script "test_lossless.py".
+                    For instance,</p>
+                    <div class="code"><b>python test_lossless.py compute_binary_probabilities</b></div>
+                </li>
+                <li>
+                    <h3>How to test the libraries in the folder "eae/graph"?</h3>
+                    <div class="code"><b>python test_eae.py decoder</b><br>
+                    <b>python test_eae.py encoder</b><br>
+                    <b>python test_eae.py isolated_decoder</b><br>
+                    <b>python test_eae.py training_eae_bw</b><br>
+                    <b>python test_eae.py training_fct</b><br>
+                    <b>python test_eae.py weight_l2_norm</b></div>
+                </li>
+                <li>
+                    <h3>How to create the ImageNet training and validation sets?</h3>
+                    <p>First of all, you have to download ImageNet images. In
+                    our case, it is sufficient to download the ILSVRC2012
+                    validation images, "ILSVRC2012_img_val.tar" (6.3 GB),
+                    see <a href="http://image-net.org/download" target="_blank">ImageNetDownloadWebPage</a>.
+                    Let's say that, in your computer, the path to "ILSVRC2012_img_val.tar"
+                    is "path/to/folder_0/ILSVRC2012_img_val.tar" and you want
+                    the unpacked images to be put into the folder "path/to/folder_1/"
+                    before the script "creating_imagenet.py" preprocesses them,</p>
+                    <div class="code"><b>python creating_imagenet.py
+                    path/to/folder_1/ --path_to_tar=path/to/folder_0/ILSVRC2012_img_val.tar</b></div>
+                </li>
+                <li>
+                    <h3>How to train an autoencoder on the ImageNet training set?</h3>
+                    <p>Below, the value of the quantization bin widths at the beginning
+                    of the training is 1.0 and the scaling coefficient is 14000.0. The
+                    script "training_eae_imagenet.py" enables to split the entire
+                    autoencoder training into several successive parts. Below, the last
+                    argument of "training_eae_imagenet.py" is 0. This means that
+                    "training_eae_imagenet.py" runs the first part of the entire training.
+                    For each successive part, the last argument is incremented by 1.</p>
+                    <div class="code"><b>python training_eae_imagenet.py 1.0 14000.0 0</b></div>
+                </li>
+                <li>
+                    <h3>How to create the Kodak test set?</h3>
+                    <p>The script "creating_kodak.py" downloads the 24 Kodak
+                    RGB images from the Kodak webpage, see <a href="http://r0k.us/graphics/kodak/" target="_blank">KodakWebPage</a>.
+                    Then, it preprocesses the 24 Kodak RGB images to create
+                    the Kodak test set.</p>
+                    <div class="code"><b>python creating_kodak.py</b></div>
+                </li>
+                <li>
+                    <h3>How to compare several trained autoencoders, JPEG2000, and H.265 in terms of rate-distortion on the Kodak test set?</h3>
+                    <div class="code"><b>python reconstructing_eae_kodak.py</b></div>
+                </li>
+                <li>
+                    <h3>How to fit a Laplace density to the normed histogram of each latent variable feature map in a trained autoencoder?</h3>
+                    <p>Below, the value of the quantization bin widths at the beginning
+                    of the training is 0.5 and the scaling coefficient is 10000.0. The
+                    entire autoencoder training was split into 10 parts. The
+                    model at the end of the last part is selected. The optional argument
+                    indicates that the quantization bin widths were learned.</p>
+                    <div class="code"><b>python fitting_eae_kodak.py 0.5 10000.0 10 --learn_bin_widths</b></div>
+                </li>
+                <li>
+                    <h3>How to analyze a trained autoencoder by activating one latent variable and deactivating the others?</h3>
+                    <p>Below, the value of the quantization bin widths at the beginning
+                    of the training is 0.5 and the scaling coefficient is 10000.0. The
+                    entire autoencoder training was split into 10 parts. The
+                    model at the end of the last part is selected. The optional argument
+                    indicates that the quantization bin widths were learned.</p>
+                    <div class="code"><b>python activating_eae.py 0.5 10000.0 10 --learn_bin_widths</b></div>
+                </li>
+            </ol>
+            <h2 class="compilation_functionalities">Additional functionalities</h2>
+            <ol>
+                <li>
+                    <h3>How to create the BSDS test set?</h3>
+                    <p>First of all, you have to download the BSDS300 dataset
+                    (22 MB), "BSDS300-images.tgz", see <a href="https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/" target="_blank">BSDSWebPage</a>.
+                    Let's say that, in your computer, the path to "BSDS300-images.tgz"
+                    is "path/to/folder_0/BSDS300-images.tgz" and you want the unpacked
+                    files to be put into the folder "path/to/folder_1/" before the
+                    preprocessing starts,</p>
+                    <div class="code"><b>python creating_bsds.py
+                    path/to/folder_1/ --path_to_tar=path/to/folder_0/BSDS300-images.tgz</b></div>
+                </li>
+                <li>
+                    <h3>How to compare several trained autoencoders, JPEG2000, and H.265 in terms of rate-distortion on the BSDS test set?</h3>
+                    <div class="code"><b>python reconstructing_eae_kodak.py --use_bsds</b></div>
+                </li>
+            </ol>
+        </section>
+    </body>
+</html>
+
+

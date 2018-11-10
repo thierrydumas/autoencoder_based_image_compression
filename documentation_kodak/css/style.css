@@ -1,0 +1,83 @@
+/*
+There is no default padding except for <ul></ul>, <td></td>
+and <th></th> elements. For any element that is not inline,
+a default margin may exist.
+*/
+body
+{
+    margin: 0;
+    font-family: Helvetica, sans-serif;
+}
+
+body header
+{
+    margin: 60px;
+}
+
+body header h1
+{
+    margin: 0;
+    text-align: center;
+    font-weight: normal;
+}
+
+body section
+{
+    margin: 0 0 60px 0;
+}
+
+body section h2
+{
+    font-weight: normal;
+}
+
+body section #prerequisites
+{
+    margin: 0;
+}
+
+body section .compilation_functionalities
+{
+    margin: 40px 0 0 0;
+}
+
+body section ul
+{
+    margin: 0;
+}
+
+body section ul li
+{
+    margin: 8px 0 0 0;
+}
+
+body section p
+{
+    margin: 8px 0 0 0;
+}
+
+body section ol
+{
+    margin: 0 40px 0 20px;
+}
+
+body section ol li
+{
+    margin: 20px 0 0 0;
+}
+
+body section ol li h3
+{
+    margin: 0;
+    font-weight: normal;
+    font-size: medium;
+}
+
+body section ol li .code
+{
+    margin: 8px 0 0 0;
+    padding: 15px;
+    background-color: rgb(235, 235, 255);
+}
+
+

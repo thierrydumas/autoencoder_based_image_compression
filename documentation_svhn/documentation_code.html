@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        
+        <!-- The following link explains the difference between CSS pixels and device
+        pixels http://www.quirksmode.org/blog/archives/2010/04/a_pixel_is_not.html -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <!-- The structural elements (<aside>, <article>, <footer>, ...)
+        are not supported by the versions of IE older than IE 8 or as old
+        as IE 8 -->
+        <!--[if lte IE 8]>
+            <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <![endif]-->
+        
+        <link rel="stylesheet" type="text/css" href="css/style.css" />
+        <title>Documentation of the code of the simple example</title>
+    </head>
+    
+    <body>
+        <header>
+            <h1>Documentation of the code of the simple example</h1>
+        </header>
+        
+        <section>
+            <h2 id="prerequisites">Prerequisites</h2>
+            <ul>
+                <li>Python (the code was tested using Python 2.7.9 and Python 3.5.2)</li>
+                <li>numpy (version >= 1.11.0)</li>
+                <li>matplotlib</li>
+                <li>scipy</li>
+                <li>six</li>
+                <li>glymur, see <a href="https://glymur.readthedocs.io/en/v0.8.7/detailed_installation.html" target="_blank">GlymurAdvancedInstallationWebPage</a></li>
+                <li>ImageMagick, see <a href="https://www.imagemagick.org" target="_blank">ImageMagickWebPage</a></li>
+            </ul>
+            <h2 id="functionalities">Main functionalities</h2>
+            <ol>
+                <li>
+                    <h3>How to test the library that contains tool functions?</h3>
+                    <p>Each function in this library can be tested by passing
+                    its name as the argument of the script "test_tools.py". For
+                    instance,</p>
+                    <div class="code"><b>python test_tools.py visualize_weights</b></div>
+                </li>
+                <li>
+                    <h3>How to test the class `VariationalAutoencoder`?</h3>
+                    <p>Two methods of class `VariationalAutoencoder` can be tested by
+                    passing their name as the argument of the script "test_vae.py".</p>
+                    <div class="code"><b>python test_vae.py backpropagation</b><br>
+                    <b>python test_vae.py training</b></div>
+                </li>
+                <li>
+                    <h3>How to test the class `EntropyAutoencoder`?</h3>
+                    <p>Five methods of class `EntropyAutoencoder` can be tested by
+                    passing their name as the argument of the script "test_eae.py".</p>
+                    <div class="code"><b>python test_eae.py backpropagation_eae_bw</b><br>
+                    <b>python test_eae.py backpropagation_fct</b><br><b>python
+                    test_eae.py training_eae_bw</b><br><b>python test_eae.py training_fct</b><br>
+                    <b>python test_eae.py weights_decay</b></div>
+                </li>
+                <li>
+                    <h3>How to create the SVHN training set, the SVHN validation set and the SVHN test set?</h3>
+                    <p>The script "creating_svhn.py" downloads "train_32x32.mat",
+                    "test_32x32.mat" and "extra_32x32.mat" from the SVHN webpage, see
+                    <a href="http://ufldl.stanford.edu/housenumbers/" target="_blank">
+                    SVHNWebPage</a>. Then, it preprocesses the SVHN digits stored
+                    in the three files to create the SVHN training set, the SVHN validation
+                    set and the SVHN test set.</p>
+                    <div class="code"><b>python creating_svhn.py</b></div>
+                </li>
+                <li>
+                    <h3>How to train a variational autoencoder on the SVHN training set?</h3>
+                    <p>With the default arguments, the script "training_vae_svhn.py"
+                    takes around 1 day to fully train the variational autoencoder
+                    using a Intel Core i7-6500U CPU.</p>
+                    <div class="code"><b>python training_vae_svhn.py</b></div>
+                </li>
+                <li>
+                    <h3>How to assess a trained variational autoencoder in terms of dimensionality
+                    reduction on the SVHN test set?</h3>
+                    <div class="code"><b>python reconstructing_vae_svhn.py</b></div>
+                </li>
+                <li>
+                    <h3>How to train a rate-distortion optimized autoencoder, also called entrotpy autoencoder,
+                    on the SVHN training set?</h3>
+                    <p>Below, the value of the quantization bin width at the beginning
+                    of the training is 1.0 and the scaling coefficient is 10.0. With the
+                    default arguments, the script "training_eae_svhn.py" takes around 2
+                    days to fully train the autoencoder using a Intel Core
+                    i7-6500U CPU.</p>
+                    <div class="code"><b>python training_eae_svhn.py 1.0 10.0</b></div>
+                </li>
+                <li>
+                    <h3>How to compare several trained entropy autoencoders, JPEG, and JPEG2000 in terms of
+                    rate-distortion on the SVHN test set?</h3>
+                    <div class="code"><b>python reconstructing_eae_svhn.py</b></div>
+                </li>
+            </ol>
+        </section>
+    </body>
+</html>
+
+

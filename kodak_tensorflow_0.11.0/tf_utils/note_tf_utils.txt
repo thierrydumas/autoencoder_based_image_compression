@@ -1,0 +1,21 @@
+NOTE ON THE LIBRARY THAT CONTAINS TENSORFLOW UTILITIES
+
+The quantization bin widths are used in the functions:
+    (i) `add_noise`
+    (ii) `approximate_entropy`
+To ensure that the quantization bin widths are strictly
+positive every time they are used, one assertion is required
+in each of the two functions.
+
+The method `__init__` of class `EntropyAutoencoder` calls
+the function `approximate_entropy` and the function
+`loss_density_approximation`. If these two functions called
+the function `approximate_probability`, the Tensorflow
+operators in the function `approximate_probability` would
+be added two times to the graph when calling `__init__`. To
+avoid this, `approximate_entropy` and `loss_density_approximation`
+do not call `approximate_probability` and the output of
+`approximate_probability` is passed as argument of `approximate_entropy`
+and `loss_density_approximation`.
+
+
