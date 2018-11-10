@@ -59,3 +59,9 @@ python creating_imagenet.py path/to/folder_1/ --path_to_tar=path/to/folder_0/ILS
 ```sh
 python training_eae_imagenet.py 1.0 14000.0 0
 ```
+
+## Full functionality
+The documentation "documentation_kodak/documentation_code.html" describes all the functionalities of the code of the paper.
+
+## Starting from a simple example
+Another piece of code is a simple example for understanding the code of the paper. It implements a simple rate-distortion optimized autoencoder. Its purpose is to make the rate-distortion optimization clear. That is why the simple rate-distortion optimized autoencoder has very few hidden units and it is trained on tiny images (32x32 SVHN digits). A variational autoencoder is supplied with the simple rate-distortion optimized autoencoder as the minimization objective of rate-distortion optimized autoencoders is similar to that of variational autoencoders. This piece of code is stored in the folder "svhn". Its documentation is at "documentation_svhn/documetation_code.html". If you feel comfortable with autoencoders, this piece of code can be ignored.
