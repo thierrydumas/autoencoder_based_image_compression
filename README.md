@@ -35,6 +35,7 @@ Two portions of the code need compilation.
 ```sh
 cd lossless
 python setup.py build_ext --inplace
+cd ../
 ```
 1. Compilation of HEVC/H.265.
   * For Linux, use the Makefile at "HM-16.15/build/linux/makefile".
