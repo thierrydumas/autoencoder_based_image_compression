@@ -51,7 +51,7 @@ python reconstructing_eae_kodak.py
 ```
 
 ## Quick start: training an autoencoder
-0. First of all, ImageNet images must be downloaded. In our case, it is sufficient to download the ILSVRC2012 validation images, "ILSVRC2012_img_val.tar" (6.3 GB), see [ImageNetDownloadWebPage](). Let's say that, in your computer, the path to "ILSVRC2012_img_val.tar" is "path/to/folder_0/ILSVRC2012_img_val.tar" and you want the unpacked images to be put into the folder "path/to/folder_1/" before the script "creating_imagenet.py" preprocesses them. The creation of the ImageNet training and validaton sets of luminance images is then done via
+0. First of all, ImageNet images must be downloaded. In our case, it is sufficient to download the ILSVRC2012 validation images, "ILSVRC2012_img_val.tar" (6.3 GB), see [ImageNetDownloadWebPage](http://image-net.org/download). Let's say that, in your computer, the path to "ILSVRC2012_img_val.tar" is "path/to/folder_0/ILSVRC2012_img_val.tar" and you want the unpacked images to be put into the folder "path/to/folder_1/" before the script "creating_imagenet.py" preprocesses them. The creation of the ImageNet training and validaton sets of luminance images is then done via
 ```sh
 python creating_imagenet.py path/to/folder_1/ --path_to_tar=path/to/folder_0/ILSVRC2012_img_val.tar
 ```
