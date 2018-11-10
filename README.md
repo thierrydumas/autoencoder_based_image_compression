@@ -4,7 +4,7 @@ This repository is a Tensorflow implementation of the paper **"Autoencoder based
 
 [ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm)
 
-## Dependencies
+## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
   * numpy (version >= 1.11.0)
   * Tensorflow with GPU support, see [TensorflowWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0)
@@ -15,7 +15,7 @@ This repository is a Tensorflow implementation of the paper **"Autoencoder based
   * glymur, see [GlymurAdvancedInstallationWebPage](https://glymur.readthedocs.io/en/v0.8.7/detailed_installation.html)
   * ImageMagick, see [ImageMagickWebPage](https://www.imagemagick.org)
   
-## Code
+## Cloning the code
 Clone this repository into the current folder.
 ```sh
 git clone https://github.com/thierrydumas/autoencoder_based_image_compression.git
@@ -30,7 +30,6 @@ cd kodak_tensorflow_1.4.0
 ```
 
 ## Compilation
-Two portions of the code need compilation.
 0. Compilation of the C++ lossless coder via Cython.
 ```sh
 cd lossless
