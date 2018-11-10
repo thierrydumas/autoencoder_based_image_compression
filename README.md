@@ -17,15 +17,15 @@ This repository is a Tensorflow implementation of the paper **"Autoencoder based
   
 ## Code
 Clone this repository into the current folder.
-```bash
-git clone https://github.com/thstkdgus35/EDSR-PyTorch
+```sh
+https://github.com/thierrydumas/autoencoder_based_image_compression.git
 ```
 If your version of Tensorflow is 0.x, x being the subversion index, use the code in the folder "kodak_tensorflow_0.11.0".
-```bash
+```sh
 cd kodak_tensorflow_0.11.0
 ```
 If your version of Tensorflow is 1.x, use the code in the folder "kodak_tensorflow_1.4.0".
-```bash
+```sh
 cd kodak_tensorflow_1.4.0
 ```
 
