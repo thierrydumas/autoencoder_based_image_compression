@@ -64,7 +64,7 @@ python training_eae_imagenet.py 1.0 14000.0 0
 The documentation "documentation_kodak/documentation_code.html" describes all the functionalities of the code of the paper.
 
 ## Starting from a simple example
-Another piece of code is a simple example for introducing the code of the paper. This piece of code is stored in the folder "svhn". Its documentation is in the file "documentation_svhn/documetation_code.html". If you feel comfortable with autoencoders, this piece of code can be skipped. Its purpose is to clarify the training of a rate-distortion optimized autoencoder. That is why a simple rate-distortion optimized autoencoder with very few hidden units is trained on tiny images (32x32 SVHN digits).
+Another piece of code is a simple example for introducing the code of the paper. This piece of code is stored in the folder "svhn". Its documentation is in the file "documentation_svhn/documentation_code.html". If you feel comfortable with autoencoders, this piece of code can be skipped. Its purpose is to clarify the training of a rate-distortion optimized autoencoder. That is why a simple rate-distortion optimized autoencoder with very few hidden units is trained on tiny images (32x32 SVHN digits).
 
 ## Citing
 ```
