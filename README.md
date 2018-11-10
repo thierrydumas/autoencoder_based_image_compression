@@ -2,7 +2,7 @@
 
 This repository is a Tensorflow implementation of the paper **"Autoencoder based image compression: can the learning be quantization independent?"**, **ICASSP 2018**. The code is tested on Linux and Windows.
 
-[ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm) | [BibTex](#Citing)
+[ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm)
 
 ## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
@@ -72,5 +72,5 @@ Another piece of code is a simple example for introducing the code of the paper.
   author = {Dumas, Thierry and Roumy, Aline and Gullemot, Christine},
   title = {Autoencoder based image compression: can the learning be quantization independent?},
   booktitle = {ICASSP},
-  year = {2017}
+  year = {2018}
 }
