@@ -1,7 +1,7 @@
-"""A script to evaluate several trained entropy autoencoders, JPEG and JPEG2000 in terms of rate-distortion.
+"""A script to compare several trained entropy autoencoders, JPEG and JPEG2000 in terms of rate-distortion.
 
 The trained entropy autoencoders, JPEG and JPEG2000
-are evaluated on 250 RGB digits from the SVHN test set.
+are compared on 250 RGB digits from the SVHN test set.
 
 """
 

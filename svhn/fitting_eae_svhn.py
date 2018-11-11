@@ -14,6 +14,7 @@ except ImportError:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
+import os
 import pickle
 import scipy.stats
 

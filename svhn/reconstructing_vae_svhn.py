@@ -1,6 +1,6 @@
-"""A script to evaluate a trained variational autoencoder in terms of dimensionality reduction.
+"""A script to assess a trained variational autoencoder in terms of dimensionality reduction.
 
-The trained variational autoencoder is evaluated
+The trained variational autoencoder is assessed
 on 250 RGB digits from the SVHN test set.
 
 """
