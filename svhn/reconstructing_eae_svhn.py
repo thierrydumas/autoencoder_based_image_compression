@@ -307,7 +307,7 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
     return (rate, psnr)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Evaluates several trained entropy autoencoders, JPEG and JPEG2000 in terms of rate-distortion.')
+    parser = argparse.ArgumentParser(description='Compares several trained entropy autoencoders, JPEG and JPEG2000 in terms of rate-distortion.')
     parser.parse_args()
     dict_vary_gamma_fix_bin_width = {
         'bin_width_init': 1.,
@@ -346,7 +346,7 @@ if __name__ == '__main__':
                        32,
                        32,
                        10,
-                       path_to_checking_r + 'reference.png')
+                       os.path.join(path_to_checking_r, 'reference.png'))
     
     # `mean_training.dtype` and `std_training.dtype`
     # are equal to `numpy.float64`.
@@ -445,7 +445,7 @@ if __name__ == '__main__':
                loc='lower right',
                prop={'size':13},
                frameon=False)
-    plt.savefig(path_to_checking_r + 'rate_distortion.png')
+    plt.savefig(os.path.join(path_to_checking_r, 'rate_distortion.png'))
     plt.clf()
 
 

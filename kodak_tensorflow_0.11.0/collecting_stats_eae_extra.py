@@ -10,6 +10,7 @@ incur no coding cost.
 
 import argparse
 import numpy
+import os
 import tensorflow as tf
 
 import lossless.stats
@@ -48,10 +49,18 @@ if __name__ == '__main__':
     path_to_nb_itvs_per_side_load = 'eae/results/{0}/nb_itvs_per_side_{1}.pkl'.format(suffix, args.idx_training)
     path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, args.idx_training)
     path_to_stats = 'lossless/results/{0}/training_index_{1}/'.format(suffix, args.idx_training)
-    path_to_map_mean = path_to_stats + 'map_mean.npy'
-    path_to_idx_map_exception = path_to_stats + 'idx_map_exception.pkl'
+    
+    # The directory containing the statistics on the
+    # latent variable feature maps is created if it
+    # does not exist.
+    if not os.path.exists(path_to_stats):
+        os.makedirs(path_to_stats)
+    path_to_map_mean = os.path.join(path_to_stats,
+                                    'map_mean.npy')
+    path_to_idx_map_exception = os.path.join(path_to_stats,
+                                             'idx_map_exception.pkl')
     paths_to_binary_probabilities = [
-        path_to_stats + 'binary_probabilities_{}.npy'.format(tls.float_to_str(multipliers[i].item())) for i in range(multipliers.size)
+        os.path.join(path_to_stats, 'binary_probabilities_{}.npy'.format(tls.float_to_str(multipliers[i].item()))) for i in range(multipliers.size)
     ]
     
     # `extra_uint8.dtype` is equal to `numpy.uint8`.

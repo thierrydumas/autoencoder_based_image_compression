@@ -2,6 +2,7 @@
 
 import argparse
 import numpy
+import os
 import pickle
 
 import parsing.parsing
@@ -101,6 +102,6 @@ if __name__ == '__main__':
                         std_training,
                         variational_ae,
                         args.nb_interpolations,
-                        path_to_checking_g + 'generation.png')
+                        os.path.join(path_to_checking_g, 'generation.png'))
 
 

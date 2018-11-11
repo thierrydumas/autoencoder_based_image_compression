@@ -106,10 +106,11 @@ if __name__ == '__main__':
     else:
         suffix = '{0}_{1}'.format(tls.float_to_str(args.bin_width_init),
                                   tls.float_to_str(args.gamma))
-    path_to_checking_f = 'eae/visualization/test/checking_fitting/' + suffix + '/'
+    path_to_checking_f = os.path.join('eae/visualization/test/checking_fitting/',
+                                      suffix)
     if not os.path.exists(path_to_checking_f):
         os.makedirs(path_to_checking_f)
-    path_to_model = 'eae/results/eae_svhn_' + suffix + '.pkl'
+    path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
     
     # `reference_uint8.dtype` is equal to `numpy.uint8`.
     reference_uint8 = numpy.load(path_to_test)[0:250, :]
@@ -130,6 +131,6 @@ if __name__ == '__main__':
     fitting_eae_svhn(reference_float64,
                      entropy_ae,
                      'Latent variables',
-                     path_to_checking_f + 'fitting_laplace.png')
+                     os.path.join(path_to_checking_f, 'fitting_laplace.png'))
 
 

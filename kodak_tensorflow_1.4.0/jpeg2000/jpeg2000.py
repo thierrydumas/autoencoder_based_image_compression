@@ -39,8 +39,14 @@ def compress_jpeg2000(qualities, nb_images, path_to_before_jpeg2000, path_to_aft
         for i in range(nb_images):
             path_to_reference = os.path.join(path_to_before_jpeg2000,
                                              'reference_{}.png'.format(i))
-            path_to_reconstruction = os.path.join(path_to_after_jpeg2000,
-                                                  'quality_{}'.format(quality),
+            path_to_directory_reconstruction = os.path.join(path_to_after_jpeg2000,
+                                                            'quality_{}'.format(quality))
+            
+            # The directory containing the reconstructed images
+            # is created if it does not exist.
+            if not os.path.exists(path_to_directory_reconstruction):
+                os.makedirs(path_to_directory_reconstruction)
+            path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                                   'reconstruction_{}.jp2'.format(i))
             args_subprocess = [
                 'magick',

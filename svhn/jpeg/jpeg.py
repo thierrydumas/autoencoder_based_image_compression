@@ -48,9 +48,15 @@ def compress_jpeg(qualities, nb_images, path_to_before, path_to_after, is_2000):
         for i in range(nb_images):
             path_to_reference = os.path.join(path_to_before,
                                              'reference_{}.png'.format(i))
-            path_to_reconstruction = os.path.join(path_to_after,
-                                                  tag,
-                                                  'quality_{}'.format(quality),
+            path_to_directory_reconstruction = os.path.join(path_to_after,
+                                                            tag,
+                                                            'quality_{}'.format(quality))
+            
+            # The directory containing the reconstructed images
+            # is created if it does not exist.
+            if not os.path.exists(path_to_directory_reconstruction):
+                os.makedirs(path_to_directory_reconstruction)
+            path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                                   'reconstruction_{0}.{1}'.format(i, extension))
             args_subprocess = [
                 'magick',
@@ -171,15 +177,9 @@ def compute_rates_psnrs(qualities, nb_images, path_to_before, path_to_after, is_
         for j in range(nb_images):
             path_to_reference = os.path.join(path_to_before,
                                              'reference_{}.png'.format(j))
-            path_to_directory_reconstruction = os.path.join(path_to_after,
-                                                            tag,
-                                                            'quality_{}'.format(qualities[i]))
-            
-            # The directory containing the reconstructed images
-            # is created if it does not exist.
-            if not os.path.exists(path_to_directory_reconstruction):
-                os.makedirs(path_to_directory_reconstruction)
-            path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
+            path_to_reconstruction = os.path.join(path_to_after,
+                                                  tag,
+                                                  'quality_{}'.format(qualities[i]),
                                                   'reconstruction_{0}.{1}'.format(j, extension))
             (rate[i, j], psnr[i, j]) = compute_rate_psnr(path_to_reference,
                                                          path_to_reconstruction,

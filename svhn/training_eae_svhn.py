@@ -77,7 +77,7 @@ if __name__ == '__main__':
                                       suffix)
     if not os.path.exists(path_to_checking_p):
         os.makedirs(path_to_checking_p)
-    path_to_model = 'eae/results/eae_svhn_' + suffix + '.pkl'
+    path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
     if os.path.isfile(path_to_model):
         print('"{}" already exists.'.format(path_to_model))
         print('Delete it manually to retrain.')

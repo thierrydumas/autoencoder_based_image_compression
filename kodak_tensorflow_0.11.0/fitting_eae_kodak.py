@@ -13,6 +13,7 @@ except ImportError:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
+import os
 import pickle
 import scipy.stats
 import tensorflow as tf
@@ -88,7 +89,7 @@ def fitting_eae_kodak(y_float32, path_to_idx_map_exception, path_to_checking_f):
                    [r'$f( . ; {0}, {1})$'.format(str(round(laplace_location, 2)), str(round(laplace_scale, 2)))],
                    prop={'size': 30},
                    loc=9)
-        plt.savefig(path_to_checking_f + 'fitting_map_{}.png'.format(i + 1))
+        plt.savefig(os.path.join(path_to_checking_f, 'fitting_map_{}.png'.format(i + 1)))
         plt.clf()
         if i != idx_map_exception:
             locations.append(laplace_location)
@@ -98,10 +99,10 @@ def fitting_eae_kodak(y_float32, path_to_idx_map_exception, path_to_checking_f):
     nb_kept = len(locations)
     tls.histogram(numpy.array(locations),
                   'Histogram of {} locations'.format(nb_kept),
-                  path_to_checking_f + 'laplace_locations.png')
+                  os.path.join(path_to_checking_f, 'laplace_locations.png'))
     tls.histogram(numpy.array(scales),
                   'Histogram of {} scales'.format(nb_kept),
-                  path_to_checking_f + 'laplace_scales.png')
+                  os.path.join(path_to_checking_f, 'laplace_scales.png'))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Fits a Laplace density to the normed histogram of each latent variable feature map in a trained entropy autoencoder.')
@@ -130,6 +131,12 @@ if __name__ == '__main__':
     path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, args.idx_training)
     path_to_idx_map_exception = 'lossless/results/{}/idx_map_exception.pkl'.format(suffix_idx_training)
     path_to_checking_f = 'eae/visualization/test/checking_fitting/{}/'.format(suffix_idx_training)
+    
+    # The directory containing the normed histogram of
+    # each latent variable feature map is created if it
+    # does not exist.
+    if not os.path.exists(path_to_checking_f):
+        os.makedirs(path_to_checking_f)
     reference_uint8 = numpy.load(path_to_kodak)
     (_, h_in, w_in) = reference_uint8.shape
     luminances_uint8 = numpy.expand_dims(reference_uint8, axis=3)

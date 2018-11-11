@@ -7,6 +7,7 @@ on 250 RGB digits from the SVHN test set.
 
 import argparse
 import numpy
+import os
 import pickle
 
 import svhn.svhn
@@ -62,7 +63,7 @@ def compute_psnr(reference_uint8, mean_training, std_training, variational_ae, p
     return psnr
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Evaluates a trained variational autoencoder in terms of dimensionality reduction.')
+    parser = argparse.ArgumentParser(description='Assesses a trained variational autoencoder in terms of dimensionality reduction.')
     parser.parse_args()
     path_to_test = 'svhn/results/test_data.npy'
     path_to_mean_training = 'svhn/results/mean_training.npy'
@@ -79,7 +80,7 @@ if __name__ == '__main__':
                        32,
                        32,
                        10,
-                       path_to_checking_r + 'reference.png')
+                       os.path.join(path_to_checking_r, 'reference.png'))
     
     # `mean_training.dtype` and `std_training.dtype`
     # are equal to `numpy.float64`.
@@ -89,7 +90,7 @@ if __name__ == '__main__':
                         mean_training,
                         std_training,
                         variational_ae,
-                        path_to_checking_r + 'reconstruction.png')
+                        os.path.join(path_to_checking_r, 'reconstruction.png'))
     print('Number of pixels: {}'.format(reference_uint8.shape[1]))
     print('Code length: {}'.format(variational_ae.nb_z))
     print('Mean PNSR over {0} RGB digits: {1}'.format(nb_images, psnr))

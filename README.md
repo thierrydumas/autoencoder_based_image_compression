@@ -12,7 +12,7 @@ This repository is a Tensorflow implementation of the paper **"Autoencoder based
   * matplotlib
   * scipy
   * six
-  * glymur, see [GlymurAdvancedInstallationWebPage](https://glymur.readthedocs.io/en/v0.8.7/detailed_installation.html)
+  * glymur, see [GlymurAdvancedInstallationWebPage](https://glymur.readthedocs.io/en/v0.8.14/detailed_installation.html)
   * ImageMagick, see [ImageMagickWebPage](https://www.imagemagick.org)
   
 ## Cloning the code

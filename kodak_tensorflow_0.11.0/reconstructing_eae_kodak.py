@@ -1,7 +1,7 @@
-"""A script to evaluate several trained entropy autoencoders, JPEG2000 and HEVC in terms of rate-distortion.
+"""A script to compare several trained entropy autoencoders, JPEG2000 and HEVC in terms of rate-distortion.
 
 The trained entropy autoencoders, JPEG2000 and
-HEVC are evaluated on the Kodak test set. Optionally,
+HEVC are compared on the Kodak test set. Optionally,
 the Kodak test set can be replaced by the BSDS
 test set.
 
@@ -115,11 +115,18 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
     path_to_nb_itvs_per_side_load = 'eae/results/{0}/nb_itvs_per_side_{1}.pkl'.format(suffix, idx_training)
     path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, idx_training)
     if is_lossless:
-        path_to_vis = path_to_checking_r + 'reconstruction_fix_gamma/{}/lossless/'.format(suffix)
+        path_to_vis = os.path.join(path_to_checking_r,
+                                   'reconstruction_fix_gamma',
+                                   suffix,
+                                   'lossless')
     else:
-        path_to_vis = path_to_checking_r + 'reconstruction_fix_gamma/{}/approx/'.format(suffix)
+        path_to_vis = os.path.join(path_to_checking_r,
+                                   'reconstruction_fix_gamma',
+                                   suffix,
+                                   'approx')
     path_to_stats = 'lossless/results/{0}/training_index_{1}/'.format(suffix, idx_training)
-    path_to_map_mean = os.path.join(path_to_stats, 'map_mean.npy')
+    path_to_map_mean = os.path.join(path_to_stats,
+                                    'map_mean.npy')
     
     # A single entropy autoencoder is created.
     entropy_ae = EntropyAutoencoder(4,
@@ -181,8 +188,12 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
             # The binary probabilities were also computed
             # on the extra set.
             if is_lossless:
-                path_to_binary_probabilities = os.path.join(path_to_stats, 'binary_probabilities_{}.npy'.format(str_multiplier))
-            path_to_storage = path_to_vis + 'multiplier_{}/'.format(str_multiplier)
+                path_to_binary_probabilities = os.path.join(path_to_stats,
+                                                            'binary_probabilities_{}.npy'.format(str_multiplier))
+            path_to_storage = os.path.join(path_to_vis,
+                                           'multiplier_{}'.format(str_multiplier))
+            if not os.path.exists(path_to_storage):
+                os.makedirs(path_to_storage)
             for j in range(nb_images):
                 if is_lossless:
                     nb_bits = lossless.compression.rescale_compress_lossless_maps(centered_quantized_y_float32[j, :, :, :],
@@ -296,7 +307,11 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
                                   tls.float_to_str(gamma_scaling))
         path_to_nb_itvs_per_side_load = 'eae/results/{0}/nb_itvs_per_side_{1}.pkl'.format(suffix, idx_training)
         path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, idx_training)
-        path_to_storage = path_to_checking_r + 'reconstruction_vary_gamma_fix_bin_widths/{}/'.format(suffix)
+        path_to_storage = os.path.join(path_to_checking_r,
+                                       'reconstruction_vary_gamma_fix_bin_widths',
+                                       suffix)
+        if not os.path.exists(path_to_storage):
+            os.makedirs(path_to_storage)
         
         # Every time `gamma_scaling` changes, a new
         # entropy autoencoder is created.
@@ -391,7 +406,7 @@ def write_reference(reference_uint8, path_to_checking_r, list_rotation, position
                                         paths)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Evaluates several trained entropy autoencoders, JPEG2000 and HEVC in terms of rate-distortion.')
+    parser = argparse.ArgumentParser(description='Compares several trained entropy autoencoders, JPEG2000 and HEVC in terms of rate-distortion.')
     parser.add_argument('--code_lossless',
                         help='if given, the quantized latent variables are coded losslessly',
                         action='store_true',

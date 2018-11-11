@@ -290,7 +290,13 @@ def evaluate_hevc(luminances_uint8, path_to_before_hevc, path_to_after_hevc, pat
     psnr = numpy.zeros((nb_qps, nb_images))
     for i in range(nb_qps):
         qp = qps[i].item()
-        path_to_storage = os.path.join(path_to_hevc_vis, 'qp_{}'.format(qp))
+        path_to_storage = os.path.join(path_to_hevc_vis,
+                                       'qp_{}'.format(qp))
+        
+        # The directory containing the reconstructed images
+        # is created if it does not exist.
+        if not os.path.exists(path_to_storage):
+            os.makedirs(path_to_storage)
         (rate[i, :], psnr[i, :]) = compute_rate_psnr(luminances_uint8,
                                                      path_to_before_hevc,
                                                      path_to_after_hevc,

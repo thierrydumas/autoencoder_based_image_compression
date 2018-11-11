@@ -58,10 +58,12 @@ if __name__ == '__main__':
     else:
         suffix = '{0}_{1}'.format(tls.float_to_str(args.bin_width_init),
                                   tls.float_to_str(args.gamma))
-    path_to_checking_l = 'eae/visualization/overfitting/checking_loss/' + suffix + '/'
+    path_to_checking_l = os.path.join('eae/visualization/overfitting/checking_loss/',
+                                      suffix)
     if not os.path.exists(path_to_checking_l):
         os.makedirs(path_to_checking_l)
-    path_to_checking_c = 'eae/visualization/overfitting/checking_compression/' + suffix + '/'
+    path_to_checking_c = os.path.join('eae/visualization/overfitting/checking_compression/',
+                                      suffix)
     if not os.path.exists(path_to_checking_c):
         os.makedirs(path_to_checking_c)
     assert args.nb_epochs_training % 100 == 0, \
@@ -129,7 +131,7 @@ if __name__ == '__main__':
                     ['training'],
                     ['r'],
                     'Evolution of the scaled approximate entropy over epochs',
-                    path_to_checking_l + 'scaled_approximate_entropy.png')
+                    os.path.join(path_to_checking_l, 'scaled_approximate_entropy.png'))
     tls.plot_graphs(x_values,
                     rec_error,
                     'epoch',
@@ -137,7 +139,7 @@ if __name__ == '__main__':
                     ['training'],
                     ['r'],
                     'Evolution of the reconstruction error over epochs',
-                    path_to_checking_l + 'reconstruction_error.png')
+                    os.path.join(path_to_checking_l, 'reconstruction_error.png'))
     tls.plot_graphs(x_values,
                     loss_density_approx,
                     'epoch',
@@ -145,7 +147,7 @@ if __name__ == '__main__':
                     ['training'],
                     ['r'],
                     'Evolution of the loss of density approximation over epochs',
-                    path_to_checking_l + 'loss_density_approximation.png')
+                    os.path.join(path_to_checking_l, 'loss_density_approximation.png'))
     t_stop = time.time()
     nb_minutes = int((t_stop - t_start)/60)
     print('\nTraining time: {} minutes.'.format(nb_minutes))
@@ -154,7 +156,7 @@ if __name__ == '__main__':
                        32,
                        32,
                        2,
-                       path_to_checking_c + 'reference.png')
+                       os.path.join(path_to_checking_c, 'reference.png'))
     
     # If, at training time, the quantization bin
     # width was learned, the test quantization bin
@@ -171,7 +173,7 @@ if __name__ == '__main__':
                                             entropy_ae,
                                             bin_width_test,
                                             2,
-                                            path_to_checking_c + 'reconstruction.png')
+                                            os.path.join(path_to_checking_c, 'reconstruction.png'))
     print('\nMean rate over the {0} training RGB digits: {1}'.format(args.nb_training, rate))
     print('Mean PSNR over the {0} training RGB digits: {1}'.format(args.nb_training, psnr))
 

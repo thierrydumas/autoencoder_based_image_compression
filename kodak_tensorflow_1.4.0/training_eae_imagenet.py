@@ -56,18 +56,36 @@ if __name__ == '__main__':
     else:
         suffix = '{0}_{1}'.format(tls.float_to_str(args.bin_width_init), tls.float_to_str(args.gamma_scaling))
     suffix_idx_training = '{0}/training_index_{1}'.format(suffix, args.idx_training + 1)
-    path_to_checking_a = 'eae/visualization/training/checking_activations/' + suffix_idx_training + '/'
-    path_to_checking_l = 'eae/visualization/training/checking_loss/' + suffix_idx_training + '/'
-    path_to_checking_p = 'eae/visualization/training/checking_parameters/' + suffix_idx_training + '/'
+    path_to_checking_a = os.path.join('eae/visualization/training/checking_activations/',
+                                      suffix_idx_training)
+    if not os.path.exists(path_to_checking_a):
+        os.makedirs(path_to_checking_a)
+    path_to_checking_l = os.path.join('eae/visualization/training/checking_loss/',
+                                      suffix_idx_training)
+    if not os.path.exists(path_to_checking_l):
+        os.makedirs(path_to_checking_l)
+    path_to_checking_p = os.path.join('eae/visualization/training/checking_parameters/',
+                                      suffix_idx_training)
+    if not os.path.exists(path_to_checking_p):
+        os.makedirs(path_to_checking_p)
+    path_to_directory_model = os.path.join('eae/results/',
+                                           suffix)
+    if not os.path.exists(path_to_directory_model):
+        os.makedirs(path_to_directory_model)
     if args.idx_training:
-        path_to_nb_itvs_per_side_load = 'eae/results/' + suffix + '/nb_itvs_per_side_{}.pkl'.format(args.idx_training)
-        path_to_restore = 'eae/results/' + suffix + '/model_{}.ckpt'.format(args.idx_training)
+        path_to_nb_itvs_per_side_load = os.path.join(path_to_directory_model,
+                                                     'nb_itvs_per_side_{}.pkl'.format(args.idx_training))
+        path_to_restore = os.path.join(path_to_directory_model,
+                                       'model_{}.ckpt'.format(args.idx_training))
     else:
         path_to_nb_itvs_per_side_load = ''
         path_to_restore = ''
-    path_to_model = 'eae/results/' + suffix + '/model_{}.ckpt'.format(args.idx_training + 1)
-    path_to_meta = 'eae/results/' + suffix + '/model_{}.ckpt.meta'.format(args.idx_training + 1)
-    path_to_nb_itvs_per_side_save = 'eae/results/' + suffix + '/nb_itvs_per_side_{}.pkl'.format(args.idx_training + 1)
+    path_to_model = os.path.join(path_to_directory_model,
+                                 'model_{}.ckpt'.format(args.idx_training + 1))
+    path_to_meta = os.path.join(path_to_directory_model,
+                                'model_{}.ckpt.meta'.format(args.idx_training + 1))
+    path_to_nb_itvs_per_side_save = os.path.join(path_to_directory_model,
+                                                 'nb_itvs_per_side_{}.pkl'.format(args.idx_training + 1))
     if os.path.isfile(path_to_model):
         print('"{}" already exists.'.format(path_to_model))
         print('Delete the model manually to retrain.')
@@ -135,7 +153,7 @@ if __name__ == '__main__':
             entropy_ae.checking_activations_1(sess,
                                               validation_float32,
                                               ['Noisy latent variables {} before the fitting'.format(index_map) for index_map in range(nb_display)],
-                                              [path_to_checking_a + 'noisy_latent_{}_before_fitting.png'.format(index_map) for index_map in range(nb_display)])
+                                              [os.path.join(path_to_checking_a, 'noisy_latent_{}_before_fitting.png'.format(index_map)) for index_map in range(nb_display)])
             print('\nThe preliminary fitting of the parameters of the piecewise linear functions starts.')
             eaeuls.preliminary_fitting(training_uint8,
                                        sess,
@@ -146,7 +164,7 @@ if __name__ == '__main__':
             entropy_ae.checking_activations_1(sess,
                                               validation_float32,
                                               ['Noisy latent variables {} after the fitting'.format(index_map) for index_map in range(nb_display)],
-                                              [path_to_checking_a + 'noisy_latent_{}_after_fitting.png'.format(index_map) for index_map in range(nb_display)])
+                                              [os.path.join(path_to_checking_a, 'noisy_latent_{}_after_fitting.png'.format(index_map)) for index_map in range(nb_display)])
         
         for i in range(args.nb_epochs_training):
             print('\nEpoch: {}'.format(i + 1))
@@ -194,43 +212,43 @@ if __name__ == '__main__':
                 entropy_ae.checking_activations_1(sess,
                                                   validation_float32,
                                                   ['Noisy latent variables {0} (epoch {1})'.format(index_map, str_epoch) for index_map in range(nb_display)],
-                                                  [path_to_checking_a + 'noisy_latent_{0}_{1}.png'.format(index_map, str_epoch) for index_map in range(nb_display)])
+                                                  [os.path.join(path_to_checking_a, 'noisy_latent_{0}_{1}.png'.format(index_map, str_epoch)) for index_map in range(nb_display)])
                 entropy_ae.checking_activations_2(sess,
                                                   validation_float32,
-                                                  [path_to_checking_a + 'image_latent_{0}_{1}.png'.format(index_map, str_epoch) for index_map in range(2)])
+                                                  [os.path.join(path_to_checking_a, 'image_latent_{0}_{1}.png'.format(index_map, str_epoch)) for index_map in range(2)])
                 entropy_ae.checking_area_under_piecewise_linear_functions(sess,
                                                                           'Area under the piecewise linear functions (epoch ' + str_epoch + ')',
-                                                                          path_to_checking_p + 'area_under_piecewise_linear_functions_' + str_epoch + '.png')
+                                                                          os.path.join(path_to_checking_p, 'area_under_piecewise_linear_functions_' + str_epoch + '.png'))
                 entropy_ae.checking_p_1('encoder',
                                         'weights_1',
                                         'Weights of the 1st convolutional layer (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'weights_1_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'weights_1_' + str_epoch + '.png'))
                 entropy_ae.checking_p_1('decoder',
                                         'weights_6',
                                         'Weights of the 3rd transpose convolutional layer (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'weights_6_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'weights_6_' + str_epoch + '.png'))
                 entropy_ae.checking_p_1('encoder',
                                         'gamma_1',
                                         'Weights of the 1st GDN (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'gamma_1_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'gamma_1_' + str_epoch + '.png'))
                 entropy_ae.checking_p_1('encoder',
                                         'beta_1',
                                         'Additive coefficients of the 1st GDN (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'beta_1_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'beta_1_' + str_epoch + '.png'))
                 if args.learn_bin_widths:
                     entropy_ae.checking_p_1('piecewise_linear_function',
                                             'bin_widths',
                                             'Quantization bin widths (epoch ' + str_epoch + ')',
-                                            path_to_checking_p + 'bin_widths_' + str_epoch + '.png')
+                                            os.path.join(path_to_checking_p, 'bin_widths_' + str_epoch + '.png'))
                 entropy_ae.checking_p_2(True,
                                         8,
-                                        path_to_checking_p + 'image_weights_1_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'image_weights_1_' + str_epoch + '.png'))
                 entropy_ae.checking_p_2(False,
                                         8,
-                                        path_to_checking_p + 'image_weights_6_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'image_weights_6_' + str_epoch + '.png'))
                 entropy_ae.checking_p_3('encoder',
                                         1,
-                                        path_to_checking_p + 'image_gamma_1_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'image_gamma_1_' + str_epoch + '.png'))
             entropy_ae.save(sess,
                             path_to_model,
                             path_to_nb_itvs_per_side_save)
@@ -249,7 +267,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the mean approximate entropy over epochs',
-                    path_to_checking_l + 'mean_approximate_entropy.png')
+                    os.path.join(path_to_checking_l, 'mean_approximate_entropy.png'))
     tls.plot_graphs(x_values,
                     mean_disc_entropy,
                     'epoch',
@@ -257,7 +275,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the mean entropy over epochs',
-                    path_to_checking_l + 'mean_entropy.png')
+                    os.path.join(path_to_checking_l, 'mean_entropy.png'))
     tls.plot_graphs(x_values,
                     scaled_approx_entropy,
                     'epoch',
@@ -265,7 +283,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the scaled cumulated approximate entropy over epochs',
-                    path_to_checking_l + 'scaled_approximate_entropy.png')
+                    os.path.join(path_to_checking_l, 'scaled_approximate_entropy.png'))
     tls.plot_graphs(x_values,
                     rec_error,
                     'epoch',
@@ -273,7 +291,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the reconstruction error over epochs',
-                    path_to_checking_l + 'reconstruction_error.png')
+                    os.path.join(path_to_checking_l, 'reconstruction_error.png'))
     tls.plot_graphs(x_values,
                     loss_density_approx,
                     'epoch',
@@ -281,7 +299,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the loss of density approximation over epochs',
-                    path_to_checking_l + 'loss_density_approximation.png')
+                    os.path.join(path_to_checking_l, 'loss_density_approximation.png'))
     tls.plot_graphs(x_values,
                     difference_mean_entropy,
                     'epoch',
@@ -289,7 +307,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the difference in mean entropy over epochs',
-                    path_to_checking_l + 'difference_mean_entropy.png')
+                    os.path.join(path_to_checking_l, 'difference_mean_entropy.png'))
     tls.plot_graphs(x_values,
                     w_decay,
                     'epoch',
@@ -297,7 +315,7 @@ if __name__ == '__main__':
                     ['l2-norm weight decay'],
                     ['b'],
                     'Evolution of the weight decay over epochs',
-                    path_to_checking_l + 'weight_decay.png')
+                    os.path.join(path_to_checking_l, 'weight_decay.png'))
     tls.plot_graphs(x_values,
                     nb_itvs_per_side,
                     'epoch',
@@ -305,7 +323,7 @@ if __name__ == '__main__':
                     ['grid symmetrical about 0'],
                     ['b'],
                     'Evolution of the number of unit intervals per side over epochs',
-                    path_to_checking_p + 'nb_intervals_per_side.png')
+                    os.path.join(path_to_checking_p, 'nb_intervals_per_side.png'))
     t_stop = time.time()
     nb_hours = int((t_stop - t_start)/3600)
     nb_minutes = int((t_stop - t_start)/60)

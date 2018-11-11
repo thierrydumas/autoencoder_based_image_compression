@@ -6,6 +6,7 @@ No dataset is needed for the analysis.
 
 import argparse
 import numpy
+import os
 import scipy.misc
 import tensorflow as tf
 
@@ -113,9 +114,12 @@ if __name__ == '__main__':
     path_to_nb_itvs_per_side_load = 'eae/results/{0}/nb_itvs_per_side_{1}.pkl'.format(suffix, args.idx_training)
     path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, args.idx_training)
     path_to_map_mean = 'lossless/results/{}/map_mean.npy'.format(suffix_idx_training)
-    path_to_crop = 'eae/visualization/test/checking_activating/{0}/activating_map_{1}_{2}.png'.format(suffix_idx_training,
-                                                                                                      args.idx_map + 1,
-                                                                                                      tls.float_to_str(args.activation))
+    path_to_directory_crop = os.path.join('eae/visualization/test/checking_activating/',
+                                          suffix_idx_training)
+    if not os.path.exists(path_to_directory_crop):
+        os.makedirs(path_to_directory_crop)
+    path_to_crop = os.path.join(path_to_directory_crop,
+                                'activating_map_{0}_{1}.png'.format(args.idx_map + 1, tls.float_to_str(args.activation)))
     
     # A single entropy autoencoder is created.
     entropy_ae = EntropyAutoencoder(1,

@@ -73,8 +73,8 @@ if __name__ == '__main__':
     # `validation_float64.dtype` and `training_portion_float64.dtype`
     # are equal to `numpy.float64`.
     validation_float64 = svhn.svhn.preprocess_svhn(numpy.load(path_to_validation_data),
-                                             mean_training,
-                                             std_training)
+                                                   mean_training,
+                                                   std_training)
     nb_validation = validation_float64.shape[0]
     assert nb_validation >= args.batch_size, \
         'The number of validation examples is not larger than {}.'.format(args.batch_size)
@@ -132,70 +132,70 @@ if __name__ == '__main__':
                                         'l1',
                                         'Weights recognition l1 (epoch ' + str_epoch + ')',
                                         'Weights recognition l1 updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'wr_l1_' + str_epoch + '.png',
-                                        path_to_checking_p + 'wr_l1_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'wr_l1_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'wr_l1_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_2('weights_recognition',
                                         'mean',
                                         'Weights recognition mean (epoch ' + str_epoch + ')',
                                         'Weights recognition mean updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'wr_mean_' + str_epoch + '.png',
-                                        path_to_checking_p + 'wr_mean_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'wr_mean_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'wr_mean_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_2('weights_recognition',
                                         'log_std_squared',
                                         'Weights recognition log std squared (epoch ' + str_epoch + ')',
                                         'Weights recognition log std squared updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'wr_log_std_squared_' + str_epoch + '.png',
-                                        path_to_checking_p + 'wr_log_std_squared_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'wr_log_std_squared_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'wr_log_std_squared_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_2('weights_generation',
                                         'l1',
                                         'Weights generation l1 (epoch ' + str_epoch + ')',
                                         'Weights generation l1 updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'wg_l1_' + str_epoch + '.png',
-                                        path_to_checking_p + 'wg_l1_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'wg_l1_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'wg_l1_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_2('weights_generation',
                                         'mean',
                                         'Weights generation mean (epoch ' + str_epoch + ')',
                                         'Weights generation mean updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'wg_mean_' + str_epoch + '.png',
-                                        path_to_checking_p + 'wg_mean_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'wg_mean_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'wg_mean_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_2('biases_recognition',
                                         'l1',
                                         'Biases recognition l1 (epoch ' + str_epoch + ')',
                                         'Biases recognition l1 updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'br_l1_' + str_epoch + '.png',
-                                        path_to_checking_p + 'br_l1_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'br_l1_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'br_l1_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_2('biases_recognition',
                                         'mean',
                                         'Biases recognition mean (epoch ' + str_epoch + ')',
                                         'Biases recognition mean updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'br_mean_' + str_epoch + '.png',
-                                        path_to_checking_p + 'br_mean_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'br_mean_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'br_mean_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_2('biases_recognition',
                                         'log_std_squared',
                                         'Biases recognition log std squared (epoch ' + str_epoch + ')',
                                         'Biases recognition log std squared updates (epoch ' + str_epoch + ')',
-                                        path_to_checking_p + 'br_log_std_squared_' + str_epoch + '.png',
-                                        path_to_checking_p + 'br_log_std_squared_updates_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'br_log_std_squared_' + str_epoch + '.png'),
+                                        os.path.join(path_to_checking_p, 'br_log_std_squared_updates_' + str_epoch + '.png'))
             variational_ae.checking_p_3(True,
                                         args.nb_hidden,
                                         32,
                                         32,
                                         10,
-                                        path_to_checking_p + 'image_wr_l1_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'image_wr_l1_' + str_epoch + '.png'))
             variational_ae.checking_p_3(False,
                                         args.nb_hidden,
                                         32,
                                         32,
                                         10,
-                                        path_to_checking_p + 'image_wg_mean_' + str_epoch + '.png')
+                                        os.path.join(path_to_checking_p, 'image_wg_mean_' + str_epoch + '.png'))
             variational_ae.checking_activations(validation_float64[0:args.batch_size, :],
                                                 'Activations recognition l1 (epoch ' + str_epoch + ')',
                                                 'Activations recognition mean (epoch ' + str_epoch + ')',
                                                 'Activation recognition log std squared (epoch ' + str_epoch + ')',
-                                                path_to_checking_a + 'ar_l1_' + str_epoch + '.png',
-                                                path_to_checking_a + 'ar_mean_' + str_epoch + '.png',
-                                                path_to_checking_a + 'ar_log_std_squared_' + str_epoch + '.png',
-                                                path_to_checking_a + 'image_ar_l1_' + str_epoch + '.png')
+                                                os.path.join(path_to_checking_a, 'ar_l1_' + str_epoch + '.png'),
+                                                os.path.join(path_to_checking_a, 'ar_mean_' + str_epoch + '.png'),
+                                                os.path.join(path_to_checking_a, 'ar_log_std_squared_' + str_epoch + '.png'),
+                                                os.path.join(path_to_checking_a, 'image_ar_l1_' + str_epoch + '.png'))
     
     # The optional argument `dtype` in the
     # function `numpy.linspace` was introduced
@@ -211,7 +211,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of scaled KL divergence over epochs',
-                    path_to_checking_l + 'scaled_kld.png')
+                    os.path.join(path_to_checking_l, 'scaled_kld.png'))
     tls.plot_graphs(x_values,
                     rec_error,
                     'epoch',
@@ -219,7 +219,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the reconstruction error over epochs',
-                    path_to_checking_l + 'reconstruction_error.png')
+                    os.path.join(path_to_checking_l, 'reconstruction_error.png'))
     tls.plot_graphs(x_values,
                     w_decay,
                     'epoch',
@@ -227,7 +227,7 @@ if __name__ == '__main__':
                     ['l2-norm weight decay'],
                     ['b'],
                     'Evolution of the weight decay over epochs',
-                    path_to_checking_l + 'weight_decay.png')
+                    os.path.join(path_to_checking_l, 'weight_decay.png'))
     tls.plot_graphs(x_values,
                     mean_magnitude,
                     'epoch',
@@ -235,7 +235,7 @@ if __name__ == '__main__':
                     ['recognition l1', 'recognition mean', 'recognition log std squared', 'generation l1', 'generation mean'],
                     ['r', 'b', 'g', 'c', 'k'],
                     'Evolution of the mean magnitude ratio over epochs',
-                    path_to_checking_p + 'mean_magnitude_ratio.png')
+                    os.path.join(path_to_checking_p, 'mean_magnitude_ratio.png'))
     t_stop = time.time()
     nb_hours = int((t_stop - t_start)/3600)
     nb_minutes = int((t_stop - t_start)/60)
