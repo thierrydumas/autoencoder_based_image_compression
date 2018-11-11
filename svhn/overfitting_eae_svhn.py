@@ -2,6 +2,7 @@
 
 import argparse
 import numpy
+import os
 import time
 
 import eae.eae_utils as eaeuls
@@ -58,7 +59,11 @@ if __name__ == '__main__':
         suffix = '{0}_{1}'.format(tls.float_to_str(args.bin_width_init),
                                   tls.float_to_str(args.gamma))
     path_to_checking_l = 'eae/visualization/overfitting/checking_loss/' + suffix + '/'
+    if not os.path.exists(path_to_checking_l):
+        os.makedirs(path_to_checking_l)
     path_to_checking_c = 'eae/visualization/overfitting/checking_compression/' + suffix + '/'
+    if not os.path.exists(path_to_checking_c):
+        os.makedirs(path_to_checking_c)
     assert args.nb_epochs_training % 100 == 0, \
         'The number of training epochs is not divisible by 100.'
     nb_measures = 1 + args.nb_epochs_training//100

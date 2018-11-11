@@ -14,6 +14,7 @@ except ImportError:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
+import os
 import pickle
 
 import eae.eae_utils as eaeuls
@@ -89,7 +90,9 @@ def fix_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_wi
     """
     suffix = '{0}_{1}'.format(tls.float_to_str(bin_width_init),
                               tls.float_to_str(gamma))
-    path_to_storage = path_to_checking_r + 'reconstruction_fix_gamma_fix_bin_width/{}/'.format(suffix)
+    path_to_storage = os.path.join(path_to_checking_r,
+                                   'reconstruction_fix_gamma_fix_bin_width',
+                                   suffix)
     path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
     with open(path_to_model, 'rb') as file:
         entropy_ae = pickle.load(file)
@@ -103,7 +106,12 @@ def fix_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_wi
     for i in range(nb_points):    
         multiplier = multipliers[i].item()
         bin_width_test = multiplier*bin_width_init
-        path_to_reconstruction = path_to_storage + 'multiplier_{}/reconstruction.png'.format(tls.float_to_str(multiplier))
+        path_to_directory_reconstruction = os.path.join(path_to_storage,
+                                                        'multiplier_{}'.format(tls.float_to_str(multiplier)))
+        if not os.path.exists(path_to_directory_reconstruction):
+            os.makedirs(path_to_directory_reconstruction)
+        path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
+                                              'reconstruction.png')
         (rate[i], psnr[i]) = eaeuls.compute_rate_psnr(reference_uint8,
                                                       mean_training,
                                                       std_training,
@@ -190,7 +198,13 @@ def vary_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_w
             'The file name is {0} whereas the scaling coefficient is {1}.'.format(path_to_model, entropy_ae.gamma)
         assert entropy_ae.bin_width == bin_width_init, \
             'The file name is {0} whereas the quantization bin width is {1}.'.format(path_to_model, entropy_ae.bin_width)
-        path_to_reconstruction = path_to_checking_r + 'reconstruction_vary_gamma_fix_bin_width/{}/reconstruction.png'.format(suffix)
+        path_to_directory_reconstruction = os.path.join(path_to_checking_r,
+                                                        'reconstruction_vary_gamma_fix_bin_width',
+                                                        suffix)
+        if not os.path.exists(path_to_directory_reconstruction):
+            os.makedirs(path_to_directory_reconstruction)
+        path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
+                                              'reconstruction.png')
         (rate[i], psnr[i]) = eaeuls.compute_rate_psnr(reference_uint8,
                                                       mean_training,
                                                       std_training,
@@ -276,7 +290,13 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
         # digit after the decimal point, yielding
         # the test quantization bin width.
         bin_width_test = round(entropy_ae.bin_width, 1)
-        path_to_reconstruction = path_to_checking_r + 'reconstruction_vary_gamma_learn_bin_width/{}/reconstruction.png'.format(suffix)
+        path_to_directory_reconstruction = os.path.join(path_to_checking_r,
+                                                        'reconstruction_vary_gamma_learn_bin_width',
+                                                        suffix)
+        if not os.path.exists(path_to_directory_reconstruction):
+            os.makedirs(path_to_directory_reconstruction)
+        path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
+                                              'reconstruction.png')
         (rate[i], psnr[i]) = eaeuls.compute_rate_psnr(reference_uint8,
                                                       mean_training,
                                                       std_training,

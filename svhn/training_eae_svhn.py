@@ -65,9 +65,18 @@ if __name__ == '__main__':
     else:
         suffix = '{0}_{1}'.format(tls.float_to_str(args.bin_width_init),
                                   tls.float_to_str(args.gamma))
-    path_to_checking_a = 'eae/visualization/training/checking_activations/' + suffix + '/'
-    path_to_checking_l = 'eae/visualization/training/checking_loss/' + suffix + '/'
-    path_to_checking_p = 'eae/visualization/training/checking_parameters/' + suffix + '/'
+    path_to_checking_a = os.path.join('eae/visualization/training/checking_activations/',
+                                      suffix)
+    if not os.path.exists(path_to_checking_a):
+        os.makedirs(path_to_checking_a)
+    path_to_checking_l = os.path.join('eae/visualization/training/checking_loss/',
+                                      suffix)
+    if not os.path.exists(path_to_checking_l):
+        os.makedirs(path_to_checking_l)
+    path_to_checking_p = os.path.join('eae/visualization/training/checking_parameters/',
+                                      suffix)
+    if not os.path.exists(path_to_checking_p):
+        os.makedirs(path_to_checking_p)
     path_to_model = 'eae/results/eae_svhn_' + suffix + '.pkl'
     if os.path.isfile(path_to_model):
         print('"{}" already exists.'.format(path_to_model))
@@ -112,10 +121,10 @@ if __name__ == '__main__':
                                     'Activations encoder l1 before the fitting',
                                     'Activations encoder latent before the fitting',
                                     'Activations encoder noisy latent before the fitting',
-                                    path_to_checking_a + 'ae_l1_before_fitting.png',
-                                    path_to_checking_a + 'ae_latent_before_fitting.png',
-                                    path_to_checking_a + 'ae_noisy_latent_before_fitting.png',
-                                    path_to_checking_a + 'image_dead_zone_before_fitting.png')
+                                    os.path.join(path_to_checking_a, 'ae_l1_before_fitting.png'),
+                                    os.path.join(path_to_checking_a, 'ae_latent_before_fitting.png'),
+                                    os.path.join(path_to_checking_a, 'ae_noisy_latent_before_fitting.png'),
+                                    os.path.join(path_to_checking_a, 'image_dead_zone_before_fitting.png'))
     print('\nThe preliminary fitting of the parameters of the piecewise linear function starts.')
     eaeuls.preliminary_fitting(training_uint8,
                                mean_training,
@@ -128,10 +137,10 @@ if __name__ == '__main__':
                                     'Activations encoder l1 after the fitting',
                                     'Activations encoder latent after the fitting',
                                     'Activations encoder noisy latent after the fitting',
-                                    path_to_checking_a + 'ae_l1_after_fitting.png',
-                                    path_to_checking_a + 'ae_latent_after_fitting.png',
-                                    path_to_checking_a + 'ae_noisy_latent_after_fitting.png',
-                                    path_to_checking_a + 'image_dead_zone_after_fitting.png')
+                                    os.path.join(path_to_checking_a, 'ae_l1_after_fitting.png'),
+                                    os.path.join(path_to_checking_a, 'ae_latent_after_fitting.png'),
+                                    os.path.join(path_to_checking_a, 'ae_noisy_latent_after_fitting.png'),
+                                    os.path.join(path_to_checking_a, 'image_dead_zone_after_fitting.png'))
     
     approx_entropy = numpy.zeros((2, args.nb_epochs_training))
     disc_entropy = numpy.zeros((2, args.nb_epochs_training))
@@ -216,58 +225,58 @@ if __name__ == '__main__':
                                     'l1',
                                     'Weights encoder l1 (epoch ' + str_epoch + ')',
                                     'Weights encoder l1 updates (epoch ' + str_epoch + ')',
-                                    path_to_checking_p + 'we_l1_' + str_epoch + '.png',
-                                    path_to_checking_p + 'we_l1_updates_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'we_l1_' + str_epoch + '.png'),
+                                    os.path.join(path_to_checking_p, 'we_l1_updates_' + str_epoch + '.png'))
             entropy_ae.checking_p_2('weights_encoder',
                                     'latent',
                                     'Weights encoder latent (epoch ' + str_epoch + ')',
                                     'Weights encoder latent updates (epoch ' + str_epoch + ')',
-                                    path_to_checking_p + 'we_latent_' + str_epoch + '.png',
-                                    path_to_checking_p + 'we_latent_updates_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'we_latent_' + str_epoch + '.png'),
+                                    os.path.join(path_to_checking_p, 'we_latent_updates_' + str_epoch + '.png'))
             entropy_ae.checking_p_2('weights_decoder',
                                     'l1',
                                     'Weights decoder l1 (epoch ' + str_epoch + ')',
                                     'Weights decoder l1 updates (epoch ' + str_epoch + ')',
-                                    path_to_checking_p + 'wd_l1_' + str_epoch + '.png',
-                                    path_to_checking_p + 'wd_l1_updates_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'wd_l1_' + str_epoch + '.png'),
+                                    os.path.join(path_to_checking_p, 'wd_l1_updates_' + str_epoch + '.png'))
             entropy_ae.checking_p_2('weights_decoder',
                                     'mean',
                                     'Weights decoder mean (epoch ' + str_epoch + ')',
                                     'Weights decoder mean updates (epoch ' + str_epoch + ')',
-                                    path_to_checking_p + 'wd_mean_' + str_epoch + '.png',
-                                    path_to_checking_p + 'wd_mean_updates_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'wd_mean_' + str_epoch + '.png'),
+                                    os.path.join(path_to_checking_p, 'wd_mean_updates_' + str_epoch + '.png'))
             entropy_ae.checking_p_2('biases_encoder',
                                     'l1',
                                     'Biases encoder l1 (epoch ' + str_epoch + ')',
                                     'Biases encoder l1 updates (epoch ' + str_epoch + ')',
-                                    path_to_checking_p + 'be_l1_' + str_epoch + '.png',
-                                    path_to_checking_p + 'be_l1_updates_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'be_l1_' + str_epoch + '.png'),
+                                    os.path.join(path_to_checking_p, 'be_l1_updates_' + str_epoch + '.png'))
             entropy_ae.checking_p_2('biases_encoder',
                                     'latent',
                                     'Biases encoder latent (epoch ' + str_epoch + ')',
                                     'Biases encoder latent updates (epoch ' + str_epoch + ')',
-                                    path_to_checking_p + 'be_latent_' + str_epoch + '.png',
-                                    path_to_checking_p + 'be_latent_updates_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'be_latent_' + str_epoch + '.png'),
+                                    os.path.join(path_to_checking_p, 'be_latent_updates_' + str_epoch + '.png'))
             entropy_ae.checking_p_3(True,
                                     args.nb_hidden,
                                     32,
                                     32,
                                     10,
-                                    path_to_checking_p + 'image_we_l1_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'image_we_l1_' + str_epoch + '.png'))
             entropy_ae.checking_p_3(False,
                                     args.nb_hidden,
                                     32,
                                     32,
                                     10,
-                                    path_to_checking_p + 'image_wd_mean_' + str_epoch + '.png')
+                                    os.path.join(path_to_checking_p, 'image_wd_mean_' + str_epoch + '.png'))
             entropy_ae.checking_activations(validation_float64[0:args.batch_size, :],
                                             'Activations encoder l1 (epoch ' + str_epoch + ')',
                                             'Activations encoder latent (epoch ' + str_epoch + ')',
                                             'Activations encoder noisy latent (epoch ' + str_epoch + ')',
-                                            path_to_checking_a + 'ae_l1_' + str_epoch + '.png',
-                                            path_to_checking_a + 'ae_latent_' + str_epoch + '.png',
-                                            path_to_checking_a + 'ae_noisy_latent_' + str_epoch + '.png',
-                                            path_to_checking_a + 'image_dead_zone_' + str_epoch + '.png')
+                                            os.path.join(path_to_checking_a, 'ae_l1_' + str_epoch + '.png'),
+                                            os.path.join(path_to_checking_a, 'ae_latent_' + str_epoch + '.png'),
+                                            os.path.join(path_to_checking_a, 'ae_noisy_latent_' + str_epoch + '.png'),
+                                            os.path.join(path_to_checking_a, 'image_dead_zone_' + str_epoch + '.png'))
     
     # The optional argument `dtype` in the
     # function `numpy.linspace` was introduced
@@ -283,7 +292,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the approximate entropy over epochs',
-                    path_to_checking_l + 'approximate_entropy.png')
+                    os.path.join(path_to_checking_l, 'approximate_entropy.png'))
     tls.plot_graphs(x_values,
                     disc_entropy,
                     'epoch',
@@ -291,7 +300,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the entropy over epochs',
-                    path_to_checking_l + 'entropy.png')
+                    os.path.join(path_to_checking_l, 'entropy.png'))
     tls.plot_graphs(x_values,
                     scaled_approx_entropy,
                     'epoch',
@@ -299,7 +308,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the scaled approximate entropy over epochs',
-                    path_to_checking_l + 'scaled_approximate_entropy.png')
+                    os.path.join(path_to_checking_l, 'scaled_approximate_entropy.png'))
     tls.plot_graphs(x_values,
                     rec_error,
                     'epoch',
@@ -307,7 +316,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the reconstruction error over epochs',
-                    path_to_checking_l + 'reconstruction_error.png')
+                    os.path.join(path_to_checking_l, 'reconstruction_error.png'))
     tls.plot_graphs(x_values,
                     loss_density_approx,
                     'epoch',
@@ -315,7 +324,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the loss of density approximation over epochs',
-                    path_to_checking_l + 'loss_density_approximation.png')
+                    os.path.join(path_to_checking_l, 'loss_density_approximation.png'))
     tls.plot_graphs(x_values,
                     difference_entropy,
                     'epoch',
@@ -323,7 +332,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the difference in entropy over epochs',
-                    path_to_checking_l + 'difference_entropy.png')
+                    os.path.join(path_to_checking_l, 'difference_entropy.png'))
     tls.plot_graphs(x_values,
                     w_decay,
                     'epoch',
@@ -331,7 +340,7 @@ if __name__ == '__main__':
                     ['L2-norm weight decay'],
                     ['b'],
                     'Evolution of the weight decay over epochs',
-                    path_to_checking_l + 'weight_decay.png')
+                    os.path.join(path_to_checking_l, 'weight_decay.png'))
     tls.plot_graphs(x_values,
                     nb_dead,
                     'epoch',
@@ -339,7 +348,7 @@ if __name__ == '__main__':
                     ['training', 'validation'],
                     ['r', 'b'],
                     'Evolution of the number of dead quantized latent variables over epochs',
-                    path_to_checking_a + 'nb_dead.png')
+                    os.path.join(path_to_checking_a, 'nb_dead.png'))
     tls.plot_graphs(x_values,
                     nb_itvs_per_side,
                     'epoch',
@@ -347,7 +356,7 @@ if __name__ == '__main__':
                     ['grid symmetrical about 0'],
                     ['b'],
                     'Evolution of the number of unit intervals per side over epochs',
-                    path_to_checking_p + 'nb_intervals_per_side.png')
+                    os.path.join(path_to_checking_p, 'nb_intervals_per_side.png'))
     tls.plot_graphs(x_values,
                     mean_magnitude,
                     'epoch',
@@ -355,7 +364,7 @@ if __name__ == '__main__':
                     ['encoder l1', 'encoder latent', 'decoder l1', 'decoder mean'],
                     ['r', 'b', 'g', 'c'],
                     'Evolution of the mean magnitude ratio over epochs',
-                    path_to_checking_p + 'mean_magnitude_ratio.png')
+                    os.path.join(path_to_checking_p, 'mean_magnitude_ratio.png'))
     if args.learn_bin_width:
         tls.plot_graphs(x_values,
                         memory_bin_width,
@@ -364,7 +373,7 @@ if __name__ == '__main__':
                         ['learned bin width'],
                         ['b'],
                         'Evolution of the quantization bin width over epochs',
-                        path_to_checking_p + 'bin_width.png')
+                        os.path.join(path_to_checking_p, 'bin_width.png'))
     t_stop = time.time()
     nb_hours = int((t_stop - t_start)/3600)
     nb_minutes = int((t_stop - t_start)/60)
