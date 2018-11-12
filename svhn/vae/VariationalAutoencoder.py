@@ -1,6 +1,7 @@
 """A library that defines the class `VariationalAutoencoder`."""
 
 import numpy
+import os
 import scipy.misc
 import warnings
 
@@ -365,7 +366,7 @@ class VariationalAutoencoder(object):
         
         tls.histogram((gwg_mean - approx).flatten(),
                       'Gradient checking weights (5)',
-                      path_to_checking_g + 'gw_5.png')
+                      os.path.join(path_to_checking_g, 'gw_5.png'))
     
     def __checking_gw_4(self, visible_units, z_mean, z_log_std_squared, z, gwg_l1, path_to_checking_g):
         """Runs gradient checking for the 4th set of weights.
@@ -465,7 +466,7 @@ class VariationalAutoencoder(object):
         else:
             tls.histogram((gwg_l1 - approx).flatten(),
                           'Gradient checking weights (4)',
-                          path_to_checking_g + 'gw_4.png')
+                          os.path.join(path_to_checking_g, 'gw_4.png'))
     
     def __checking_gw_3(self, visible_units, hidden_recognition, z_mean, eps,
                         gwr_log_std_squared, path_to_checking_g):
@@ -543,7 +544,7 @@ class VariationalAutoencoder(object):
         else:
             tls.histogram((gwr_log_std_squared - approx).flatten(),
                           'Gradient checking weights (3)',
-                          path_to_checking_g + 'gw_3.png')
+                          os.path.join(path_to_checking_g, 'gw_3.png'))
     
     def __checking_gw_2(self, visible_units, hidden_recognition, z_log_std_squared,
                         eps, gwr_mean, path_to_checking_g):
@@ -621,7 +622,7 @@ class VariationalAutoencoder(object):
         else:
             tls.histogram((gwr_mean - approx).flatten(),
                           'Gradient checking weights (2)',
-                          path_to_checking_g + 'gw_2.png')
+                          os.path.join(path_to_checking_g, 'gw_2.png'))
     
     def __checking_gw_1(self, visible_units, eps, gwr_l1, path_to_checking_g):
         """Runs gradient checking for the 1st set of weights.
@@ -708,7 +709,7 @@ class VariationalAutoencoder(object):
         else:
             tls.histogram((gwr_l1 - approx).flatten(),
                           'Gradient checking weights (1)',
-                          path_to_checking_g + 'gw_1.png')
+                          os.path.join(path_to_checking_g, 'gw_1.png'))
     
     def __checking_gb_1(self, visible_units, eps, gbr_l1, path_to_checking_g):
         """Runs gradient checking for the 1st set of biases.
@@ -793,7 +794,7 @@ class VariationalAutoencoder(object):
         else:
             tls.histogram(gbr_l1 - approx,
                           'Gradient checking biases (1)',
-                          path_to_checking_g + 'gb_1.png')
+                          os.path.join(path_to_checking_g, 'gb_1.png'))
     
     def backpropagation(self, visible_units, is_checking=False, path_to_checking_g=''):
         """Computes the gradients of the parameters of the variational autoencoder.

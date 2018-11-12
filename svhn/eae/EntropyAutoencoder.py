@@ -1,6 +1,7 @@
 """A library that defines the class `EntropyAutoencoder`."""
 
 import numpy
+import os
 import scipy.stats.distributions
 import warnings
 
@@ -351,7 +352,7 @@ class EntropyAutoencoder(object):
         
         tls.histogram(gradients_fct - approx,
                       'Gradient checking for the parameters of the piecewise linear function',
-                      path_to_checking_g + 'gfct.png')
+                      os.path.join(path_to_checking_g, 'gfct.png'))
     
     def __checking_gw_4(self, visible_units, y_tilde, hidden_decoder, gwd_mean, path_to_checking_g):
         """Runs gradient checking for the 4th set of weights.
@@ -422,7 +423,7 @@ class EntropyAutoencoder(object):
         
         tls.histogram((gwd_mean - approx).flatten(),
                       'Gradient checking weights (4)',
-                      path_to_checking_g + 'gw_4.png')
+                      os.path.join(path_to_checking_g, 'gw_4.png'))
     
     def __checking_gw_3(self, visible_units, y_tilde, gwd_l1, path_to_checking_g):
         """Runs gradient checking for the 3rd set of weights.
@@ -502,7 +503,7 @@ class EntropyAutoencoder(object):
         else:
             tls.histogram((gwd_l1 - approx).flatten(),
                           'Gradient checking weights (3)',
-                          path_to_checking_g + 'gw_3.png')
+                          os.path.join(path_to_checking_g, 'gw_3.png'))
     
     def __checking_gb_3(self, visible_units, y_tilde, gbd_l1, path_to_checking_g):
         """Runs gradient checking for the 3rd set of biases.
@@ -576,7 +577,7 @@ class EntropyAutoencoder(object):
         else:
             tls.histogram(gbd_l1 - approx,
                           'Gradient checking biases (3)',
-                          path_to_checking_g + 'gb_3.png')
+                          os.path.join(path_to_checking_g, 'gb_3.png'))
     
     def __checking_gw_2(self, visible_units, hidden_encoder, eps, gwe_latent, path_to_checking_g):
         """Runs gradient checking for the 2nd set of weights.
@@ -692,7 +693,7 @@ class EntropyAutoencoder(object):
         else:
             tls.histogram((gwe_latent - approx).flatten(),
                           'Gradient checking weights (2)',
-                          path_to_checking_g + 'gw_2.png')
+                          os.path.join(path_to_checking_g, 'gw_2.png'))
     
     def __checking_gw_1(self, visible_units, hidden_encoder, eps, gwe_l1, path_to_checking_g):
         """Runs gradient checking for the 1st set of weights.
@@ -801,7 +802,7 @@ class EntropyAutoencoder(object):
         else:
             tls.histogram((gwe_l1 - approx).flatten(),
                           'Gradient checking weights (1)',
-                          path_to_checking_g + 'gw_1.png')
+                          os.path.join(path_to_checking_g, 'gw_1.png'))
     
     def __checking_gbw(self, visible_units, y, standard_eps, gradient_bw):
         """Runs gradient checking for the quantization bin width.
