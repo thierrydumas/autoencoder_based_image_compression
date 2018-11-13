@@ -41,12 +41,15 @@ def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rot
         512x768x3 nor 768x512x3.
     
     """
-    download_option(source_url,
-                    path_to_store_rgbs)
     if os.path.isfile(path_to_kodak) and os.path.isfile(path_to_list_rotation):
         print('"{0}" and "{1}" already exist.'.format(path_to_kodak, path_to_list_rotation))
         print('Delete them manually to recreate the Kodak test set.')
     else:
+        
+        # If the Kodak test set already exists, there is
+        # no need to download the Kodak RGB images.
+        download_option(source_url,
+                        path_to_store_rgbs)
         h_kodak = 512
         w_kodak = 768
         reference_uint8 = numpy.zeros((24, h_kodak, w_kodak), dtype=numpy.uint8)
@@ -92,7 +95,8 @@ def download_option(source_url, path_to_store_rgbs):
         if os.path.isfile(path_to_file):
             print('"{}" already exists. The image is not downloaded.'.format(path_to_file))
         else:
-            six.moves.urllib.request.urlretrieve(source_url + filename, path_to_file)
+            six.moves.urllib.request.urlretrieve(source_url + filename,
+                                                 path_to_file)
             print('Successfully downloaded "{}".'.format(filename))
 
 

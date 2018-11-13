@@ -57,7 +57,8 @@ def create_imagenet(path_to_root, width_crop, nb_training, nb_validation, path_t
         print('Delete them manually to recreate the ImageNet training and validation sets.')
     else:
         if path_to_tar:
-            tls.untar_archive(path_to_root, path_to_tar)
+            tls.untar_archive(path_to_root,
+                              path_to_tar)
         nb_total = nb_training + nb_validation
         luminances_uint8 = numpy.zeros((nb_total, width_crop, width_crop, 1), dtype=numpy.uint8)
         list_names = os.listdir(path_to_root)

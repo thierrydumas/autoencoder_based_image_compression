@@ -110,31 +110,40 @@ def create_svhn(source_url, path_to_store_mats, nb_training, nb_validation, nb_t
         If `len(paths_to_outputs)` is not equal to 5.
     
     """
-    assert len(paths_to_outputs) == 5, '`len(paths_to_outputs)` is not equal to 5.'
-    download_option(source_url,
-                    path_to_store_mats,
-                    'train_32x32.mat')
-    download_option(source_url,
-                    path_to_store_mats,
-                    'test_32x32.mat')
-    download_option(source_url,
-                    path_to_store_mats,
-                    'extra_32x32.mat')
-    booleans = [os.path.isfile(path_to_output) for path_to_output in paths_to_outputs]
-    if all(booleans):
+    assert len(paths_to_outputs) == 5, \
+        '`len(paths_to_outputs)` is not equal to 5.'
+    if all([os.path.isfile(path_to_output) for path_to_output in paths_to_outputs]):
         print('The SVHN training set, the SVHN validation set, the SVHN test set and the two preprocessing tools already exist.')
         print('Delete them manually to recreate them.')
     else:
+        
+        # If the the training set, the validation set
+        # and the test set exist, there is no need to
+        # downloaded the SVHN RGB digits.
+        names_sets = (
+            'train_32x32.mat',
+            'test_32x32.mat',
+            'extra_32x32.mat'
+        )
+        for name_set in names_sets:
+            download_option(source_url,
+                            path_to_store_mats,
+                            name_set)
         (training_uint8, validation_uint8, test_uint8) = convert_svhn(path_to_store_mats,
                                                                       nb_training,
                                                                       nb_validation,
                                                                       nb_test)
-        numpy.save(paths_to_outputs[0], training_uint8)
-        numpy.save(paths_to_outputs[1], validation_uint8)
-        numpy.save(paths_to_outputs[2], test_uint8)
+        numpy.save(paths_to_outputs[0],
+                   training_uint8)
+        numpy.save(paths_to_outputs[1],
+                   validation_uint8)
+        numpy.save(paths_to_outputs[2],
+                   test_uint8)
         (mean_training, std_training) = std_mean_chunks(training_uint8, 20)
-        numpy.save(paths_to_outputs[3], mean_training)
-        numpy.save(paths_to_outputs[4], std_training)
+        numpy.save(paths_to_outputs[3],
+                   mean_training)
+        numpy.save(paths_to_outputs[4],
+                   std_training)
 
 def download_option(source_url, path_to_store_mats, filename):
     """Downloads the file ".mat" from the source URL if it does not already exist.
@@ -154,7 +163,8 @@ def download_option(source_url, path_to_store_mats, filename):
     if os.path.isfile(path_to_file):
         print('"{}" already exists. It is not downloaded.'.format(filename))
     else:
-        six.moves.urllib.request.urlretrieve(source_url + filename, path_to_file)
+        six.moves.urllib.request.urlretrieve(source_url + filename,
+                                             path_to_file)
         print('Successfully downloaded "{}".'.format(filename))
 
 def preprocess_svhn(images_uint8, mean_training, std_training):

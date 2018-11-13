@@ -54,7 +54,8 @@ def create_bsds(path_to_root, path_to_bsds, path_to_list_rotation, path_to_tar='
         print('Delete them manually to recreate the BSDS test set.')
     else:
         if path_to_tar:
-            tls.untar_archive(path_to_root, path_to_tar)
+            tls.untar_archive(path_to_root,
+                              path_to_tar)
         h_bsds = 321
         w_bsds = 481
         
