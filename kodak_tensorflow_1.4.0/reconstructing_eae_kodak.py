@@ -415,6 +415,10 @@ if __name__ == '__main__':
                         help='if given, the BSDS test set is used. Otherwise, the Kodak test set is used',
                         action='store_true',
                         default=False)
+    parser.add_argument('--write_ref',
+                        help='if given, the reference luminance images are written to disk before the compression begins',
+                        action='store_true',
+                        default=False)
     args = parser.parse_args()
     dict_vary_gamma_fix_bin_widths = {
         'bin_width_init': 1.,
@@ -468,10 +472,11 @@ if __name__ == '__main__':
     reference_uint8 = numpy.load('{0}/results/{0}.npy'.format(str_set))
     with open(path_to_list_rotation, 'rb') as file:
         list_rotation = pickle.load(file)
-    write_reference(reference_uint8,
-                    path_to_checking_r,
-                    list_rotation,
-                    positions_top_left)
+    if args.write_ref:
+        write_reference(reference_uint8,
+                        path_to_checking_r,
+                        list_rotation,
+                        positions_top_left)
     
     (rate_vary_gamma_fix_bin_widths, psnr_vary_gamma_fix_bin_widths) = \
         vary_gamma_fix_bin_widths(reference_uint8,
@@ -525,30 +530,56 @@ if __name__ == '__main__':
     numpy.save(os.path.join(path_to_checking_r, 'psnr_fix_gamma_fix_bin_widths_{}.npy'.format(str_code)),
                psnr_fix_gamma_fix_bin_widths)
     
-    (rate_jpeg2000, psnr_jpeg2000) = jpeg2000.jpeg2000.evaluate_jpeg2000(reference_uint8,
-                                                                         path_to_before_jpeg2000,
-                                                                         path_to_after_jpeg2000,
-                                                                         qualities,
-                                                                         list_rotation,
-                                                                         positions_top_left)
-    numpy.save(os.path.join(path_to_checking_r, 'rate_jpeg2000.npy'),
-               rate_jpeg2000)
-    numpy.save(os.path.join(path_to_checking_r, 'psnr_jpeg2000.npy'),
-               psnr_jpeg2000)
+    # JPEG2000 and HEVC takes time to compress
+    # luminance images. That is why, if the rates
+    # and the PSNRs for JPEG2000 and HEVC have
+    # already been computed, they are loaded.
+    path_to_rate_jpeg2000 = os.path.join(path_to_checking_r,
+                                         'rate_jpeg2000.npy')
+    path_to_psnr_jpeg2000 = os.path.join(path_to_checking_r,
+                                         'psnr_jpeg2000.npy')
+    if os.path.isfile(path_to_rate_jpeg2000) and os.path.isfile(path_to_psnr_jpeg2000):
+        rate_jpeg2000 = numpy.load(path_to_rate_jpeg2000)
+        psnr_jpeg2000 = numpy.load(path_to_psnr_jpeg2000)
+        print('For JPEG2000, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_jpeg2000, path_to_psnr_jpeg2000))
+        print('Delete them manually to re-compute them.')
+    else:
+        print('For JPEG2000, the rates and the PSNRs are computed.')
+        (rate_jpeg2000, psnr_jpeg2000) = jpeg2000.jpeg2000.evaluate_jpeg2000(reference_uint8,
+                                                                             path_to_before_jpeg2000,
+                                                                             path_to_after_jpeg2000,
+                                                                             qualities,
+                                                                             list_rotation,
+                                                                             positions_top_left)
+        numpy.save(path_to_rate_jpeg2000,
+                   rate_jpeg2000)
+        numpy.save(path_to_psnr_jpeg2000,
+                   psnr_jpeg2000)
     
-    (rate_hevc, psnr_hevc) = hevculs.evaluate_hevc(reference_uint8,
-                                                   path_to_before_hevc,
-                                                   path_to_after_hevc,
-                                                   path_to_cfg,
-                                                   path_to_bitstream,
-                                                   qps,
-                                                   path_to_hevc_vis,
-                                                   list_rotation,
-                                                   positions_top_left)
-    numpy.save(os.path.join(path_to_checking_r, 'rate_hevc.npy'),
-               rate_hevc)
-    numpy.save(os.path.join(path_to_checking_r, 'psnr_hevc.npy'),
-               psnr_hevc)
+    path_to_rate_hevc = os.path.join(path_to_checking_r,
+                                     'rate_hevc.npy')
+    path_to_psnr_hevc = os.path.join(path_to_checking_r,
+                                     'psnr_hevc.npy')
+    if os.path.isfile(path_to_rate_hevc) and os.path.isfile(path_to_psnr_hevc):
+        rate_hevc = numpy.load(path_to_rate_hevc)
+        psnr_hevc = numpy.load(path_to_psnr_hevc)
+        print('For HEVC, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_hevc, path_to_psnr_hevc))
+        print('Delete them manually to re-compute them.')
+    else:
+        print('For HEVC, the rates and the PSNRs are computed.')
+        (rate_hevc, psnr_hevc) = hevculs.evaluate_hevc(reference_uint8,
+                                                       path_to_before_hevc,
+                                                       path_to_after_hevc,
+                                                       path_to_cfg,
+                                                       path_to_bitstream,
+                                                       qps,
+                                                       path_to_hevc_vis,
+                                                       list_rotation,
+                                                       positions_top_left)
+        numpy.save(path_to_rate_hevc,
+                   rate_hevc)
+        numpy.save(path_to_psnr_hevc,
+                   psnr_hevc)
     
     # The function `plt.plot` returns a list.
     handle = []

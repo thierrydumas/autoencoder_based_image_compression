@@ -308,7 +308,11 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Compares several trained entropy autoencoders, JPEG and JPEG2000 in terms of rate-distortion.')
-    parser.parse_args()
+    parser.add_argument('--write_ref',
+                        help='if given, the RGB digits are written to disk before the compression begins',s
+                        action='store_true',
+                        default=False)
+    args = parser.parse_args()
     dict_vary_gamma_fix_bin_width = {
         'bin_width_init': 1.,
         'gammas': numpy.array([5., 15., 45., 135.])
@@ -342,11 +346,12 @@ if __name__ == '__main__':
     
     # `reference_uint8.dtype` is equal to `numpy.uint8`.
     reference_uint8 = numpy.load(path_to_test)[0:nb_images, :]
-    tls.visualize_rows(reference_uint8,
-                       32,
-                       32,
-                       10,
-                       os.path.join(path_to_checking_r, 'reference.png'))
+    if args.write_ref:
+        tls.visualize_rows(reference_uint8,
+                           32,
+                           32,
+                           10,
+                           os.path.join(path_to_checking_r, 'reference.png'))
     
     # `mean_training.dtype` and `std_training.dtype`
     # are equal to `numpy.float64`.
@@ -384,12 +389,38 @@ if __name__ == '__main__':
                                 dict_fix_gamma_fix_bin_width_1['gamma'],
                                 path_to_checking_r)
     
-    (rate_jpeg, psnr_jpeg, rate_jpeg2000, psnr_jpeg2000) = \
+    path_to_rate_jpeg = os.path.join(path_to_checking_r,
+                                     'rate_jpeg.npy')
+    path_to_psnr_jpeg = os.path.join(path_to_checking_r,
+                                     'psnr_jpeg.npy')
+    path_to_rate_jpeg2000 = os.path.join(path_to_checking_r,
+                                         'rate_jpeg2000.npy')
+    path_to_psnr_jpeg2000 = os.path.join(path_to_checking_r,
+                                         'psnr_jpeg2000.npy')
+    if os.path.isfile(path_to_rate_jpeg) and os.path.isfile(path_to_psnr_jpeg) and os.path.isfile(path_to_rate_jpeg2000) and os.path.isfile(path_to_psnr_jpeg2000):
+        rate_jpeg = numpy.load(path_to_rate_jpeg)
+        psnr_jpeg = numpy.load(path_to_psnr_jpeg)
+        rate_jpeg2000 = numpy.load(path_to_rate_jpeg2000)
+        psnr_jpeg2000 = numpy.load(path_to_psnr_jpeg2000)
+        print('For JPEG, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_jpeg, path_to_psnr_jpeg))
+        print('For JPEG2000, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_jpeg2000, path_to_psnr_jpeg2000))
+        print('Delete them manually to re-compute them.')
+    else:
+        print('For JPEG and JPEG2000, the rates and the PSNRs are computed.')
+        (rate_jpeg, psnr_jpeg, rate_jpeg2000, psnr_jpeg2000) = \
         jpeg.jpeg.evaluate_jpeg(reference_uint8,
                                 path_to_before,
                                 path_to_after,
                                 qualities_jpeg,
                                 qualities_jpeg2000)
+        numpy.save(path_to_rate_jpeg,
+                   rate_jpeg)
+        numpy.save(path_to_psnr_jpeg,
+                   psnr_jpeg)
+        numpy.save(path_to_rate_jpeg2000,
+                   rate_jpeg2000)
+        numpy.save(path_to_psnr_jpeg2000,
+                   psnr_jpeg2000)
     
     # The function `plt.plot` returns a list.
     handle = []
