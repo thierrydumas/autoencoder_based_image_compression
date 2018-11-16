@@ -70,7 +70,8 @@ def compress_jpeg(qualities, nb_images, path_to_before, path_to_after, is_2000):
             # Setting `shell` to True makes the program
             # vulnerable to shell injection, see
             # <https://docs.python.org/2/library/subprocess.html>.
-            subprocess.call(args_subprocess, shell=False)
+            subprocess.check_call(args_subprocess,
+                                  shell=False)
 
 def compute_rate_psnr(path_to_reference, path_to_reconstruction, is_2000):
     """Computes the rate and the PSNR associated to the compression of the RGB image via either JPEG or JPEG2000.

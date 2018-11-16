@@ -104,7 +104,8 @@ def compress_hevc(luminance_before_hevc_uint8, path_to_before_hevc, path_to_afte
     # Setting `shell` to True makes the program
     # vulnerable to shell injection, see
     # <https://docs.python.org/2/library/subprocess.html>.
-    subprocess.call(args_subprocess, shell=False)
+    subprocess.check_call(args_subprocess,
+                          shell=False)
     luminance_after_hevc_uint8 = read_400(path_to_after_hevc,
                                           height,
                                           width,
