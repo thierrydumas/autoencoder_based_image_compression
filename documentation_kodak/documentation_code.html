@@ -28,7 +28,7 @@
             <ul>
                 <li>Python (the code was tested using Python 2.7.9 and Python 3.6.3)</li>
                 <li>numpy (version >= 1.11.0)</li>
-                <li>Tensorflow with GPU support, see <a href="https://www.tensorflow.org/install/" target="_blank">TensorflowInstallationWebPage</a>
+                <li>Tensorflow (optional GPU support), see <a href="https://www.tensorflow.org/install/" target="_blank">TensorflowInstallationWebPage</a>
                 (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python
                 3.6.3, the code was tested using Tensorflow 1.4.0)</li>
                 <li>cython</li>
@@ -48,10 +48,19 @@
                 </li>
                 <li>
                     <h3>Compilation of HEVC/H.265.</h3>
-                    <p>On Linux, use the Makefile at "HM-16.15/build/linux/makefile".
-                    On Windows, use Visual Studio 2015 and the solution file at
-                    "HM-16.15/build/HM_vc2015.sln". For more information, see
-                    <a href="https://hevc.hhi.fraunhofer.de/" target="_blank">HEVCSoftwareWebPage</a>.</p>
+                    <ul>
+                        <li>
+                            <p>For Linux,</p>
+                             <div class="code"><b>cd HM-16.15/build/linux/</b><br>
+                             <b>make</b><br>
+                             <b>cd ../../../</b></div>
+                        </li>
+                        <li>
+                            <p>For Windows, use Visual Studio 2015 and the solution
+                            file at "HM-16.15/build/HM_vc2015.sln". For more information,
+                            see <a href="https://hevc.hhi.fraunhofer.de/" target="_blank">HEVCSoftwareWebPage</a>.</p>
+                        </li>
+                    </ul>
                 </li>
             </ol>
             <h2 class="compilation_functionalities">Main functionalities</h2>
