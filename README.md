@@ -41,11 +41,11 @@ cd ../
 ```
 2. Compilation of HEVC/H.265.
     * For Linux,
-      ```sh
-      cd HM-16.15/build/linux/
-      make
-      cd ../../../
-      ```
+    ```sh
+    cd HM-16.15/build/linux/
+    make
+    cd ../../../
+    ```
     * For Windows, use Visual Studio 2015 and the solution file at "HM-16.15/build/HM_vc2015.sln". For more information, see [HEVCSoftwareWebPage](https://hevc.hhi.fraunhofer.de/).
 
 ## Quick start: reproducing the main results of the paper
