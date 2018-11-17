@@ -9,7 +9,7 @@ The code is tested on Linux and Windows.
 ## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
   * numpy (version >= 1.11.0)
-  * Tensorflow with GPU support, see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0)
+  * Tensorflow (optional GPU support), see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0)
   * cython
   * matplotlib
   * scipy
