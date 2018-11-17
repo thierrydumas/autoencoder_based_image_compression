@@ -15,6 +15,7 @@ if __name__ == '__main__':
                         default='',
                         metavar='')
     args = parser.parse_args()
+    
     path_to_bsds = 'bsds/results/bsds.npy'
     path_to_list_rotation = 'bsds/results/list_rotation.pkl'
     

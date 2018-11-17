@@ -39,6 +39,7 @@ if __name__ == '__main__':
                         default=10,
                         metavar='')
     args = parser.parse_args()
+    
     batch_size = 20
     multipliers = numpy.array([1., 1.25, 1.5, 2., 3., 4., 6., 8., 10.], dtype=numpy.float32)
     path_to_extra = 'lossless/results/extra_data.npy'

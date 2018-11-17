@@ -101,6 +101,7 @@ if __name__ == '__main__':
                         default=51,
                         metavar='')
     args = parser.parse_args()
+    
     batch_size = 4
     path_to_kodak = 'kodak/results/kodak.npy'
     if args.learn_bin_widths:

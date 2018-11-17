@@ -9,6 +9,7 @@ import kodak.kodak
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Creates the Kodak test set.')
     parser.parse_args()
+    
     source_url = 'http://r0k.us/graphics/kodak/kodak/'
     path_to_store_rgbs = 'kodak/data'
     path_to_kodak = 'kodak/results/kodak.npy'

@@ -96,6 +96,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tests two methods of class `VariationalAutoencoder`.')
     parser.add_argument('name', help='name of the method to be tested')
     args = parser.parse_args()
+    
     tester = TesterVariationalAutoencoder()
     getattr(tester, 'test_' + args.name)()
 

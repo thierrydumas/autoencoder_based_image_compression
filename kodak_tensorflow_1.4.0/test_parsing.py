@@ -16,6 +16,7 @@ if __name__ == '__main__':
                         help='argument to be converted into a strictly positive float',
                         type=parsing.parsing.float_strictly_positive)
     args = parser.parse_args()
+    
     print('{} is a positive integer.'.format(args.int_pos))
     print('{} is a strictly positive integer.'.format(args.int_strictly_pos))
     print('{} is a strictly positive float.'.format(args.float_strictly_pos))

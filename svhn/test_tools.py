@@ -1165,6 +1165,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tests the library that contains common tools.')
     parser.add_argument('name', help='name of the function to be tested')
     args = parser.parse_args()
+    
     tester = TesterTools()
     getattr(tester, 'test_' + args.name)()
 

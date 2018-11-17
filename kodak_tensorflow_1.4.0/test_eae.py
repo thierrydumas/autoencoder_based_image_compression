@@ -326,6 +326,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tests the libraries in the folder "eae/graph".')
     parser.add_argument('name', help='name of the function/method to be tested')
     args = parser.parse_args()
+    
     tester = TesterEntropyAutoencoder()
     getattr(tester, 'test_' + args.name)()
 

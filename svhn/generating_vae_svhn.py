@@ -83,6 +83,7 @@ if __name__ == '__main__':
                         default=3.,
                         metavar='')
     args = parser.parse_args()
+    
     path_to_mean_training = 'svhn/results/mean_training.npy'
     path_to_std_training = 'svhn/results/std_training.npy'
     path_to_checking_g = 'vae/visualization/test/checking_generating/'

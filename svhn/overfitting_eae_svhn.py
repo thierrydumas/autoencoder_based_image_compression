@@ -49,6 +49,7 @@ if __name__ == '__main__':
                         default=10,
                         metavar='')
     args = parser.parse_args()
+    
     path_to_training_data = 'svhn/results/training_data.npy'
     path_to_mean_training = 'svhn/results/mean_training.npy'
     path_to_std_training = 'svhn/results/std_training.npy'

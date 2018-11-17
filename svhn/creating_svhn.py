@@ -25,6 +25,7 @@ if __name__ == '__main__':
                         default=1000,
                         metavar='')
     args = parser.parse_args()
+    
     source_url = 'http://ufldl.stanford.edu/housenumbers/'
     path_to_store_mats = 'svhn/data'
     paths_to_outputs = (

@@ -8,6 +8,55 @@ import tools.tools as tls
 # The functions are sorted in
 # alphabetic order.
 
+def decode_mini_batches(quantized_y_float32, sess, isolated_decoder, batch_size):
+    """Computes the reconstruction of the luminance images from the quantized latent variables, one mini-batch at a time.
+    
+    Parameters
+    ----------
+    quantized_y_float32 : numpy.ndarray
+        4D array with data-type `numpy.float32`.
+        Quantized latent variables. `quantized_y_float32[i, :, :, :]`
+        contains the quantized latent variables
+        previously computed from the ith luminance
+        image.
+    sess : Session
+        Session that runs the graph.
+    isolated_decoder : IsolatedDecoder
+        Isolated decoder.
+    batch_size : int
+        Size of the mini-batches.
+    
+    Returns
+    -------
+    numpy.ndarray
+        4D array with data-type `numpy.uint8`.
+        Reconstruction of the luminance images. The
+        4th array dimension is equal to 1.
+    
+    Raises
+    ------
+    AssertionError
+        If `quantized_y_float32.ndim` is not equal to 4.
+    
+    """
+    assert quantized_y_float32.ndim == 4, '`quantized_y_float32.ndim` is not equal to 4.'
+    (nb_images, h_in, w_in, _) = quantized_y_float32.shape
+    nb_batches = tls.subdivide_set(nb_images, batch_size)
+    
+    # The height of a quantized latent variable feature map
+    # is `csts.STRIDE_PROD` times smaller than the height
+    # of the luminance image. Similarly, the width of a
+    # quantized latent variable feature map is `csts.STRIDE_PROD`
+    # times smaller than the width of the luminance image.
+    expanded_reconstruction_uint8 = numpy.zeros((nb_images, h_in*csts.STRIDE_PROD, w_in*csts.STRIDE_PROD, 1), dtype=numpy.uint8)
+    for i in range(nb_batches):
+        reconstruction_float32 = sess.run(
+            isolated_decoder.node_reconstruction,
+            feed_dict={isolated_decoder.node_quantized_y:quantized_y_float32[i*batch_size:(i + 1)*batch_size, :, :, :]}
+        )
+        expanded_reconstruction_uint8[i*batch_size:(i + 1)*batch_size, :, :, :] = tls.cast_bt601(reconstruction_float32)
+    return expanded_reconstruction_uint8
+
 def encode_mini_batches(luminances_uint8, sess, entropy_ae, batch_size):
     """Computes the latent variables from the luminance images via the entropy autoencoder, one mini-batch at a time.
     

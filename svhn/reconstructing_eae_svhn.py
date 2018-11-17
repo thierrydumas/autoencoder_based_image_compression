@@ -313,6 +313,7 @@ if __name__ == '__main__':
                         action='store_true',
                         default=False)
     args = parser.parse_args()
+    
     dict_vary_gamma_fix_bin_width = {
         'bin_width_init': 1.,
         'gammas': numpy.array([5., 15., 45., 135.])
@@ -365,6 +366,11 @@ if __name__ == '__main__':
                                  dict_vary_gamma_fix_bin_width['bin_width_init'],
                                  dict_vary_gamma_fix_bin_width['gammas'],
                                  path_to_checking_r)
+    numpy.save(os.path.join(path_to_checking_r, 'rate_vary_gamma_fix_bin_width.npy'),
+               rate_vary_gamma_fix_bin_width)
+    numpy.save(os.path.join(path_to_checking_r, 'psnr_vary_gamma_fix_bin_width.npy'),
+               psnr_vary_gamma_fix_bin_width)
+    
     (rate_vary_gamma_learn_bin_width, psnr_vary_gamma_learn_bin_width) = \
         vary_gamma_learn_bin_width(reference_uint8,
                                    mean_training,
@@ -372,6 +378,11 @@ if __name__ == '__main__':
                                    dict_vary_gamma_learn_bin_width['bin_width_init'],
                                    dict_vary_gamma_learn_bin_width['gammas'],
                                    path_to_checking_r)
+    numpy.save(os.path.join(path_to_checking_r, 'rate_vary_gamma_learn_bin_width.npy'),
+               rate_vary_gamma_learn_bin_width)
+    numpy.save(os.path.join(path_to_checking_r, 'psnr_vary_gamma_learn_bin_width.npy'),
+               psnr_vary_gamma_learn_bin_width)
+    
     (rate_fix_gamma_fix_bin_width_0, psnr_fix_gamma_fix_bin_width_0) = \
         fix_gamma_fix_bin_width(reference_uint8,
                                 mean_training,
@@ -380,6 +391,11 @@ if __name__ == '__main__':
                                 dict_fix_gamma_fix_bin_width_0['multipliers'],
                                 dict_fix_gamma_fix_bin_width_0['gamma'],
                                 path_to_checking_r)
+    numpy.save(os.path.join(path_to_checking_r, 'rate_fix_gamma_fix_bin_width_0.npy'),
+               rate_fix_gamma_fix_bin_width_0)
+    numpy.save(os.path.join(path_to_checking_r, 'psnr_fix_gamma_fix_bin_width_0.npy'),
+               psnr_fix_gamma_fix_bin_width_0)
+    
     (rate_fix_gamma_fix_bin_width_1, psnr_fix_gamma_fix_bin_width_1) = \
         fix_gamma_fix_bin_width(reference_uint8,
                                 mean_training,
@@ -388,22 +404,28 @@ if __name__ == '__main__':
                                 dict_fix_gamma_fix_bin_width_1['multipliers'],
                                 dict_fix_gamma_fix_bin_width_1['gamma'],
                                 path_to_checking_r)
+    numpy.save(os.path.join(path_to_checking_r, 'rate_fix_gamma_fix_bin_width_1.npy'),
+               rate_fix_gamma_fix_bin_width_1)
+    numpy.save(os.path.join(path_to_checking_r, 'psnr_fix_gamma_fix_bin_width_1.npy'),
+               psnr_fix_gamma_fix_bin_width_1)
     
-    path_to_rate_jpeg = os.path.join(path_to_checking_r,
-                                     'rate_jpeg.npy')
-    path_to_psnr_jpeg = os.path.join(path_to_checking_r,
-                                     'psnr_jpeg.npy')
-    path_to_rate_jpeg2000 = os.path.join(path_to_checking_r,
-                                         'rate_jpeg2000.npy')
-    path_to_psnr_jpeg2000 = os.path.join(path_to_checking_r,
-                                         'psnr_jpeg2000.npy')
-    if os.path.isfile(path_to_rate_jpeg) and os.path.isfile(path_to_psnr_jpeg) and os.path.isfile(path_to_rate_jpeg2000) and os.path.isfile(path_to_psnr_jpeg2000):
-        rate_jpeg = numpy.load(path_to_rate_jpeg)
-        psnr_jpeg = numpy.load(path_to_psnr_jpeg)
-        rate_jpeg2000 = numpy.load(path_to_rate_jpeg2000)
-        psnr_jpeg2000 = numpy.load(path_to_psnr_jpeg2000)
-        print('For JPEG, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_jpeg, path_to_psnr_jpeg))
-        print('For JPEG2000, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_jpeg2000, path_to_psnr_jpeg2000))
+    # JPEG and JPEG2000 take time to compress
+    # RGB digits. That is why, if the rates and
+    # the PSNRs for JPEG and JPEG2000 have already
+    # been computed, they are loaded.
+    paths_to_rates_psnrs_jpeg = (
+        os.path.join(path_to_checking_r, 'rate_jpeg.npy'),
+        os.path.join(path_to_checking_r, 'psnr_jpeg.npy'),
+        os.path.join(path_to_checking_r, 'rate_jpeg2000.npy'),
+        os.path.join(path_to_checking_r, 'psnr_jpeg2000.npy')
+    )
+    if all([os.path.isfile(path_to_rate_psnr_jpeg) for path_to_rate_psnr_jpeg in paths_to_rates_psnrs_jpeg]):
+        rate_jpeg = numpy.load(paths_to_rates_psnrs_jpeg[0])
+        psnr_jpeg = numpy.load(paths_to_rates_psnrs_jpeg[1])
+        rate_jpeg2000 = numpy.load(paths_to_rates_psnrs_jpeg[2])
+        psnr_jpeg2000 = numpy.load(paths_to_rates_psnrs_jpeg[3])
+        print('For JPEG, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(paths_to_rates_psnrs_jpeg[0], paths_to_rates_psnrs_jpeg[1]))
+        print('For JPEG2000, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(paths_to_rates_psnrs_jpeg[2], paths_to_rates_psnrs_jpeg[3]))
         print('Delete them manually to re-compute them.')
     else:
         print('For JPEG and JPEG2000, the rates and the PSNRs are computed.')
@@ -413,13 +435,13 @@ if __name__ == '__main__':
                                 path_to_after,
                                 qualities_jpeg,
                                 qualities_jpeg2000)
-        numpy.save(path_to_rate_jpeg,
+        numpy.save(paths_to_rates_psnrs_jpeg[0],
                    rate_jpeg)
-        numpy.save(path_to_psnr_jpeg,
+        numpy.save(paths_to_rates_psnrs_jpeg[1],
                    psnr_jpeg)
-        numpy.save(path_to_rate_jpeg2000,
+        numpy.save(paths_to_rates_psnrs_jpeg[2],
                    rate_jpeg2000)
-        numpy.save(path_to_psnr_jpeg2000,
+        numpy.save(paths_to_rates_psnrs_jpeg[3],
                    psnr_jpeg2000)
     
     # The function `plt.plot` returns a list.

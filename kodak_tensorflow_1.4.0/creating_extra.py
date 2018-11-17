@@ -36,6 +36,7 @@ if __name__ == '__main__':
                         default=600,
                         metavar='')
     args = parser.parse_args()
+    
     path_to_extra = 'lossless/results/extra_data.npy'
     
     lossless.stats.create_extra(args.path_to_root,

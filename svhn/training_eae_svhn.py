@@ -55,6 +55,7 @@ if __name__ == '__main__':
                         default=250,
                         metavar='')
     args = parser.parse_args()
+    
     path_to_training_data = 'svhn/results/training_data.npy'
     path_to_validation_data = 'svhn/results/validation_data.npy'
     path_to_mean_training = 'svhn/results/mean_training.npy'

@@ -97,6 +97,7 @@ if __name__ == '__main__':
                         action='store_true',
                         default=False)
     args = parser.parse_args()
+    
     path_to_test = 'svhn/results/test_data.npy'
     path_to_mean_training = 'svhn/results/mean_training.npy'
     path_to_std_training = 'svhn/results/std_training.npy'

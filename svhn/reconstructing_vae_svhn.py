@@ -65,6 +65,7 @@ def compute_psnr(reference_uint8, mean_training, std_training, variational_ae, p
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Assesses a trained variational autoencoder in terms of dimensionality reduction.')
     parser.parse_args()
+    
     path_to_test = 'svhn/results/test_data.npy'
     path_to_mean_training = 'svhn/results/mean_training.npy'
     path_to_std_training = 'svhn/results/std_training.npy'

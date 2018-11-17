@@ -29,7 +29,7 @@ from eae.graph.EntropyAutoencoder import EntropyAutoencoder
 from eae.graph.IsolatedDecoder import IsolatedDecoder
 
 def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_scaling,
-              are_bin_widths_learned, is_lossless, path_to_checking_r, list_rotation,
+              batch_size, are_bin_widths_learned, is_lossless, path_to_checking_r, list_rotation,
               positions_top_left):
     """Computes a series of pairs (rate, PSNR).
     
@@ -63,6 +63,10 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
     gamma_scaling : float
         Scaling coefficient of the single
         entropy autoencoder.
+    batch_size : int
+        Size of the mini-batches for encoding
+        and decoding via the single entropy
+        autoencoder.
     are_bin_widths_learned : bool
         Were the quantization bin widths learned
         at training time?
@@ -129,7 +133,7 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
                                     'map_mean.npy')
     
     # A single entropy autoencoder is created.
-    entropy_ae = EntropyAutoencoder(4,
+    entropy_ae = EntropyAutoencoder(batch_size,
                                     h_in,
                                     w_in,
                                     bin_width_init,
@@ -141,7 +145,7 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
         y_float32 = eaeuls.encode_mini_batches(numpy.expand_dims(reference_uint8, axis=3),
                                                sess,
                                                entropy_ae,
-                                               4)
+                                               batch_size)
         
         # `bin_widths` are the quantization bin widths
         # at the end of the training.
@@ -151,7 +155,7 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
     tf.reset_default_graph()
     
     # A single decoder is created.
-    isolated_decoder = IsolatedDecoder(nb_images,
+    isolated_decoder = IsolatedDecoder(batch_size,
                                        h_in,
                                        w_in,
                                        are_bin_widths_learned)
@@ -176,14 +180,14 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
             bin_widths_test = multiplier*bin_widths
             centered_quantized_y_float32 = tls.quantize_per_map(centered_y_float32, bin_widths_test)
             off_centered_quantized_y_float32 = centered_quantized_y_float32 + tiled_map_mean
-            reconstruction_float32 = sess.run(
-                isolated_decoder.node_reconstruction,
-                feed_dict={isolated_decoder.node_quantized_y:off_centered_quantized_y_float32}
-            )
+            expanded_reconstruction_uint8 = eaeuls.decode_mini_batches(off_centered_quantized_y_float32,
+                                                                       sess,
+                                                                       isolated_decoder,
+                                                                       batch_size)
             
-            # `reconstruction_uint8.dtype` is equal to `numpy.uint8`.
-            # Its elements span the range [|16, 235|].
-            reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32), axis=3)
+            # The elements of span `reconstruction_uint8`
+            # the range [|16, 235|].
+            reconstruction_uint8 = numpy.squeeze(expanded_reconstruction_uint8, axis=3)
             
             # The binary probabilities were also computed
             # on the extra set.
@@ -221,7 +225,7 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
     return (rate, psnr)
 
 def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, gammas_scaling,
-                              path_to_checking_r, list_rotation, positions_top_left):
+                              batch_size, path_to_checking_r, list_rotation, positions_top_left):
     """Computes a series of pairs (rate, PSNR).
     
     Several entropy autoencoders, each trained
@@ -254,6 +258,9 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
     gammas_scaling : numpy.ndarray
         1D array with data-type `numpy.float64`.
         Scaling coefficients.
+    batch_size : int
+        Size of the mini-batches for encoding
+        and decoding via the entropy autoencoders.
     path_to_checking_r : str
         Path to the folder containing the
         luminance images before/after being
@@ -315,7 +322,7 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
         
         # Every time `gamma_scaling` changes, a new
         # entropy autoencoder is created.
-        entropy_ae = EntropyAutoencoder(4,
+        entropy_ae = EntropyAutoencoder(batch_size,
                                         h_in,
                                         w_in,
                                         bin_width_init,
@@ -327,7 +334,7 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
             y_float32 = eaeuls.encode_mini_batches(numpy.expand_dims(reference_uint8, axis=3),
                                                    sess,
                                                    entropy_ae,
-                                                   4)
+                                                   batch_size)
             
             # `bin_widths` are the quantization bin widths
             # at training time.
@@ -338,24 +345,25 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
         
         # Every time `gamma_scaling` changes, a new
         # decoder is created.
-        isolated_decoder = IsolatedDecoder(nb_images,
+        isolated_decoder = IsolatedDecoder(batch_size,
                                            h_in,
                                            w_in,
                                            False)
         quantized_y_float32 = tls.quantize_per_map(y_float32, bin_widths)
         with tf.Session() as sess:
             isolated_decoder.initialization(sess, path_to_restore)
-            reconstruction_float32 = sess.run(
-                isolated_decoder.node_reconstruction,
-                feed_dict={isolated_decoder.node_quantized_y:quantized_y_float32}
-            )
+            expanded_reconstruction_uint8 = eaeuls.decode_mini_batches(quantized_y_float32,
+                                                                       sess,
+                                                                       isolated_decoder,
+                                                                       batch_size)
+            
+        # The elements of `reconstruction_uint8` span
+        # the range [|16, 235|].
+        reconstruction_uint8 = numpy.squeeze(expanded_reconstruction_uint8, axis=3)
         
         # The graph of the decoder is destroyed.
         tf.reset_default_graph()
         
-        # `reconstruction_uint8.dtype` is equal to `numpy.uint8`.
-        # Its elements span the range [|16, 235|].
-        reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32), axis=3)
         for j in range(nb_images):
             rate[i, j] = tls.rate_3d(quantized_y_float32[j, :, :, :],
                                      bin_widths,
@@ -420,6 +428,7 @@ if __name__ == '__main__':
                         action='store_true',
                         default=False)
     args = parser.parse_args()
+    
     dict_vary_gamma_fix_bin_widths = {
         'bin_width_init': 1.,
         'idxs_training': numpy.array([10, 10, 10, 10, 10, 7, 6], dtype=numpy.int32),
@@ -437,6 +446,7 @@ if __name__ == '__main__':
         'idx_training': 10,
         'gamma_scaling': 10000.
     }
+    batch_size = 4
     
     # The height of the luminance images in the
     # BSDS test set is smaller than the height
@@ -483,6 +493,7 @@ if __name__ == '__main__':
                                   dict_vary_gamma_fix_bin_widths['bin_width_init'],
                                   dict_vary_gamma_fix_bin_widths['idxs_training'],
                                   dict_vary_gamma_fix_bin_widths['gammas_scaling'],
+                                  batch_size,
                                   path_to_checking_r,
                                   list_rotation,
                                   positions_top_left)
@@ -504,6 +515,7 @@ if __name__ == '__main__':
                   dict_fix_gamma_learn_bin_widths['multipliers'],
                   dict_fix_gamma_learn_bin_widths['idx_training'],
                   dict_fix_gamma_learn_bin_widths['gamma_scaling'],
+                  batch_size,
                   True,
                   args.code_lossless,
                   path_to_checking_r,
@@ -520,6 +532,7 @@ if __name__ == '__main__':
                   dict_fix_gamma_fix_bin_widths['multipliers'],
                   dict_fix_gamma_fix_bin_widths['idx_training'],
                   dict_fix_gamma_fix_bin_widths['gamma_scaling'],
+                  batch_size,
                   False,
                   args.code_lossless,
                   path_to_checking_r,

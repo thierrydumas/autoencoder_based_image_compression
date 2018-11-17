@@ -31,6 +31,7 @@ if __name__ == '__main__':
                         default='',
                         metavar='')
     args = parser.parse_args()
+    
     path_to_training = 'imagenet/results/training_data.npy'
     path_to_validation = 'imagenet/results/validation_data.npy'
     

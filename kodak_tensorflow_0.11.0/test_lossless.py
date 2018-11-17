@@ -393,6 +393,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tests the libraries in the folder "lossless".')
     parser.add_argument('name', help='name of the function to be tested')
     args = parser.parse_args()
+    
     tester = TesterLossless()
     getattr(tester, 'test_' + args.name)()
 

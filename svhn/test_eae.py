@@ -183,6 +183,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tests five methods of class `EntropyAutoencoder`.')
     parser.add_argument('name', help='name of the method to be tested')
     args = parser.parse_args()
+    
     tester = TesterEntropyAutoencoder()
     getattr(tester, 'test_' + args.name)()
 
