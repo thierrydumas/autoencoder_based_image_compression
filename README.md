@@ -9,7 +9,7 @@ The code is tested on Linux and Windows.
 ## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
   * numpy (version >= 1.11.0)
-  * Tensorflow (optional GPU support), see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0)
+  * Tensorflow (optional GPU support), see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0; the code must thus work using any Tensorflow 0.x or 1.x, x being the subversion index)
   * cython
   * matplotlib
   * scipy
@@ -21,15 +21,7 @@ The code is tested on Linux and Windows.
 Clone this repository into the current folder.
 ```sh
 git clone https://github.com/thierrydumas/autoencoder_based_image_compression.git
-cd autoencoder_based_image_compression
-```
-If your version of Tensorflow is 0.x, x being the subversion index, use the code in the folder "kodak_tensorflow_0.11.0".
-```sh
-cd kodak_tensorflow_0.11.0
-```
-If your version of Tensorflow is 1.x, use the code in the folder "kodak_tensorflow_1.4.0".
-```sh
-cd kodak_tensorflow_1.4.0
+cd autoencoder_based_image_compression/kodak_tensorflow
 ```
 
 ## Compilation
