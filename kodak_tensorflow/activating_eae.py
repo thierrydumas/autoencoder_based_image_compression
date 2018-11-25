@@ -7,7 +7,6 @@ No dataset is needed for the analysis.
 import argparse
 import numpy
 import os
-import scipy.misc
 import tensorflow as tf
 
 import eae.graph.constants as csts
@@ -71,8 +70,8 @@ def activating_eae(isolated_decoder, h_in, w_in, bin_widths, idx_map, activation
             feed_dict={isolated_decoder.node_quantized_y:quantized_y_float32}
         )
         reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32), axis=(0, 3))
-        scipy.misc.imsave(path_to_crop,
-                          reconstruction_uint8[0:64, 0:64])
+        tls.save_image(path_to_crop,
+                       reconstruction_uint8[0:64, 0:64])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyzes a trained entropy autoencoder by activating one latent variable and deactivating the others.')

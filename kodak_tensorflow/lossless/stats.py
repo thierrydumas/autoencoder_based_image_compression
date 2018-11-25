@@ -3,7 +3,6 @@
 import numpy
 import os
 import pickle
-import scipy.misc
 
 import eae.eae_utils as eaeuls
 import tools.tools as tls
@@ -168,8 +167,9 @@ def create_extra(path_to_root, width_crop, nb_extra, path_to_extra):
         for name in list_names:
             if name.endswith(extensions):
                 path_to_rgb = os.path.join(path_to_root, name)
-                rgb_uint8 = scipy.misc.imread(path_to_rgb)
                 try:
+                    rgb_uint8 = tls.read_image_mode(path_to_rgb,
+                                                    'RGB')
                     crop_uint8 = tls.crop_option_2d(tls.rgb_to_ycbcr(rgb_uint8)[:, :, 0],
                                                     width_crop,
                                                     False)

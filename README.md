@@ -9,9 +9,10 @@ The code is tested on Linux and Windows.
 ## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
   * numpy (version >= 1.11.0)
-  * Tensorflow (optional GPU support), see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0; the code must thus work using any Tensorflow 0.x or 1.x, x being the subversion index)
+  * tensorflow (optional GPU support), see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0; the code must thus work using any Tensorflow 0.x or 1.x, x being the subversion index)
   * cython
   * matplotlib
+  * pillow
   * scipy
   * six
   * glymur, see [GlymurAdvancedInstallationWebPage](https://glymur.readthedocs.io/en/v0.8.14/detailed_installation.html)

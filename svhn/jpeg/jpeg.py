@@ -3,7 +3,6 @@
 import glymur
 import numpy
 import os
-import scipy.misc
 import subprocess
 
 import tools.tools as tls
@@ -107,7 +106,8 @@ def compute_rate_psnr(path_to_reference, path_to_reconstruction, is_2000):
             the RGB image via either JPEG or JPEG2000.
     
     """
-    reference_uint8 = scipy.misc.imread(path_to_reference)
+    reference_uint8 = tls.read_image_mode(path_to_reference,
+                                          'RGB')
     reference_float64 = reference_uint8.astype(numpy.float64)
     
     # `Glymur` is needed to read JPEG2000 images.
@@ -115,7 +115,8 @@ def compute_rate_psnr(path_to_reference, path_to_reconstruction, is_2000):
         file = glymur.Jp2k(path_to_reconstruction)
         reconstruction_uint8 = file[:]
     else:
-        reconstruction_uint8 = scipy.misc.imread(path_to_reconstruction)
+        reconstruction_uint8 = tls.read_image_mode(path_to_reconstruction,
+                                                   'RGB')
     reconstruction_float64 = reconstruction_uint8.astype(numpy.float64)
     psnr = 10.*numpy.log10((255.**2)/numpy.mean((reference_float64 - reconstruction_float64)**2))
     nb_bytes = os.stat(path_to_reconstruction).st_size
@@ -296,7 +297,7 @@ def write_digits(reference_uint8, path_to_before):
     # and `reference_uint8.ndim` is equal to 2.
     images_uint8 = tls.rows_to_images(reference_uint8, 32, 32)
     for i in range(images_uint8.shape[3]):
-        scipy.misc.imsave(os.path.join(path_to_before, 'reference_{}.png'.format(i)),
-                          images_uint8[:, :, :, i])
+        tls.save_image(os.path.join(path_to_before, 'reference_{}.png'.format(i)),
+                       images_uint8[:, :, :, i])
 
 

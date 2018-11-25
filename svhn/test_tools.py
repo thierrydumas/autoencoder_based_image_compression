@@ -9,7 +9,6 @@ except ImportError:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
-import scipy.misc
 import scipy.stats.distributions
 import warnings
 
@@ -636,8 +635,8 @@ class TesterTools(object):
         """
         images_uint8 = numpy.load('tools/pseudo_data/images_uint8.npy')
         for i in range(images_uint8.shape[3]):
-            scipy.misc.imsave('tools/pseudo_visualization/images_to_rows/images_to_rows_{}.png'.format(i),
-                              images_uint8[:, :, :, i])
+            tls.save_image('tools/pseudo_visualization/images_to_rows/images_to_rows_{}.png'.format(i),
+                           images_uint8[:, :, :, i])
         rows_uint8 = tls.images_to_rows(images_uint8)
         numpy.save('tools/pseudo_data/rows_uint8.npy', rows_uint8)
     
@@ -972,6 +971,32 @@ class TesterTools(object):
         print('3rd quantization bin width: {}'.format(bin_width_2))
         print('3rd set of quantized samples:')
         print(quantized_samples_2)
+    
+    def test_read_image_mode(self):
+        """Tests the function `read_image_mode`.
+        
+        The test is successful if the file "tools/pseudo_data/rgb_web.jpg"
+        is read normally. However, the reading of "tools/pseudo_data/cmyk_snake.jpg"
+        and the reading of "tools/pseudo_data/cmyk_mushroom.jpg" each
+        raises a `ValueError` exception.
+        
+        """
+        path_to_rgb = 'tools/pseudo_data/rgb_web.jpg'
+        paths_to_cmyks = (
+            'tools/pseudo_data/cmyk_snake.jpg',
+            'tools/pseudo_data/cmyk_mushroom.jpg'
+        )
+        
+        rgb_uint8 = tls.read_image_mode(path_to_rgb,
+                                        'RGB')
+        print('The reading of "{0}" yields a Numpy array with shape {1} and data-type {2}.'.format(path_to_rgb, rgb_uint8.shape, rgb_uint8.dtype))
+        for path_to_cmyk in paths_to_cmyks:
+            try:
+                cmyk_uint8 = tls.read_image_mode(path_to_cmyk,
+                                                 'RGB')
+            except ValueError as err:
+                print('The reading of "{}" raises a `ValueError` exception.'.format(path_to_cmyk))
+                print(err)
 
     def test_reconstruction_error(self):
         """Tests the function `reconstruction_error`.
@@ -1038,8 +1063,21 @@ class TesterTools(object):
         rows_uint8 = numpy.load('tools/pseudo_data/rows_uint8.npy')
         images_uint8 = tls.rows_to_images(rows_uint8, 64, 64)
         for i in range(images_uint8.shape[3]):
-            scipy.misc.imsave('tools/pseudo_visualization/rows_to_images/rows_to_images_{}.png'.format(i),
-                              images_uint8[:, :, :, i])
+            tls.save_image('tools/pseudo_visualization/rows_to_images/rows_to_images_{}.png'.format(i),
+                           images_uint8[:, :, :, i])
+    
+    def test_save_image(self):
+        """Tests the function `save_image`.
+        
+        An image is saved at "tools/pseudo_visualization/save_image.png".
+        The test is successful if this image is
+        identical to "tools/pseudo_data/rgb_web.png".
+        
+        """
+        rgb_uint8 = tls.read_image_mode('tools/pseudo_data/rgb_web.jpg',
+                                        'RGB')
+        tls.save_image('tools/pseudo_visualization/save_image.png',
+                       rgb_uint8)
 
     def test_sigmoid(self):
         """Tests the function `sigmoid`.

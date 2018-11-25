@@ -2,7 +2,6 @@
 
 import numpy
 import os
-import scipy.misc
 import warnings
 
 import tools.tools as tls
@@ -1057,7 +1056,8 @@ class VariationalAutoencoder(object):
         # `hidden_recognition_uint8.dtype` is
         # equal to `numpy.uint8`.
         hidden_recognition_uint8 = numpy.round(hidden_recognition_rescaled).astype(numpy.uint8)
-        scipy.misc.imsave(path_image, hidden_recognition_uint8)
+        tls.save_image(path_image,
+                       hidden_recognition_uint8)
     
     def checking_p_1(self, key_type, key_layer):
         """Divides the parameter updates mean magnitude by the parameters mean magnitude.

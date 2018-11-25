@@ -2,7 +2,6 @@
 
 import argparse
 import numpy
-import scipy.misc
 
 import lossless.compression
 import lossless.interface_cython
@@ -308,8 +307,8 @@ class TesterLossless(object):
                                     path_to_extra)
         pseudo_extra = numpy.load(path_to_extra)
         for i in range(nb_extra):
-            scipy.misc.imsave('lossless/pseudo_visualization/create_extra/crop_{}.png'.format(i),
-                              pseudo_extra[i, :, :, 0])
+            tls.save_image('lossless/pseudo_visualization/create_extra/crop_{}.png'.format(i),
+                           pseudo_extra[i, :, :, 0])
     
     def test_find_index_map_exception(self):
         """Tests the function `find_index_map_exception` in the file "lossless/stats.py".

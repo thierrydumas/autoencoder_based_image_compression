@@ -7,7 +7,6 @@ The Kodak test set is used for the analysis.
 import argparse
 import numpy
 import os
-import scipy.misc
 import tensorflow as tf
 
 import eae.eae_utils as eaeuls
@@ -78,7 +77,8 @@ def masking_eae_kodak(y_float32, isolated_decoder, bin_widths, idx_map, path_to_
                 feed_dict={isolated_decoder.node_quantized_y:quantized_y_float32}
             )
             reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32), axis=(0, 3))
-            scipy.misc.imsave(paths[i], reconstruction_uint8[0:200, 0:200])
+            tls.save_image(paths[i],
+                           reconstruction_uint8[0:200, 0:200])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyzes a trained entropy autoencoder by masking all the latent variable feature maps except one.')

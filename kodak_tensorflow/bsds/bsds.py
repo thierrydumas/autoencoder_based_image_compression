@@ -3,7 +3,6 @@
 import numpy
 import os
 import pickle
-import scipy.misc
 
 import tools.tools as tls
 
@@ -74,12 +73,18 @@ def create_bsds(path_to_root, path_to_bsds, path_to_list_rotation, path_to_tar='
         for i in range(100):
             path_to_file = os.path.join(path_to_root, 'BSDS300/images/test/', list_names[i])
             
+             # The function `tls.read_image_mode` is not put
+            # into a `try` `except` condition as each BSDS300
+            # RGB image has to be read.
+            rgb_uint8 = tls.read_image_mode(path_to_file,
+                                            'RGB')
+            
             # The function `tls.rgb_to_ycbcr` checks that
             # the data-type of its input array is equal to
             # `numpy.uint8`. `tls.rgb_to_ycbcr` also checks
             # that its input array has 3 dimensions and its
             # 3rd dimension is equal to 3.
-            luminance_uint8 = tls.rgb_to_ycbcr(scipy.misc.imread(path_to_file))[:, :, 0]
+            luminance_uint8 = tls.rgb_to_ycbcr(rgb_uint8)[:, :, 0]
             (height_image, width_image) = luminance_uint8.shape
             if height_image == h_bsds and width_image == w_bsds:
                 reference_uint8[i, :, :] = luminance_uint8[1:h_bsds, 1:w_bsds]

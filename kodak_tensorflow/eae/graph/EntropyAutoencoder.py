@@ -2,7 +2,6 @@
 
 import numpy
 import pickle
-import scipy.misc
 import tensorflow as tf
 
 import eae.graph.components
@@ -735,6 +734,7 @@ class EntropyAutoencoder(object):
         minimum = numpy.amin(gamma_float32)
         maximum = numpy.amax(gamma_float32)
         gamma_uint8 = numpy.round(255.*(gamma_float32 - minimum)/(maximum - minimum)).astype(numpy.uint8)
-        scipy.misc.imsave(path, gamma_uint8)
+        tls.save_image(path,
+                       gamma_uint8)
 
 

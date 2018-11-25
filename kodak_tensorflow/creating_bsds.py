@@ -2,9 +2,9 @@
 
 import argparse
 import numpy
-import scipy.misc
 
 import bsds.bsds
+import tools.tools as tls
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Creates the BSDS test set.')
@@ -24,9 +24,9 @@ if __name__ == '__main__':
                           path_to_list_rotation,
                           path_to_tar=args.path_to_tar)
     reference_uint8 = numpy.load(path_to_bsds)
-    scipy.misc.imsave('bsds/visualization/luminance_7.png',
-                      reference_uint8[7, :, :])
-    scipy.misc.imsave('bsds/visualization/luminance_39.png',
-                      reference_uint8[39, :, :])
+    tls.save_image('bsds/visualization/luminance_7.png',
+                   reference_uint8[7, :, :])
+    tls.save_image('bsds/visualization/luminance_39.png',
+                   reference_uint8[39, :, :])
 
 

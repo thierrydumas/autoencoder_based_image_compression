@@ -2,7 +2,6 @@
 
 import numpy
 import os
-import scipy.misc
 
 import tools.tools as tls
 
@@ -67,7 +66,6 @@ def create_imagenet(path_to_root, width_crop, nb_training, nb_validation, path_t
         for name in list_names:
             if name.endswith(extensions):
                 path_to_rgb = os.path.join(path_to_root, name)
-                rgb_uint8 = scipy.misc.imread(path_to_rgb)
                 
                 # If the condition below is met, the result of
                 # the processing of `rgb_uint8` is added to the
@@ -79,6 +77,8 @@ def create_imagenet(path_to_root, width_crop, nb_training, nb_validation, path_t
                 else:
                     is_random = False
                 try:
+                    rgb_uint8 = tls.read_image_mode(path_to_rgb,
+                                                    'RGB')
                     crop_uint8 = tls.crop_option_2d(tls.rgb_to_ycbcr(rgb_uint8)[:, :, 0],
                                                     width_crop,
                                                     is_random)

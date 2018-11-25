@@ -9,7 +9,6 @@ except ImportError:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
-import scipy.misc
 import scipy.stats.distributions
 import tensorflow as tf
 
@@ -482,8 +481,8 @@ class TesterTfUtils(object):
         print('Minimum of the GDN/IGDN weights: {}'.format(minimum))
         print('Maximum of the GDN/IGDN weights: {}'.format(maximum))
         image_uint8 = numpy.round(255.*(gamma - minimum)/(maximum - minimum)).astype(numpy.uint8)
-        scipy.misc.imsave('tf_utils/pseudo_visualization/initialize_weights_gdn.png',
-                          image_uint8)
+        tls.save_image('tf_utils/pseudo_visualization/initialize_weights_gdn.png',
+                       image_uint8)
     
     def test_inverse_gdn(self):
         """Tests the function `inverse_gdn`.

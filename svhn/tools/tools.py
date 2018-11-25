@@ -13,7 +13,7 @@ except ImportError:
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 import numpy
-import scipy.misc
+import PIL.Image
 
 # The functions are sorted in
 # alphabetic order.
@@ -1084,6 +1084,34 @@ def quantization(samples, bin_width):
     assert bin_width > 0., 'The quantization bin width is not strictly positive.'
     return bin_width*numpy.round(samples/bin_width)
 
+def read_image_mode(path, mode):
+    """Reads the image if its mode matches the given mode.
+
+    Parameters
+    ----------
+    path : str
+        Path to the image to be read.
+    mode : str
+        Given mode. The two most common modes
+        are 'RGB' and 'L'.
+
+    Returns
+    -------
+    numpy.ndarray
+        Array with data-type `numpy.uint8`.
+        Image.
+
+    Raises
+    ------
+    ValueError
+        If the image mode is not equal to `mode`.
+
+    """
+    image = PIL.Image.open(path)
+    if image.mode != mode:
+        raise ValueError('The image mode is {0} whereas the given mode is {1}.'.format(image.mode, mode))
+    return numpy.asarray(image)
+
 def reconstruction_error(visible_units, reconstruction, is_continuous):
     """Computes the error between the visible units and their reconstruction.
     
@@ -1221,6 +1249,32 @@ def rows_to_images(rows_uint8, height_image, width_image):
                           (height_image, width_image))
     return images_uint8
 
+def save_image(path, array_uint8):
+    """Saves the array as an image.
+    
+    `scipy.misc.imsave` is deprecated in Scipy 1.0.0.
+    `scipy.misc.imsave` will be removed in Scipy 1.2.0.
+    `save_image` replaces `scipy.misc.imsave`.
+    
+    Parameters
+    ----------
+    path : str
+        Path to the saved image.
+    array_uint8 : numpy.ndarray
+        Array with data-type `numpy.uint8`.
+        Array to be saved as an image.
+
+    Raises
+    ------
+    TypeError
+        If `array_uint8.dtype` is not equal to `numpy.uint8`.
+
+    """
+    if array_uint8.dtype != numpy.uint8:
+        raise TypeError('`array_uint8.dtype` is not equal to `numpy.uint8`.')
+    image = PIL.Image.fromarray(array_uint8)
+    image.save(path)
+
 def sigmoid(input):
     """Computes the sigmoid function using a trick that avoids numerical overflow.
     
@@ -1301,7 +1355,8 @@ def visualize_dead(quantized_samples, path):
     red_uint8 = black_uint8.copy()
     red_uint8[quantized_samples > 0.] = 255
     image_uint8 = numpy.concatenate((red_uint8, black_uint8, blue_uint8), axis=2)
-    scipy.misc.imsave(path, image_uint8)
+    save_image(path,
+               image_uint8)
 
 def visualize_images(images_uint8, nb_vertically, path):
     """Arranges the RGB images in a single RGB image and saves the single RGB image.
@@ -1351,7 +1406,8 @@ def visualize_images(images_uint8, nb_vertically, path):
             image_uint8[i*(height_image + 1) + 1:(i + 1)*(height_image + 1),
                 j*(width_image + 1) + 1:(j + 1)*(width_image + 1), :] = \
                 images_uint8[:, :, :, i*nb_horizontally + j]
-    scipy.misc.imsave(path, image_uint8)
+    save_image(path,
+               image_uint8)
 
 def visualize_rows(rows_uint8, height_image, width_image, nb_vertically, path):
     """Reshapes each row to a RGB image, arranges the RGB images in a single RGB image and saves the single RGB image.

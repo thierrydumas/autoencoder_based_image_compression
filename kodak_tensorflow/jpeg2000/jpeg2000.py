@@ -3,7 +3,6 @@
 import glymur
 import numpy
 import os
-import scipy.misc
 import subprocess
 
 import tools.tools as tls
@@ -112,7 +111,8 @@ def compute_rate_psnr(quality, list_rotation, index, path_to_before_jpeg2000, pa
     path_to_reconstruction = os.path.join(path_to_after_jpeg2000,
                                           'quality_{}'.format(quality),
                                           'reconstruction_{}.jp2'.format(index))
-    reference_uint8 = scipy.misc.imread(path_to_reference)
+    reference_uint8 = tls.read_image_mode(path_to_reference,
+                                          'RGB')
     
     # `Glymur` is needed to read JPEG2000 images.
     file = glymur.Jp2k(path_to_reconstruction)
@@ -285,7 +285,7 @@ def write_luminances(reference_uint8, path_to_before_jpeg2000):
     
     """
     for i in range(reference_uint8.shape[0]):
-        scipy.misc.imsave(os.path.join(path_to_before_jpeg2000, 'reference_{}.png'.format(i)),
-                          reference_uint8[i, :, :])
+        tls.save_image(os.path.join(path_to_before_jpeg2000, 'reference_{}.png'.format(i)),
+                       reference_uint8[i, :, :])
 
 

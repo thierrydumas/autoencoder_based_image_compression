@@ -2,9 +2,9 @@
 
 import argparse
 import numpy
-import scipy.misc
 
 import kodak.kodak
+import tools.tools as tls
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Creates the Kodak test set.')
@@ -20,9 +20,9 @@ if __name__ == '__main__':
                              path_to_kodak,
                              path_to_list_rotation)
     reference_uint8 = numpy.load(path_to_kodak)
-    scipy.misc.imsave('kodak/visualization/luminance_3.png',
-                      reference_uint8[2, :, :])
-    scipy.misc.imsave('kodak/visualization/luminance_11.png',
-                      reference_uint8[10, :, :])
+    tls.save_image('kodak/visualization/luminance_3.png',
+                   reference_uint8[2, :, :])
+    tls.save_image('kodak/visualization/luminance_11.png',
+                   reference_uint8[10, :, :])
 
 

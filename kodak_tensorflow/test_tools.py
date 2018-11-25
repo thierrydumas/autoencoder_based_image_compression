@@ -9,7 +9,6 @@ except ImportError:
     matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy
-import scipy.misc
 import scipy.stats.distributions
 
 import tools.tools as tls
@@ -165,12 +164,12 @@ class TesterTools(object):
         crop_1 = tls.crop_option_2d(luminance_uint8,
                                     width_crop,
                                     False)
-        scipy.misc.imsave('tools/pseudo_visualization/crop_option_2d/luminance_image.png',
-                          luminance_uint8)
-        scipy.misc.imsave('tools/pseudo_visualization/crop_option_2d/crop_random.png',
-                          crop_0)
-        scipy.misc.imsave('tools/pseudo_visualization/crop_option_2d/crop_center.png',
-                          crop_1)
+        tls.save_image('tools/pseudo_visualization/crop_option_2d/luminance_image.png',
+                       luminance_uint8)
+        tls.save_image('tools/pseudo_visualization/crop_option_2d/crop_random.png',
+                       crop_0)
+        tls.save_image('tools/pseudo_visualization/crop_option_2d/crop_center.png',
+                       crop_1)
     
     def test_crop_repeat_2d(self):
         """Tests the function `crop_repeat_2d`.
@@ -191,12 +190,12 @@ class TesterTools(object):
         image_uint8 = numpy.load('tools/pseudo_data/luminances_uint8.npy')[0, :, :, 0]
         crop_0 = tls.crop_repeat_2d(image_uint8, image_uint8.shape[0] - 81, 0)
         crop_1 = tls.crop_repeat_2d(image_uint8, 0, image_uint8.shape[1] - 81)
-        scipy.misc.imsave('tools/pseudo_visualization/crop_repeat_2d/luminance_image.png',
-                          image_uint8)
-        scipy.misc.imsave('tools/pseudo_visualization/crop_repeat_2d/crop_0.png',
-                          crop_0)
-        scipy.misc.imsave('tools/pseudo_visualization/crop_repeat_2d/crop_1.png',
-                          crop_1)
+        tls.save_image('tools/pseudo_visualization/crop_repeat_2d/luminance_image.png',
+                       image_uint8)
+        tls.save_image('tools/pseudo_visualization/crop_repeat_2d/crop_0.png',
+                       crop_0)
+        tls.save_image('tools/pseudo_visualization/crop_repeat_2d/crop_1.png',
+                       crop_1)
     
     def test_discrete_entropy(self):
         """Tests the function `discrete_entropy`.
@@ -500,6 +499,32 @@ class TesterTools(object):
         print('Rate computed by the function: {}'.format(rate))
         print('Theoretical rate: {}'.format(theoretical_rate))
     
+    def test_read_image_mode(self):
+        """Tests the function `read_image_mode`.
+        
+        The test is successful if the file "tools/pseudo_data/rgb_web.jpg"
+        is read normally. However, the reading of "tools/pseudo_data/cmyk_snake.jpg"
+        and the reading of "tools/pseudo_data/cmyk_mushroom.jpg" each
+        raises a `ValueError` exception.
+        
+        """
+        path_to_rgb = 'tools/pseudo_data/rgb_web.jpg'
+        paths_to_cmyks = (
+            'tools/pseudo_data/cmyk_snake.jpg',
+            'tools/pseudo_data/cmyk_mushroom.jpg'
+        )
+        
+        rgb_uint8 = tls.read_image_mode(path_to_rgb,
+                                        'RGB')
+        print('The reading of "{0}" yields a Numpy array with shape {1} and data-type {2}.'.format(path_to_rgb, rgb_uint8.shape, rgb_uint8.dtype))
+        for path_to_cmyk in paths_to_cmyks:
+            try:
+                cmyk_uint8 = tls.read_image_mode(path_to_cmyk,
+                                                 'RGB')
+            except ValueError as err:
+                print('The reading of "{}" raises a `ValueError` exception.'.format(path_to_cmyk))
+                print(err)
+    
     def test_rgb_to_ycbcr(self):
         """Tests the function `rgb_to_ycbcr`.
         
@@ -532,6 +557,19 @@ class TesterTools(object):
         print(ycbcr_uint8[:, :, 2])
         print('Red chrominance computed by hand:')
         print(numpy.array([[28, 110, 130], [148, 142, 128]], dtype=numpy.uint8))
+    
+    def test_save_image(self):
+        """Tests the function `save_image`.
+        
+        An image is saved at "tools/pseudo_visualization/save_image.png".
+        The test is successful if this image is
+        identical to "tools/pseudo_data/rgb_web.png".
+        
+        """
+        rgb_uint8 = tls.read_image_mode('tools/pseudo_data/rgb_web.jpg',
+                                        'RGB')
+        tls.save_image('tools/pseudo_visualization/save_image.png',
+                       rgb_uint8)
     
     def test_subdivide_set(self):
         """Tests the function `subdivide_set`.
@@ -668,7 +706,8 @@ class TesterTools(object):
             'tools/pseudo_visualization/visualize_rotated_luminance/luminance_crop_1.png'
         ]
         
-        rgb_uint8 = scipy.misc.imread('tools/pseudo_data/rgb_web.jpg')
+        rgb_uint8 = tls.read_image_mode('tools/pseudo_data/rgb_web.jpg',
+                                        'RGB')
         luminance_before_rotation_uint8 = tls.rgb_to_ycbcr(rgb_uint8)[:, :, 0]
         tls.visualize_rotated_luminance(luminance_before_rotation_uint8,
                                         True,

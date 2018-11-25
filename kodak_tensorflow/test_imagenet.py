@@ -2,9 +2,9 @@
 
 import argparse
 import numpy
-import scipy.misc
 
 import imagenet.imagenet
+import tools.tools as tls
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tests a function for creating the ImageNet training and validation sets.')
@@ -42,11 +42,11 @@ if __name__ == '__main__':
                                       path_to_validation)
     pseudo_training_data = numpy.load(path_to_training)
     for i in range(nb_training):
-        scipy.misc.imsave('imagenet/pseudo_visualization/create_imagenet/training_{}.png'.format(i),
-                          pseudo_training_data[i, :, :, 0])
+        tls.save_image('imagenet/pseudo_visualization/create_imagenet/training_{}.png'.format(i),
+                       pseudo_training_data[i, :, :, 0])
     pseudo_validation_data = numpy.load(path_to_validation)
     for i in range(nb_validation):
-        scipy.misc.imsave('imagenet/pseudo_visualization/create_imagenet/validation_{}.png'.format(i),
-                          pseudo_validation_data[i, :, :, 0])
+        tls.save_image('imagenet/pseudo_visualization/create_imagenet/validation_{}.png'.format(i),
+                       pseudo_validation_data[i, :, :, 0])
 
 
