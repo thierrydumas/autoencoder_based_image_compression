@@ -80,10 +80,10 @@ def fix_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_wi
     
     Raises
     ------
-    AssertionError
+    OSError
         If the scaling coefficient written in the
         name of the file ".pkl" is incorrect.
-    AssertionError
+    OSError
         If the quantization bin width written in the
         name of the file ".pkl" is incorrect.
     
@@ -96,10 +96,10 @@ def fix_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_wi
     path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
     with open(path_to_model, 'rb') as file:
         entropy_ae = pickle.load(file)
-    assert entropy_ae.gamma == gamma, \
-        'The file name is {0} whereas the scaling coefficient is {1}.'.format(path_to_model, entropy_ae.gamma)
-    assert entropy_ae.bin_width == bin_width_init, \
-        'The file name is {0} whereas the quantization bin width is {1}.'.format(path_to_model, entropy_ae.bin_width)
+    if entropy_ae.gamma != gamma:
+        raise OSError('The file name is {0} whereas the scaling coefficient is {1}.'.format(path_to_model, entropy_ae.gamma))
+    if entropy_ae.bin_width != bin_width_init:
+        raise OSError('The file name is {0} whereas the quantization bin width is {1}.'.format(path_to_model, entropy_ae.bin_width))
     nb_points = multipliers.size
     rate = numpy.zeros(nb_points)
     psnr = numpy.zeros(nb_points)
@@ -177,10 +177,10 @@ def vary_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_w
     
     Raises
     ------
-    AssertionError
+    OSError
         If, for a file ".pkl", the scaling coefficient
         written in the file name is incorrect.
-    AssertionError
+    OSError
         If, for a file ".pkl", the quantization bin width
         written in the file name is incorrect.
     
@@ -194,10 +194,10 @@ def vary_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_w
         path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
         with open(path_to_model, 'rb') as file:
             entropy_ae = pickle.load(file)
-        assert entropy_ae.gamma == gammas[i].item(), \
-            'The file name is {0} whereas the scaling coefficient is {1}.'.format(path_to_model, entropy_ae.gamma)
-        assert entropy_ae.bin_width == bin_width_init, \
-            'The file name is {0} whereas the quantization bin width is {1}.'.format(path_to_model, entropy_ae.bin_width)
+        if entropy_ae.gamma != gammas[i].item():
+            raise OSError('The file name is {0} whereas the scaling coefficient is {1}.'.format(path_to_model, entropy_ae.gamma))
+        if entropy_ae.bin_width != bin_width_init:
+            raise OSError('The file name is {0} whereas the quantization bin width is {1}.'.format(path_to_model, entropy_ae.bin_width))
         path_to_directory_reconstruction = os.path.join(path_to_checking_r,
                                                         'reconstruction_vary_gamma_fix_bin_width',
                                                         suffix)
@@ -268,7 +268,7 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
     
     Raises
     ------
-    AssertionError
+    OSError
         If, for a file ".pkl", the scaling coefficient
         written in the file name is incorrect.
     
@@ -282,8 +282,8 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
         path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
         with open(path_to_model, 'rb') as file:
             entropy_ae = pickle.load(file)
-        assert entropy_ae.gamma == gammas[i].item(), \
-            'The file name is {0} whereas the scaling coefficient is {1}.'.format(path_to_model, entropy_ae.gamma)
+        if entropy_ae.gamma != gammas[i].item():
+            raise OSError('The file name is {0} whereas the scaling coefficient is {1}.'.format(path_to_model, entropy_ae.gamma))
         
         # The quantization bin width at the end
         # of the training is rounded to the 1st
@@ -309,7 +309,7 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Compares several trained entropy autoencoders, JPEG and JPEG2000 in terms of rate-distortion.')
     parser.add_argument('--write_ref',
-                        help='if given, the RGB digits are written to disk before the compression begins',s
+                        help='if given, the RGB digits are written to disk before the compression begins',
                         action='store_true',
                         default=False)
     args = parser.parse_args()

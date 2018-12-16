@@ -1,7 +1,7 @@
-"""A library that contains common tools. These tools are re-used many times in the project."""
+"""A library that contains common functions."""
 
 # This library contains low level functions. The
-# functions include many assertions to avoid
+# functions include many checks to avoid
 # blunders when they are called.
 
 import matplotlib
@@ -57,22 +57,23 @@ def approximate_entropy(y_tilde, parameters, nb_points_per_interval, nb_interval
     
     Raises
     ------
-    AssertionError
+    ValueError
         If the quantization bin width is not
         strictly positive.
-    AssertionError
+    ValueError
         If the approximate entropy of the quantized
         latent variables is not positive.
     
     """
-    assert bin_width > 0., 'The quantization bin width is not strictly positive.'
+    if bin_width <= 0.:
+        raise ValueError('The quantization bin width is not strictly positive.')
     diff_entropy = differential_entropy(y_tilde,
                                         parameters,
                                         nb_points_per_interval,
                                         nb_intervals_per_side)
     approx_entropy = diff_entropy - numpy.log2(bin_width)
-    assert approx_entropy >= 0., \
-        'The approximate entropy of the quantized latent variables is not positive.'
+    if approx_entropy < 0.:
+        raise ValueError('The approximate entropy of the quantized latent variables is not positive.')
     return approx_entropy
 
 def approximate_probability(samples, parameters, nb_points_per_interval, nb_intervals_per_side):
@@ -155,13 +156,13 @@ def cast_float_to_uint8(array_float):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `array_float.dtype` is not smaller
         than `numpy.float` in type hierarchy.
     
     """
-    assert numpy.issubdtype(array_float.dtype, numpy.float), \
-        '`array_float.dtype` is not smaller than `numpy.float` in type hierarchy.'
+    if not numpy.issubdtype(array_float.dtype, numpy.float):
+        raise TypeError('`array_float.dtype` is not smaller than `numpy.float` in type hierarchy.')
     return numpy.round(array_float.clip(min=0., max=255.)).astype(numpy.uint8)
 
 def count_symbols(quantized_samples, bin_width):
@@ -243,11 +244,12 @@ def count_zero_columns(array_2d):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `array_2d.ndim` is not equal to 2.
     
     """
-    assert array_2d.ndim == 2, '`array_2d.ndim` is not equal to 2.'
+    if array_2d.ndim != 2:
+        raise ValueError('`array_2d.ndim` is not equal to 2.')
     nb_columns = array_2d.shape[1]
     return nb_columns - numpy.count_nonzero(numpy.sum(numpy.absolute(array_2d), axis=0))
 
@@ -315,9 +317,9 @@ def discrete_entropy(quantized_samples, bin_width):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If the entropy is not positive.
-    AssertionError
+    ValueError
         If the entropy is not smaller than
         its upper bound.
     
@@ -332,9 +334,10 @@ def discrete_entropy(quantized_samples, bin_width):
     # two integers returns a float.
     frequency = hist_non_zero.astype(numpy.float64)/numpy.sum(hist_non_zero)
     disc_entropy = -numpy.sum(frequency*numpy.log2(frequency))
-    assert disc_entropy >= 0., 'The entropy is not positive.'
-    assert disc_entropy <= numpy.log2(hist_non_zero.size), \
-        'The entropy is not smaller than its upper bound.'
+    if disc_entropy < 0.:
+        raise ValueError('The entropy is not positive.')
+    if disc_entropy > numpy.log2(hist_non_zero.size):
+        raise ValueError('The entropy is not smaller than its upper bound.')
     return disc_entropy
 
 def expand_parameters(parameters, low_projection, nb_points_per_interval, nb_added_per_side):
@@ -369,14 +372,16 @@ def expand_parameters(parameters, low_projection, nb_points_per_interval, nb_add
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `low_projection` is not strictly larger than 1.e-7.
-    AssertionError
+    ValueError
         If `nb_added_per_side` is not strictly positive.
     
     """
-    assert low_projection > 1.e-7, '`low_projection` is not strictly larger than 1.e-7.'
-    assert nb_added_per_side > 0, '`nb_added_per_side` is not striclty positive.'
+    if low_projection <= 1.e-7:
+        raise ValueError('`low_projection` is not strictly larger than 1.e-7.')
+    if nb_added_per_side <= 0:
+        raise ValueError('`nb_added_per_side` is not striclty positive.')
     piece = low_projection*numpy.ones(nb_points_per_interval*nb_added_per_side)
     return numpy.concatenate((piece, parameters, piece), axis=0)
 
@@ -517,7 +522,7 @@ def gradient_entropy(samples, parameters, nb_points_per_interval, nb_intervals_p
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `samples.ndim` is not equal to 2.
     
     """
@@ -527,7 +532,8 @@ def gradient_entropy(samples, parameters, nb_points_per_interval, nb_intervals_p
     # and `loss_density_approximation`, the 1st argument
     # is a 1D array. In the function `gradient_entropy`,
     # the 1st argument is a 2D array.
-    assert samples.ndim == 2, '`samples.ndim` is not equal to 2.'
+    if samples.ndim != 2:
+        raise ValueError('`samples.ndim` is not equal to 2.')
     (height_samples, width_samples) = samples.shape
     flattened_samples = samples.flatten()
     idx_linear_piece = index_linear_piece(flattened_samples,
@@ -581,22 +587,22 @@ def images_to_rows(images_uint8):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `images_uint8.dtype` is not equal to
         `numpy.uint8`.
-    AssertionError
+    ValueError
         If `images_uint8.ndim` is not equal to 4.
-    AssertionError
+    ValueError
         If `images_uint8.shape[2]` is not equal to 3.
     
     """
-    assert images_uint8.dtype == numpy.uint8, \
-        '`images_uint8.dtype` is not equal to `numpy.uint8`.'
-    assert images_uint8.ndim == 4, \
-        '`images_uint8.ndim` is not equal to 4.'
+    if images_uint8.dtype != numpy.uint8:
+        raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
+    if images_uint8.ndim != 4:
+        raise ValueError('`images_uint8.ndim` is not equal to 4.')
     (height_image, width_image, nb_channels, nb_images) = images_uint8.shape
-    assert nb_channels == 3, \
-        '`images_uint8.shape[2]` is not equal to 3.'
+    if nb_channels != 3:
+        raise ValueError('`images_uint8.shape[2]` is not equal to 3.')
     rows_uint8 = numpy.zeros((nb_images, 3*height_image*width_image), dtype=numpy.uint8)
     for i in range(nb_images):
         tuple_rgb = (
@@ -634,9 +640,9 @@ def index_linear_piece(samples, nb_points_per_interval, nb_intervals_per_side):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If a linear piece index is not positive.
-    AssertionError
+    ValueError
         If a linear piece index exceeds the maximum
         possible linear piece index.
     
@@ -645,9 +651,10 @@ def index_linear_piece(samples, nb_points_per_interval, nb_intervals_per_side):
     # with data-type `numpy.float64`.
     idx_linear_piece = numpy.floor(nb_points_per_interval*samples).astype(numpy.int64) + \
         nb_points_per_interval*nb_intervals_per_side
-    assert numpy.all(idx_linear_piece >= 0), 'A linear piece index is not positive.'
-    assert numpy.all(idx_linear_piece <= 2*nb_points_per_interval*nb_intervals_per_side - 1), \
-        'A linear piece index exceeds the maximum possible linear piece index.'
+    if numpy.any(idx_linear_piece < 0):
+        raise ValueError('A linear piece index is not positive.')
+    if numpy.any(idx_linear_piece > 2*nb_points_per_interval*nb_intervals_per_side - 1):
+        raise ValueError('A linear piece index exceeds the maximum possible linear piece index.')
     return idx_linear_piece
 
 def kl_divergence(z_mean, z_log_std_squared):
@@ -832,34 +839,36 @@ def mean_psnr(reference_uint8, reconstruction_uint8):
     
     Raises
     ------
-    AssertionError
-        If either `reference_uint8.dtype` or
-        `reconstruction_uint8.dtype` is not equal
-        to `numpy.uint8`.
-    AssertionError
+    TypeError
+        If `reference_uint8.dtype` is not equal to `numpy.uint8`.
+    TypeError
+        `reconstruction_uint8.dtype` is not equal to `numpy.uint8`.
+    ValueError
         If `reference_uint8.ndim` is not equal to 2.
-    AssertionError
+    ValueError
         If `reference_uint8.shape` is not equal
         to `reconstruction_uint8.shape`.
-    AssertionError
+    ValueError
         If the mean square error between a reference
         image and its reconstruction is equal to 0.
     
     """
-    assert reference_uint8.dtype == numpy.uint8 and reconstruction_uint8.dtype == numpy.uint8, \
-        'Either `reference_uint8.dtype` or `reconstruction_uint8.dtype` is not equal to `numpy.uint8`.'
-    assert reference_uint8.ndim == 2, \
-        '`reference_uint8.ndim` is not equal to 2.'
-    assert reference_uint8.shape == reconstruction_uint8.shape, \
-        '`reference_uint8.shape` is not equal to `reconstruction_uint8.shape`.'
+    if reference_uint8.dtype != numpy.uint8:
+        raise TypeError('`reference_uint8.dtype` is not equal to `numpy.uint8`.')
+    if reconstruction_uint8.dtype != numpy.uint8:
+        raise TypeError('`reconstruction_uint8.dtype` is not equal to `numpy.uint8`.')
+    if reference_uint8.ndim != 2:
+        raise ValueError('`reference_uint8.ndim` is not equal to 2.')
+    if reference_uint8.shape != reconstruction_uint8.shape:
+        raise ValueError('`reference_uint8.shape` is not equal to `reconstruction_uint8.shape`.')
     reference_float64 = reference_uint8.astype(numpy.float64)
     reconstruction_float64 = reconstruction_uint8.astype(numpy.float64)
     mse = numpy.mean((reference_float64 - reconstruction_float64)**2, axis=1)
     
     # A perfect reconstruction is impossible
     # in lossy compression.
-    assert numpy.all(mse != 0.), \
-        'The mean square error between a reference image and its reconstruction is equal to 0.'
+    if numpy.any(mse == 0.):
+        raise ValueError('The mean square error between a reference image and its reconstruction is equal to 0.')
     return numpy.mean(10.*numpy.log10((255.**2)/mse))
 
 def noise(nb_rows, nb_columns):
@@ -908,18 +917,20 @@ def normed_histogram(data, grid, pdf, title, path):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `grid.ndim` is not equal to 1.
-    AssertionError
+    ValueError
         If `pdf.ndim` is not equal to 1.
-    AssertionError
+    ValueError
         If `grid.size` is not equal to `pdf.size`.
     
     """
-    assert grid.ndim == 1, '`grid.ndim` is not equal to 1.'
-    assert pdf.ndim == 1, '`pdf.ndim` is not equal to 1.'
-    assert grid.size == pdf.size, \
-        '`grid.size` is not equal to `pdf.size`.'
+    if grid.ndim != 1:
+        raise ValueError('`grid.ndim` is not equal to 1.')
+    if pdf.ndim != 1:
+        raise ValueError('`pdf.ndim` is not equal to 1.')
+    if grid.size != pdf.size:
+        raise ValueError('`grid.size` is not equal to `pdf.size`.')
     
     # In the function `numpy.histogram`, `data`
     # is flattened to compute the histogram.
@@ -1007,25 +1018,30 @@ def plot_graphs(x_values, y_values, x_label, y_label, legend, colors, title, pat
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `x_values.ndim` is not equal to 1.
-    AssertionError
+    ValueError
         If `y_values.ndim` is not equal to 2.
-    AssertionError
+    ValueError
         If `x_values.size` is not equal to
         `y_values.shape[1]`.
-    AssertionError
-        If either `len(legend)` or `len(colors)`
-        is not equal to `y_values.shape[0]`.
+    ValueError
+        If `len(legend)` is not equal to `y_values.shape[0]`.
+    ValueError
+        If `len(colors)` is not equal to `y_values.shape[0]`.
     
     """
-    assert x_values.ndim == 1, '`x_values.ndim` is not equal to 1.'
-    assert y_values.ndim == 2, '`y_values.ndim` is not equal to 2.'
+    if x_values.ndim != 1:
+        raise ValueError('`x_values.ndim` is not equal to 1.')
+    if y_values.ndim != 2:
+        raise ValueError('`y_values.ndim` is not equal to 2.')
     (nb_graphs, nb_y) = y_values.shape
-    assert x_values.size == nb_y, \
-        '`x_values.size` is not equal to `y_values.shape[1]`.'
-    assert nb_graphs == len(legend) and nb_graphs == len(colors), \
-        'Either `len(legend)` or `len(colors)` is not equal to `y_values.shape[0]`.'
+    if x_values.size != nb_y:
+        raise ValueError('`x_values.size` is not equal to `y_values.shape[1]`.')
+    if nb_graphs != len(legend):
+        raise ValueError('`len(legend)` is not equal to `y_values.shape[0]`.')
+    if nb_graphs != len(colors):
+        raise ValueError('`len(colors)` is not equal to `y_values.shape[0]`.')
     
     # Matplotlib is forced to display only
     # whole numbers on the x-axis if the
@@ -1071,17 +1087,18 @@ def quantization(samples, bin_width):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `samples.dtype` is not smaller than
         `numpy.float` in type hierarchy.
-    AssertionError
+    ValueError
         If the quantization bin width is
         not strictly positive.
     
     """
-    assert numpy.issubdtype(samples.dtype, numpy.float), \
-        '`samples.dtype` is not smaller than `numpy.float` in type hierarchy.'
-    assert bin_width > 0., 'The quantization bin width is not strictly positive.'
+    if not numpy.issubdtype(samples.dtype, numpy.float):
+        raise TypeError('`samples.dtype` is not smaller than `numpy.float` in type hierarchy.')
+    if bin_width <= 0.:
+        raise ValueError('The quantization bin width is not strictly positive.')
     return bin_width*numpy.round(samples/bin_width)
 
 def read_image_mode(path, mode):
@@ -1136,13 +1153,14 @@ def reconstruction_error(visible_units, reconstruction, is_continuous):
     
     Raises
     ------
-    AssertionError
-        If `is_continuous` is False and the visible
-        units do not belong to [0, 1].
-    AssertionError
-        If `is_continuous` is False and the
-        reconstruction of the visible units
-        do not belong to ]0, 1[.
+    ValueError
+        If `is_continuous` is False and at least a
+        coefficient of `visible_units` does not belong
+        to [0, 1].
+    ValueError
+        If `is_continuous` is False and at least a
+        coefficient `reconstruction` does not belong
+        to ]0, 1[.
     
     """
     if is_continuous:
@@ -1153,10 +1171,10 @@ def reconstruction_error(visible_units, reconstruction, is_continuous):
         # each visible unit is assumed to be 1.
         return 0.5*numpy.mean(numpy.sum((visible_units - reconstruction)**2, axis=1))
     else:
-        assert numpy.all(numpy.logical_and(visible_units >= 0., visible_units <= 1.)), \
-            'The visible units do not belong to [0, 1].'
-        assert numpy.all(numpy.logical_and(reconstruction > 0., reconstruction < 1.)), \
-            'The reconstruction of the visible units do not belong to ]0, 1[.'
+        if numpy.any(numpy.logical_or(visible_units < 0., visible_units > 1.)):
+            raise ValueError('At least a coefficient of `visible_units` does not belong to [0, 1].')
+        if numpy.any(numpy.logical_or(reconstruction <= 0., reconstruction >= 1.)):
+            raise ValueError('At least a coefficient of `reconstruction` does not belong to ]0, 1[.')
         return -numpy.mean(numpy.sum(visible_units*numpy.log(reconstruction) + 
             (1. - visible_units)*numpy.log(1. - reconstruction), axis=1))
 
@@ -1221,21 +1239,22 @@ def rows_to_images(rows_uint8, height_image, width_image):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `rows_uint8.dtype` is not equal to `numpy.uint8`.
-    AssertionError
+    ValueError
         If `rows_uint8.ndim` is not equal to 2.
-    AssertionError
+    ValueError
         If `rows_uint8.shape[1]` is not equal
         to `3*height_image*width_image`.
     
     """
-    assert rows_uint8.dtype == numpy.uint8, \
-        '`rows_uint8.dtype` is not equal to `numpy.uint8`.'
-    assert rows_uint8.ndim == 2, '`rows_uint8.ndim` is not equal to 2.'
+    if rows_uint8.dtype != numpy.uint8:
+        raise TypeError('`rows_uint8.dtype` is not equal to `numpy.uint8`.')
+    if rows_uint8.ndim != 2:
+        raise ValueError('`rows_uint8.ndim` is not equal to 2.')
     (nb_images, nb_pixels_per_row) = rows_uint8.shape
-    assert nb_pixels_per_row == 3*height_image*width_image, \
-        '`rows_uint8.shape[1]` is not equal to `3*height_image*width_image`.'
+    if nb_pixels_per_row != 3*height_image*width_image:
+        raise ValueError('`rows_uint8.shape[1]` is not equal to `3*height_image*width_image`.')
     images_uint8 = numpy.zeros((height_image, width_image, 3, nb_images), dtype=numpy.uint8)
     for i in range(nb_images):
         images_uint8[:, :, 0, i] = \
@@ -1318,13 +1337,13 @@ def subdivide_set(nb_examples, batch_size):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `nb_examples` is not divisible
         by `batch_size`.
     
     """
-    assert nb_examples % batch_size == 0, \
-        '`nb_examples` is not divisible by `batch_size`.'
+    if nb_examples % batch_size != 0:
+        raise ValueError('`nb_examples` is not divisible by `batch_size`.')
     return nb_examples//batch_size
 
 def visualize_dead(quantized_samples, path):
@@ -1344,11 +1363,12 @@ def visualize_dead(quantized_samples, path):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `quantized_samples.ndim` is not equal to 2.
     
     """
-    assert quantized_samples.ndim == 2, '`quantized_samples.ndim` is not equal to 2.'
+    if quantized_samples.ndim != 2:
+        raise ValueError('`quantized_samples.ndim` is not equal to 2.')
     black_uint8 = numpy.zeros((quantized_samples.shape[0], quantized_samples.shape[1], 1), dtype=numpy.uint8)
     blue_uint8 = black_uint8.copy()
     blue_uint8[quantized_samples < 0.] = 255
@@ -1376,26 +1396,26 @@ def visualize_images(images_uint8, nb_vertically, path):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `images_uint8.dtype` is not equal to `numpy.uint8`.
-    AssertionError
+    ValueError
         If `images_uint8.ndim` is not equal to 4.
-    AssertionError
+    ValueError
         If `images_uint8.shape[2]` is not equal to 3.
-    AssertionError
+    ValueError
         If `images_uint8.shape[3]` is not
         divisible by `nb_vertically`.
     
     """
-    assert images_uint8.dtype == numpy.uint8, \
-        '`images_uint8.dtype` is not equal to `numpy.uint8`.'
-    assert images_uint8.ndim == 4, \
-        '`images_uint8.ndim` is not equal to 4.'
+    if images_uint8.dtype != numpy.uint8:
+        raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
+    if images_uint8.ndim != 4:
+        raise ValueError('`images_uint8.ndim` is not equal to 4.')
     (height_image, width_image, nb_channels, nb_images) = images_uint8.shape
-    assert nb_channels == 3, \
-        '`images_uint8.shape[2]` is not equal to 3.'
-    assert nb_images % nb_vertically == 0, \
-        '`images_uint8.shape[3]` is not divisible by `nb_vertically`.'
+    if nb_channels != 3:
+        raise ValueError('`images_uint8.shape[2]` is not equal to 3.')
+    if nb_images % nb_vertically != 0:
+        raise ValueError('`images_uint8.shape[3]` is not divisible by `nb_vertically`.')
     
     # `nb_horizontally` has to be an integer.
     nb_horizontally = nb_images//nb_vertically

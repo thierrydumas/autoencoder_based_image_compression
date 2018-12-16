@@ -11,7 +11,7 @@ The function `differential_entropy` is directly called by the function
 `approximate_entropy`.
 The function `approximate_entropy` is directly called by the function
 `loss_entropy_reconstruction`.
-The two assertions in the function `index_linear_piece`
+Two checks in the function `index_linear_piece`
 ensures that there is no latent variable perturbed by
 uniform noise out of the grid bounds every time one of
 the above functions is called.
@@ -29,7 +29,7 @@ The function `quantization` is directly called by the function
 The function `count_symbols` is directly called by the function
 `discrete_entropy`.
 To ensure that the quantization bin width is strictly
-positive every time it is used, one assertion is required
+positive every time it is used, one check is required
 in the function `approximate_entropy` and another one
 is required in the function `quantization`.
 

@@ -103,8 +103,8 @@ if __name__ == '__main__':
                                                    mean_training,
                                                    std_training)
     nb_validation = validation_float64.shape[0]
-    assert nb_validation >= args.batch_size, \
-        'The number of validation examples is not larger than {}.'.format(args.batch_size)
+    if nb_validation < args.batch_size:
+        raise ValueError('The number of validation examples is not larger than {}.'.format(args.batch_size))
     print('Number of validation examples: {}'.format(nb_validation))
     training_portion_float64 = svhn.svhn.preprocess_svhn(training_uint8[0:nb_validation, :],
                                                          mean_training,

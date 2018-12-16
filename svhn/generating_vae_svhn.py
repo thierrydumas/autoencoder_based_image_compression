@@ -35,14 +35,14 @@ def generating_vae_svhn(z_reference, mean_training, std_training, variational_ae
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `z_reference.shape[1]` is not equal
         to `variational_ae.nb_z`.
     
     """
     (nb_reference_points, width) = z_reference.shape
-    assert width == variational_ae.nb_z, \
-        '`z_reference.shape[1]` is not equal to `variational_ae.nb_z`.'
+    if width != variational_ae.nb_z:
+        raise ValueError('`z_reference.shape[1]` is not equal to `variational_ae.nb_z`.')
     
     # Between two reference points in the latent
     # space, `nb_interpolations` points are

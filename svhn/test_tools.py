@@ -1108,10 +1108,10 @@ class TesterTools(object):
     def test_subdivide_set(self):
         """Tests the function `subdivide_set`.
         
-        The test is successful if an assertion
-        error is raised when the number of
-        examples cannot be divided into a
-        whole number of mini-batches.
+        The test is successful if an exception
+        is raised when the number of examples
+        cannot be divided into a whole number
+        of mini-batches.
         
         """
         nb_examples = 400

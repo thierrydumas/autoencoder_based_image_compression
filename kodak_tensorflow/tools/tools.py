@@ -1,4 +1,4 @@
-"""A library that contains common tools. These tools are re-used many times in the project."""
+"""A library that contains common functions."""
 
 # This library contains low level functions. The
 # functions include many assertions to avoid

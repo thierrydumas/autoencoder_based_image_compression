@@ -45,7 +45,7 @@ def convert_svhn(path_to_store_mats, nb_training, nb_validation, nb_test):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `nb_training + nb_validation + nb_test`
         is too small.
     
@@ -54,8 +54,8 @@ def convert_svhn(path_to_store_mats, nb_training, nb_validation, nb_test):
     pack_train = scipy.io.loadmat(os.path.join(path_to_store_mats, 'train_32x32.mat'))['X']
     pack_test = scipy.io.loadmat(os.path.join(path_to_store_mats, 'test_32x32.mat'))['X']
     nb_already_loaded = pack_train.shape[3] + pack_test.shape[3]
-    assert nb_already_loaded <= nb_total, \
-        '`nb_training + nb_validation + nb_test` is not larger than {}.'.format(nb_already_loaded)
+    if nb_already_loaded > nb_total:
+        raise ValueError('`nb_training + nb_validation + nb_test` is not larger than {}.'.format(nb_already_loaded))
     nb_extra = nb_total - nb_already_loaded
     pack_extra = scipy.io.loadmat(os.path.join(path_to_store_mats, 'extra_32x32.mat'))['X'][:, :, :, 0:nb_extra]
     clutter = numpy.random.permutation(nb_total)
@@ -106,12 +106,12 @@ def create_svhn(source_url, path_to_store_mats, nb_training, nb_validation, nb_t
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `len(paths_to_outputs)` is not equal to 5.
     
     """
-    assert len(paths_to_outputs) == 5, \
-        '`len(paths_to_outputs)` is not equal to 5.'
+    if len(paths_to_outputs) != 5:
+        raise ValueError('`len(paths_to_outputs)` is not equal to 5.')
     if all([os.path.isfile(path_to_output) for path_to_output in paths_to_outputs]):
         print('The SVHN training set, the SVHN validation set, the SVHN test set and the two preprocessing tools already exist.')
         print('Delete them manually to recreate them.')
@@ -191,16 +191,16 @@ def preprocess_svhn(images_uint8, mean_training, std_training):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `images_uint8.dtype` is not equal to `numpy.uint8`.
-    AssertionError
+    ValueError
         If `images_uint8.ndim` is not equal to 2.
     
     """
-    assert images_uint8.dtype == numpy.uint8, \
-        '`images_uint8.dtype` is not equal to `numpy.uint8`.'
-    assert images_uint8.ndim == 2, \
-        '`images_uint8.ndim` is not equal to 2.'
+    if images_uint8.dtype != numpy.uint8:
+        raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
+    if images_uint8.ndim != 2:
+        raise ValueError('`images_uint8.ndim` is not equal to 2.')
     
     # In the subtraction below, the data-type of the
     # left term is `numpy.uint8` and that of the right
@@ -237,21 +237,21 @@ def std_mean_chunks(images_uint8, nb_chunks):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `images_uint8.dtype` is not equal to `numpy.uint8`.
-    AssertionError
+    ValueError
         If `images_uint8.ndim` is not equal to 2.
-    AssertionError
+    ValueError
         If `images_uint8.shape[0]` is not divisible by `nb_chunks`.
     
     """
-    assert images_uint8.dtype == numpy.uint8, \
-        '`images_uint8.dtype` is not equal to `numpy.uint8`.'
-    assert images_uint8.ndim == 2, \
-        '`images_uint8.ndim` is not equal to 2.'
+    if images_uint8.dtype != numpy.uint8:
+        raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
+    if images_uint8.ndim != 2:
+        raise ValueError('`images_uint8.ndim` is not equal to 2.')
     (nb_images, nb_visible) = images_uint8.shape
-    assert nb_images % nb_chunks == 0, \
-        '`images_uint8.shape[0]` is not divisible by `nb_chunks`.'
+    if nb_images % nb_chunks != 0:
+        raise ValueError('`images_uint8.shape[0]` is not divisible by `nb_chunks`.')
     chunk_size = nb_images//nb_chunks
     accumulation_0 = numpy.zeros(nb_visible)
     for i in range(nb_chunks):

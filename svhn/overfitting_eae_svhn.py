@@ -67,8 +67,8 @@ if __name__ == '__main__':
                                       suffix)
     if not os.path.exists(path_to_checking_c):
         os.makedirs(path_to_checking_c)
-    assert args.nb_epochs_training % 100 == 0, \
-        'The number of training epochs is not divisible by 100.'
+    if args.nb_epochs_training % 100 != 0:
+        raise ValueError('The number of training epochs is not divisible by 100.')
     nb_measures = 1 + args.nb_epochs_training//100
     
     # `training_uint8.dtype` is equal to `numpy.uint8`.

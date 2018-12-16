@@ -824,7 +824,7 @@ class EntropyAutoencoder(object):
         
         Raises
         ------
-        AssertionError
+        RuntimeError
             If the gradient checking of the quantization
             bin width fails.
         
@@ -853,8 +853,8 @@ class EntropyAutoencoder(object):
                                                      neg,
                                                      self.gamma)
         diff = gradient_bw - 0.5*((approx_pos - approx_neg).item())/offset
-        assert abs(diff) < 1.e-8, \
-            'The gradient checking of the quantization bin width fails.'
+        if abs(diff) >= 1.e-8:
+            raise RuntimeError('The gradient checking of the quantization bin width fails.')
     
     def __checking_grid(self, max_abs_y):
         """Expands the grid and the parameters of the piecewise linear function if the condition of expansion is met.
