@@ -1,4 +1,4 @@
-"""A script to test the library that contains common tools."""
+"""A script to test the library that contains common functions."""
 
 import argparse
 import matplotlib

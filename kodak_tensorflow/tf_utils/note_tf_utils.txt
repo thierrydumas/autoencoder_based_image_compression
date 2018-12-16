@@ -4,7 +4,7 @@ The quantization bin widths are used in the functions:
     (i) `add_noise`
     (ii) `approximate_entropy`
 To ensure that the quantization bin widths are strictly
-positive every time they are used, one assertion is required
+positive every time they are used, one check is required
 in each of the two functions.
 
 The method `__init__` of class `EntropyAutoencoder` calls

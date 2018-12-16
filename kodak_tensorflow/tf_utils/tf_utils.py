@@ -332,13 +332,14 @@ def expand_parameters(parameters, low_projection, nb_points_per_interval, nb_add
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `low_projection` is not strictly larger than 1.e-7.
     AssertionError
         If `nb_added_per_side` is not strictly positive.
     
     """
-    assert low_projection > 1.e-7, '`low_projection` is not strictly larger than 1.e-7.'
+    if low_projection <= 1.e-7:
+        raise ValueError('`low_projection` is not strictly larger than 1.e-7.')
     
     # The shape of `parameters` may change
     # while running the graph. Therefore, the
@@ -464,11 +465,12 @@ def initialize_weights_gdn(nb_maps, min_gamma):
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `min_gamma` does not belong to ]0., 0.01].
     
     """
-    assert min_gamma <= 0.01 and min_gamma > 0., '`min_gamma` does not belong to ]0., 0.01].'
+    if min_gamma > 0.01 or min_gamma <= 0.:
+        raise ValueError('`min_gamma` does not belong to ]0., 0.01].')
     gamma_non_symmetric = tf.random_uniform([nb_maps, nb_maps],
                                             minval=min_gamma,
                                             maxval=0.01,

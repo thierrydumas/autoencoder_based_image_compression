@@ -13,7 +13,7 @@ The function `count_symbols` is directly called by the function
 The function `discrete_entropy` is directly called by the
 functions `average_entropies` and `rate_3d`.
 To ensure that the quantization bin widths are strictly
-positive every time they are used, one assertion is required
+positive every time they are used, one check is required
 in the function `quantize_per_map` and another one
 is required in the function `count_symbols`.
 
