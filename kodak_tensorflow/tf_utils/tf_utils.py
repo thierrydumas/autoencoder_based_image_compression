@@ -28,7 +28,7 @@ def add_noise(data, bin_widths):
     
     Raises
     ------
-    AssertionError
+    InvalidArgumentError
         If a quantization bin width is not
         strictly positive.
     
@@ -75,10 +75,10 @@ def approximate_entropy(approximate_prob, bin_widths):
     
     Raises
     ------
-    AssertionError
+    InvalidArgumentError
         If a quantization bin width is not
         strictly positive.
-    AssertionError
+    InvalidArgumentError
         If the approximate entropy of a set of quantized
         latent variables is not positive.
     
@@ -334,7 +334,7 @@ def expand_parameters(parameters, low_projection, nb_points_per_interval, nb_add
     ------
     ValueError
         If `low_projection` is not strictly larger than 1.e-7.
-    AssertionError
+    InvalidArgumentError
         If `nb_added_per_side` is not strictly positive.
     
     """
@@ -426,9 +426,9 @@ def index_linear_piece(samples, nb_points_per_interval, nb_intervals_per_side):
     
     Raises
     ------
-    AssertionError
+    InvalidArgumentError
         If a linear piece index is not positive.
-    AssertionError
+    InvalidArgumentError
         If a linear piece index exceeds the maximum
         possible linear piece index.
     

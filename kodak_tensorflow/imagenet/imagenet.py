@@ -45,7 +45,7 @@ def create_imagenet(path_to_root, width_crop, nb_training, nb_validation, path_t
     
     Raises
     ------
-    AssertionError
+    RuntimeError
         If there are not enough ImageNet
         RGB images to create the ImageNet
         training and validation sets.
@@ -97,8 +97,8 @@ def create_imagenet(path_to_root, width_crop, nb_training, nb_validation, path_t
         # ImageNet training and validation sets
         # should not contain any "zero" luminance
         # crop.
-        assert i == nb_total, \
-            'There are not enough ImageNet RGB images at "{}" to create the ImageNet training and validation sets.'.format(path_to_root)
+        if i != nb_total:
+            raise RuntimeError('There are not enough ImageNet RGB images at "{}" to create the ImageNet training and validation sets.'.format(path_to_root))
         training_data = luminances_uint8[0:nb_training, :, :, :]
         validation_data = luminances_uint8[nb_training:nb_total, :, :, :]
         numpy.save(path_to_training, training_data)

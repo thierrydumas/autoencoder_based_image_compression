@@ -297,13 +297,14 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `gammas_scaling.size` is not equal to
         `idxs_training.size`.
     
     """
     nb_points = gammas_scaling.size
-    assert idxs_training.size == nb_points, '`gammas_scaling.size` is not equal to `idxs_training.size`.'
+    if idxs_training.size != nb_points:
+        raise ValueError('`gammas_scaling.size` is not equal to `idxs_training.size`.')
     (nb_images, h_in, w_in) = reference_uint8.shape
     rate = numpy.zeros((nb_points, nb_images))
     psnr = numpy.zeros((nb_points, nb_images))

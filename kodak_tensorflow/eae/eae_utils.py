@@ -35,11 +35,12 @@ def decode_mini_batches(quantized_y_float32, sess, isolated_decoder, batch_size)
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `quantized_y_float32.ndim` is not equal to 4.
     
     """
-    assert quantized_y_float32.ndim == 4, '`quantized_y_float32.ndim` is not equal to 4.'
+    if quantized_y_float32.ndim != 4:
+        raise ValueError('`quantized_y_float32.ndim` is not equal to 4.')
     (nb_images, h_in, w_in, _) = quantized_y_float32.shape
     nb_batches = tls.subdivide_set(nb_images, batch_size)
     
@@ -83,14 +84,16 @@ def encode_mini_batches(luminances_uint8, sess, entropy_ae, batch_size):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `luminances_uint8.dtype` is not equal to `numpy.uint8`.
-    AssertionError
+    ValueError
         If `luminances_uint8.ndim` is not equal to 4.
     
     """
-    assert luminances_uint8.dtype == numpy.uint8, '`luminances_uint8.dtype` is not equal to `numpy.uint8`.'
-    assert luminances_uint8.ndim == 4, '`luminances_uint8.ndim` is not equal to 4.'
+    if luminances_uint8.dtype != numpy.uint8:
+        raise TypeError('`luminances_uint8.dtype` is not equal to `numpy.uint8`.')
+    if luminances_uint8.ndim != 4:
+        raise ValueError('`luminances_uint8.ndim` is not equal to 4.')
     (nb_images, h_in, w_in, _) = luminances_uint8.shape
     nb_batches = tls.subdivide_set(nb_images, batch_size)
     y_float32 = numpy.zeros((nb_images, h_in//csts.STRIDE_PROD, w_in//csts.STRIDE_PROD, csts.NB_MAPS_3), dtype=numpy.float32)

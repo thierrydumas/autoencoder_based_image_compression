@@ -100,13 +100,13 @@ def count_binary_decisions(abs_centered_quantized_data, bin_width_test, truncate
     
     Raises
     ------
-    AssertionError
+    ValueError
         If an element of `abs_centered_quantized_data`
         is not positive.
     
     """
-    assert numpy.all(abs_centered_quantized_data >= 0.), \
-        'An element of `abs_centered_quantized_data` is not positive.'
+    if numpy.any(abs_centered_quantized_data < 0.):
+        raise ValueError('An element of `abs_centered_quantized_data` is not positive.')
     
     # In the function `tls.count_symbols`, `abs_centered_quantized_data`
     # is flattened beforehand.
@@ -151,7 +151,7 @@ def create_extra(path_to_root, width_crop, nb_extra, path_to_extra):
     
     Raises
     ------
-    AssertionError
+    RuntimeError
         If there are not enough RGB images
         to create the extra set.
     
@@ -187,8 +187,8 @@ def create_extra(path_to_root, width_crop, nb_extra, path_to_extra):
         # this case, the program crashes as the
         # extra set should not contain any "zero"
         # luminance crop.
-        assert i == nb_extra, \
-            'There are not enough RGB images at "{}" to create the extra set.'.format(path_to_root)
+        if i != nb_extra:
+            raise RuntimeError('There are not enough RGB images at "{}" to create the extra set.'.format(path_to_root))
         numpy.save(path_to_extra, luminances_uint8)
 
 def find_index_map_exception(y_float32):
@@ -296,14 +296,14 @@ def save_statistics(extra_uint8, sess, entropy_ae, batch_size, multipliers, trun
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `len(paths_to_binary_probabilities)` is not equal
         to `multipliers.size`.
     
     """
     nb_multipliers = multipliers.size
-    assert len(paths_to_binary_probabilities) == nb_multipliers, \
-        '`len(paths_to_binary_probabilities)` is not equal to `multipliers.size`.'
+    if len(paths_to_binary_probabilities) != nb_multipliers:
+        raise ValueError('`len(paths_to_binary_probabilities)` is not equal to `multipliers.size`.')
     booleans = [os.path.isfile(path_to_binary_probability) for path_to_binary_probability in paths_to_binary_probabilities]
     if os.path.isfile(path_to_map_mean) and os.path.isfile(path_to_idx_map_exception) and all(booleans):
         print('The statistics on the latent variable feature maps already exist.')

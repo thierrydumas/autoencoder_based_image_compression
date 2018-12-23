@@ -66,14 +66,18 @@ class EntropyAutoencoder(object):
         
         Raises
         ------
-        AssertionError
-            If either the height or the width of
-            the input images is not divisible by the
-            product of the three strides.
+        ValueError
+            If the height of the input images is not divisible
+            by the product of the three strides.
+        ValueError
+            If the width of the input images is not divisible
+            by the product of the three strides.
         
         """
-        assert h_in % csts.STRIDE_PROD == 0 and w_in % csts.STRIDE_PROD == 0, \
-            'Either the height or the width of the input images is not divisible by the product of the three strides.'
+        if h_in % csts.STRIDE_PROD != 0:
+            raise ValueError('The height of the input images is not divisible by the product of the three strides.')
+        if w_in % csts.STRIDE_PROD != 0:
+            raise ValueError('The width of the input images is not divisible by the product of the three strides.')
         if path_to_nb_itvs_per_side_load:
             
             # If it is not the 1st training, to build the graph,

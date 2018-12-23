@@ -55,12 +55,13 @@ def masking_eae_kodak(y_float32, isolated_decoder, bin_widths, idx_map, path_to_
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `len(paths)` is not equal to `y_float32.shape[0]`.
     
     """
     nb_images = y_float32.shape[0]
-    assert len(paths) == nb_images, '`len(paths)` is not equal to `y_float32.shape[0]`.'
+    if len(paths) != nb_images:
+        raise ValueError('`len(paths)` is not equal to `y_float32.shape[0]`.')
     map_mean = numpy.load(path_to_map_mean)
     with tf.Session() as sess:
         isolated_decoder.initialization(sess, path_to_restore)

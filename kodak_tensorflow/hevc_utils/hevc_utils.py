@@ -68,13 +68,13 @@ def compress_hevc(luminance_before_hevc_uint8, path_to_before_hevc, path_to_afte
     
     Raises
     ------
-    AssertionError
-        If `luminance_before_hevc_uint8.dtype`
-        is not equal to `numpy.uint8`.
+    TypeError
+        If `luminance_before_hevc_uint8.dtype` is not
+        equal to `numpy.uint8`.
     
     """
-    assert luminance_before_hevc_uint8.dtype == numpy.uint8, \
-        '`luminance_before_hevc_uint8.dtype` is not equal to `numpy.uint8`.'
+    if luminance_before_hevc_uint8.dtype != numpy.uint8:
+        raise TypeError('`luminance_before_hevc_uint8.dtype` is not equal to `numpy.uint8`.')
     
     # The function `write_400` ensures that
     # `luminance_before_hevc_uint8.ndim` is
@@ -185,11 +185,12 @@ def compute_rate_psnr(luminances_uint8, path_to_before_hevc, path_to_after_hevc,
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `luminances_uint8.ndim` is not equal to 3.
     
     """
-    assert luminances_uint8.ndim == 3, '`luminances_uint8.ndim` is not equal to 3.'
+    if luminances_uint8.ndim != 3:
+        raise ValueError('`luminances_uint8.ndim` is not equal to 3.')
     (nb_images, height, width) = luminances_uint8.shape
     rate = numpy.zeros(nb_images)
     psnr = numpy.zeros(nb_images)
@@ -340,15 +341,15 @@ def read_400(path, height, width, nb_frames, data_type):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If the data type is equal to neither
         `numpy.uint8` nor `numpy.uint16`.
-    AssertionError
+    RuntimeError
         If pixels are missing to read a frame.
     
     """
-    assert data_type == numpy.uint8 or data_type == numpy.uint16, \
-        'The data type is equal to neither `numpy.uint8` nor `numpy.uint16`.'
+    if data_type not in (numpy.uint8, numpy.uint16):
+        raise TypeError('The data type is equal to neither `numpy.uint8` nor `numpy.uint16`.')
     nb_pixels_per_frame = height*width
     luminance_uint8or16 = numpy.zeros((height, width, nb_frames), dtype=data_type)
     with open(path, 'rb') as file:
@@ -361,8 +362,8 @@ def read_400(path, height, width, nb_frames, data_type):
             vector_frame = numpy.fromfile(file,
                                           dtype=data_type,
                                           count=nb_pixels_per_frame)
-            assert vector_frame.size == nb_pixels_per_frame, \
-                'Pixels are missing to read the {}th frame.'.format(i + 1)
+            if vector_frame.size != nb_pixels_per_frame:
+                raise RuntimeError('Pixels are missing to read the {}th frame.'.format(i + 1))
             luminance_uint8or16[:, :, i] = numpy.reshape(vector_frame, (height, width))
     return luminance_uint8or16
 
@@ -381,23 +382,25 @@ def write_400(luminance_uint8or16, path):
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `luminance_uint8or16.dtype` is equal to
         neither `numpy.uint8` nor `numpy.uint16`.
-    AssertionError
+    ValueError
         If `luminance_uint8or16.ndim` is not equal to 3.
-    AssertionError
+    OSError
         If a file already exists at `path`.
     
     """
-    assert luminance_uint8or16.dtype == numpy.uint8 or luminance_uint8or16.dtype == numpy.uint16, \
-        '`luminance_uint8or16.dtype` is equal to neither `numpy.uint8` nor `numpy.uint16`.'
-    assert luminance_uint8or16.ndim == 3, '`luminance_uint8or16.ndim` is not equal to 3.'
+    if luminance_uint8or16.dtype not in (numpy.uint8, numpy.uint16):
+        raise TypeError('`luminance_uint8or16.dtype` is equal to neither `numpy.uint8` nor `numpy.uint16`.')
+    if luminance_uint8or16.ndim != 3:
+        raise ValueError('`luminance_uint8or16.ndim` is not equal to 3.')
     
     # Perhaps, another program running in
     # parallel has already created a file
     # at `path`.
-    assert not os.path.isfile(path), '"{}" already exists.'.format(path)
+    if os.path.isfile(path):
+        raise OSError('"{}" already exists.'.format(path))
     with open(path, 'wb') as file:
         for i in range(luminance_uint8or16.shape[2]):
             luminance_uint8or16[:, :, i].flatten().tofile(file)

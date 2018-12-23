@@ -40,7 +40,7 @@ def create_bsds(path_to_root, path_to_bsds, path_to_list_rotation, path_to_tar='
     
     Raises
     ------
-    AssertionError
+    RuntimeError
         If the number of BSDS RGB images to be
         read is not 100.
     ValueError
@@ -69,7 +69,8 @@ def create_bsds(path_to_root, path_to_bsds, path_to_list_rotation, path_to_tar='
         # sorted.
         list_names = clean_sort_list_strings(os.listdir(os.path.join(path_to_root, 'BSDS300/images/test/')),
                                              'jpg')
-        assert len(list_names) == 100, 'The number of BSDS RGB images to be read is not 100.'
+        if len(list_names) != 100:
+            raise RuntimeError('The number of BSDS RGB images to be read is not 100.')
         for i in range(100):
             path_to_file = os.path.join(path_to_root, 'BSDS300/images/test/', list_names[i])
             

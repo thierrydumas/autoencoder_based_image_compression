@@ -42,24 +42,27 @@ def compress_lossless_maps(ref_int16, path_to_binary_probabilities, idx_map_exce
     
     Raises
     ------
-    AssertionError
+    TypeError
         If `ref_int16.dtype` is not equal to `numpy.int16`.
-    AssertionError
+    ValueError
         If `ref_int16.ndim` is not equal to 3.
-    AssertionError
+    ValueError
         If `binary_probabilities.ndim` is not equal to 2.
-    AssertionError
+    ValueError
         If `binary_probabilities.shape[0]` is not
         equal to `ref_int16.shape[2]`.
     
     """
-    assert ref_int16.dtype == numpy.int16, '`ref_int16.dtype` is not equal to `numpy.int16`.'
-    assert ref_int16.ndim == 3, '`ref_int16.ndim` is not equal to 3.'
+    if ref_int16.dtype != numpy.int16:
+        raise TypeError('`ref_int16.dtype` is not equal to `numpy.int16`.')
+    if ref_int16.ndim != 3:
+        raise ValueError('`ref_int16.ndim` is not equal to 3.')
     (height_map, width_map, nb_maps) = ref_int16.shape
     binary_probabilities = numpy.load(path_to_binary_probabilities)
-    assert binary_probabilities.ndim == 2, '`binary_probabilities.ndim` is not equal to 2.'
-    assert binary_probabilities.shape[0] == nb_maps, \
-        '`binary_probabilities.shape[0]` is not equal to `ref_int16.shape[2]`.'
+    if binary_probabilities.ndim != 2:
+        raise ValueError('`binary_probabilities.ndim` is not equal to 2.')
+    if binary_probabilities.shape[0] != nb_maps:
+        raise ValueError('`binary_probabilities.shape[0]` is not equal to `ref_int16.shape[2]`.')
     rec_int16 = numpy.zeros((height_map, width_map, nb_maps), dtype=numpy.int16)
     nb_bits_each_map = numpy.zeros(nb_maps, dtype=numpy.uint32)
     for i in range(nb_maps):
@@ -111,11 +114,11 @@ def rescale_compress_lossless_maps(centered_quantized_data, bin_widths_test, pat
     
     Raises
     ------
-    AssertionError
+    ValueError
         If `centered_quantized_data.ndim` is not equal to 3.
-    AssertionError
+    ValueError
         If `bin_widths_test.ndim` is not equal to 1.
-    AssertionError
+    ValueError
         If `bin_widths_test.size` is not equal to
         `centered_quantized_data.shape[2]`.
     AssertionError
@@ -123,11 +126,13 @@ def rescale_compress_lossless_maps(centered_quantized_data, bin_widths_test, pat
         the centered quantized data.
     
     """
-    assert centered_quantized_data.ndim == 3, '`centered_quantized_data.ndim` is not equal to 3.'
-    assert bin_widths_test.ndim == 1, '`bin_widths_test.ndim` is not equal to 1.'
+    if centered_quantized_data.ndim != 3:
+        raise ValueError('`centered_quantized_data.ndim` is not equal to 3.')
+    if bin_widths_test.ndim != 1:
+        raise ValueError('`bin_widths_test.ndim` is not equal to 1.')
     (height_map, width_map, nb_maps) = centered_quantized_data.shape
-    assert bin_widths_test.size == nb_maps, \
-        '`bin_widths_test.size` is not equal to `centered_quantized_data.shape[2]`.'
+    if bin_widths_test.size != nb_maps:
+        raise ValueError('`bin_widths_test.size` is not equal to `centered_quantized_data.shape[2]`.')
     tiled_bin_widths = numpy.tile(numpy.reshape(bin_widths_test, (1, 1, nb_maps)),
                                   (height_map, width_map, 1))
     

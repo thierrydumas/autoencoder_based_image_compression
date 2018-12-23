@@ -37,15 +37,20 @@ class IsolatedDecoder(object):
         
         Raises
         ------
-        AssertionError
-            If either the height or the width of
-            the images returned by the isolated
-            decoder is not divisible by the product
-            of the three strides.
+        ValueError
+            If the height of the images returned by the isolated
+            decoder is not divisible by the product of the three
+            strides.
+        ValueError
+            If the width of the images returned by the isolated
+            decoder is not divisible by the product of the three
+            strides.
         
         """
-        assert h_in % csts.STRIDE_PROD == 0 and w_in % csts.STRIDE_PROD == 0, \
-            'Either the height or the width of the images returned by the isolated decoder is not divisible by the product of the three strides.'
+        if h_in % csts.STRIDE_PROD != 0:
+            raise ValueError('The height of the images returned by the isolated decoder is not divisible by the product of the three strides.')
+        if w_in % csts.STRIDE_PROD != 0:
+            raise ValueError('The width of the images returned by the isolated decoder is not divisible by the product of the three strides.')
         with tf.variable_scope('decoder'):
             if not are_bin_widths_learned:
                 gamma_4 = tf.get_variable('gamma_4',

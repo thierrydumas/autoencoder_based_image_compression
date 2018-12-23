@@ -106,8 +106,8 @@ if __name__ == '__main__':
     # `validation_float32.dtype` and `training_portion_float32.dtype`
     # are equal to `numpy.float32`.
     validation_float32 = numpy.load(path_to_validation_data).astype(numpy.float32)
-    assert validation_float32.shape[0] == batch_size, \
-        'The number of validation examples is not equal to {}.'.format(batch_size)
+    if validation_float32.shape[0] != batch_size:
+        raise ValueError('The number of validation examples is not equal to {}.'.format(batch_size))
     print('Number of validation examples: {}'.format(batch_size))
     training_portion_float32 = training_uint8[0:batch_size, :, :, :].astype(numpy.float32)
     entropy_ae = EntropyAutoencoder(batch_size,
