@@ -251,17 +251,15 @@ def crop_option_2d(luminance_uint8, width_crop, is_random):
     TypeError
         If `luminance_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
-        If `luminance_uint8.ndim` is not equal to 2.
-    ValueError
-        If either the height or the width of
-        the luminance image is not larger than
-        the width of the crop.
+        If either the height or the width of the luminance
+        image is not larger than the width of the crop.
     
     """
     if luminance_uint8.dtype != numpy.uint8:
         raise TypeError('`luminance_uint8.dtype` is not equal to `numpy.uint8`.')
-    if luminance_uint8.ndim != 2:
-        raise ValueError('`luminance_uint8.ndim` is not equal to 2.')
+    
+    # If `luminance_uint8.ndim` is not equal to 2,
+    # the unpacking below raises a `ValueError` exception.
     (height_image, width_image) = luminance_uint8.shape
     if height_image < width_crop or width_image < width_crop:
         raise ValueError('Either the height or the width of the luminance image is not larger than the width of the crop.')
@@ -304,8 +302,6 @@ def crop_repeat_2d(image_uint8, row_top_left, column_top_left):
     TypeError
         If `image_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
-        If `image_uint8.ndim` is not equal to 2.
-    ValueError
         If `image_uint8.shape[0]` is not strictly
         larger than `row_top_left + 80`.
     ValueError
@@ -315,11 +311,10 @@ def crop_repeat_2d(image_uint8, row_top_left, column_top_left):
     """
     if image_uint8.dtype != numpy.uint8:
         raise TypeError('`image_uint8.dtype` is not equal to `numpy.uint8`.')
-    if image_uint8.ndim != 2:
-        raise ValueError('`image_uint8.ndim` is not equal to 2.')
-    if row_top_left + 80 >= image_uint8.shape[0]:
+    (height_image, width_image) = image_uint8.shape
+    if row_top_left + 80 >= height_image:
         raise ValueError('`image_uint8.shape[0]` is not strictly larger than `row_top_left + 80`.')
-    if column_top_left + 80 >= image_uint8.shape[1]:
+    if column_top_left + 80 >= width_image:
         raise ValueError('`image_uint8.shape[1]` is not strictly larger than `column_top_left + 80`.')
     crop_uint8 = image_uint8[row_top_left:row_top_left + 80, column_top_left:column_top_left + 80]
     return numpy.repeat(numpy.repeat(crop_uint8, 2, axis=0), 2, axis=1)
@@ -594,8 +589,6 @@ def plot_graphs(x_values, y_values, x_label, y_label, legend, colors, title, pat
     ValueError
         If `x_values.ndim` is not equal to 1.
     ValueError
-        If `y_values.ndim` is not equal to 2.
-    ValueError
         If `x_values.size` is not equal to
         `y_values.shape[1]`.
     ValueError
@@ -606,8 +599,9 @@ def plot_graphs(x_values, y_values, x_label, y_label, legend, colors, title, pat
     """
     if x_values.ndim != 1:
         raise ValueError('`x_values.ndim` is not equal to 1.')
-    if y_values.ndim != 2:
-        raise ValueError('`y_values.ndim` is not equal to 2.')
+    
+    # If `y_values.ndim` is not equal to 2, the
+    # unpacking below raises a `ValueError` exception.
     (nb_graphs, nb_y) = y_values.shape
     if x_values.size != nb_y:
         raise ValueError('`x_values.size` is not equal to `y_values.shape[1]`.')
@@ -715,8 +709,6 @@ def quantize_per_map(data, bin_widths):
     Raises
     ------
     ValueError
-        If `data.ndim` is not equal to 4.
-    ValueError
         If `bin_widths.ndim` is not equal to 1.
     ValueError
         If `bin_widths.size` is not equal
@@ -726,10 +718,12 @@ def quantize_per_map(data, bin_widths):
         strictly positive.
     
     """
-    if data.ndim != 4:
-        raise ValueError('`data.ndim` is not equal to 4.')
     if bin_widths.ndim != 1:
         raise ValueError('`bin_widths.ndim` is not equal to 1.')
+    
+    # If `data.ndim` is not equal to 4, the
+    # unpacking below raises a `ValueError`
+    # exception.
     (nb_examples, height_map, width_map, nb_maps) = data.shape
     if bin_widths.size != nb_maps:
         raise ValueError('`bin_widths.size` is not equal to `data.shape[3]`.')
@@ -771,16 +765,12 @@ def rate_3d(quantized_latent_float32, bin_widths, h_in, w_in):
     Raises
     ------
     ValueError
-        If `quantized_latent_float32.ndim` is not equal to 3.
-    ValueError
         If `bin_widths.ndim` is not equal to 1.
     ValueError
         If `bin_widths.size` is not equal to
         `quantized_latent_float32.shape[2]`.
     
     """
-    if quantized_latent_float32.ndim != 3:
-        raise ValueError('`quantized_latent_float32.ndim` is not equal to 3.')
     if bin_widths.ndim != 1:
         raise ValueError('`bin_widths.ndim` is not equal to 1.')
     (height_map, width_map, nb_maps) = quantized_latent_float32.shape
@@ -1053,8 +1043,6 @@ def visualize_luminances(luminances_uint8, nb_vertically, path):
     TypeError
         If `luminances_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
-        If `luminances_uint8.ndim` is not equal to 4.
-    ValueError
         If `luminances_uint8.shape[3]` is not equal to 1.
     ValueError
         If `luminances_uint8.shape[0]` is
@@ -1063,8 +1051,9 @@ def visualize_luminances(luminances_uint8, nb_vertically, path):
     """
     if luminances_uint8.dtype != numpy.uint8:
         raise TypeError('`luminances_uint8.dtype` is not equal to `numpy.uint8`.')
-    if luminances_uint8.ndim != 4:
-        raise ValueError('`luminances_uint8.ndim` is not equal to 4.')
+    
+    # If `luminances_uint8.ndim` is not equal to 4,
+    # the unpacking below raises a `ValueError` exception.
     (nb_images, height_image, width_image, nb_channels) = luminances_uint8.shape
     if nb_channels != 1:
         raise ValueError('`luminances_uint8.shape[3]` is not equal to 1.')

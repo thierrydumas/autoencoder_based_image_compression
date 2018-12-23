@@ -45,8 +45,6 @@ def compress_lossless_maps(ref_int16, path_to_binary_probabilities, idx_map_exce
     TypeError
         If `ref_int16.dtype` is not equal to `numpy.int16`.
     ValueError
-        If `ref_int16.ndim` is not equal to 3.
-    ValueError
         If `binary_probabilities.ndim` is not equal to 2.
     ValueError
         If `binary_probabilities.shape[0]` is not
@@ -55,8 +53,6 @@ def compress_lossless_maps(ref_int16, path_to_binary_probabilities, idx_map_exce
     """
     if ref_int16.dtype != numpy.int16:
         raise TypeError('`ref_int16.dtype` is not equal to `numpy.int16`.')
-    if ref_int16.ndim != 3:
-        raise ValueError('`ref_int16.ndim` is not equal to 3.')
     (height_map, width_map, nb_maps) = ref_int16.shape
     binary_probabilities = numpy.load(path_to_binary_probabilities)
     if binary_probabilities.ndim != 2:
@@ -115,8 +111,6 @@ def rescale_compress_lossless_maps(centered_quantized_data, bin_widths_test, pat
     Raises
     ------
     ValueError
-        If `centered_quantized_data.ndim` is not equal to 3.
-    ValueError
         If `bin_widths_test.ndim` is not equal to 1.
     ValueError
         If `bin_widths_test.size` is not equal to
@@ -126,10 +120,11 @@ def rescale_compress_lossless_maps(centered_quantized_data, bin_widths_test, pat
         the centered quantized data.
     
     """
-    if centered_quantized_data.ndim != 3:
-        raise ValueError('`centered_quantized_data.ndim` is not equal to 3.')
     if bin_widths_test.ndim != 1:
         raise ValueError('`bin_widths_test.ndim` is not equal to 1.')
+    
+    # If `centered_quantized_data.ndim` is not equal to 3,
+    # the unpacking below raises a `ValueError` exception.
     (height_map, width_map, nb_maps) = centered_quantized_data.shape
     if bin_widths_test.size != nb_maps:
         raise ValueError('`bin_widths_test.size` is not equal to `centered_quantized_data.shape[2]`.')

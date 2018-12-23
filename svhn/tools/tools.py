@@ -520,11 +520,6 @@ def gradient_entropy(samples, parameters, nb_points_per_interval, nb_intervals_p
         entropy of the samples with respect to
         `samples[i, j]`.
     
-    Raises
-    ------
-    ValueError
-        If `samples.ndim` is not equal to 2.
-    
     """
     # In the functions `approximate_entropy`,
     # `approximate_probability`, `differential_entropy`,
@@ -532,8 +527,6 @@ def gradient_entropy(samples, parameters, nb_points_per_interval, nb_intervals_p
     # and `loss_density_approximation`, the 1st argument
     # is a 1D array. In the function `gradient_entropy`,
     # the 1st argument is a 2D array.
-    if samples.ndim != 2:
-        raise ValueError('`samples.ndim` is not equal to 2.')
     (height_samples, width_samples) = samples.shape
     flattened_samples = samples.flatten()
     idx_linear_piece = index_linear_piece(flattened_samples,
@@ -591,15 +584,15 @@ def images_to_rows(images_uint8):
         If `images_uint8.dtype` is not equal to
         `numpy.uint8`.
     ValueError
-        If `images_uint8.ndim` is not equal to 4.
-    ValueError
         If `images_uint8.shape[2]` is not equal to 3.
     
     """
     if images_uint8.dtype != numpy.uint8:
         raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
-    if images_uint8.ndim != 4:
-        raise ValueError('`images_uint8.ndim` is not equal to 4.')
+    
+    # If `images_uint8.ndim` is not equal to 4,
+    # the unpacking below raises a `ValueError`
+    # exception.
     (height_image, width_image, nb_channels, nb_images) = images_uint8.shape
     if nb_channels != 3:
         raise ValueError('`images_uint8.shape[2]` is not equal to 3.')
@@ -1021,8 +1014,6 @@ def plot_graphs(x_values, y_values, x_label, y_label, legend, colors, title, pat
     ValueError
         If `x_values.ndim` is not equal to 1.
     ValueError
-        If `y_values.ndim` is not equal to 2.
-    ValueError
         If `x_values.size` is not equal to
         `y_values.shape[1]`.
     ValueError
@@ -1033,8 +1024,10 @@ def plot_graphs(x_values, y_values, x_label, y_label, legend, colors, title, pat
     """
     if x_values.ndim != 1:
         raise ValueError('`x_values.ndim` is not equal to 1.')
-    if y_values.ndim != 2:
-        raise ValueError('`y_values.ndim` is not equal to 2.')
+    
+    # If `y_values.ndim` is not equal to 2,
+    # the unpacking below raises a `ValueError`
+    # exception.
     (nb_graphs, nb_y) = y_values.shape
     if x_values.size != nb_y:
         raise ValueError('`x_values.size` is not equal to `y_values.shape[1]`.')
@@ -1242,16 +1235,16 @@ def rows_to_images(rows_uint8, height_image, width_image):
     TypeError
         If `rows_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
-        If `rows_uint8.ndim` is not equal to 2.
-    ValueError
         If `rows_uint8.shape[1]` is not equal
         to `3*height_image*width_image`.
     
     """
     if rows_uint8.dtype != numpy.uint8:
         raise TypeError('`rows_uint8.dtype` is not equal to `numpy.uint8`.')
-    if rows_uint8.ndim != 2:
-        raise ValueError('`rows_uint8.ndim` is not equal to 2.')
+    
+    # If `rows_uint8.ndim` is not equal to 2,
+    # the unpacking below raises a `ValueError`
+    # exception.
     (nb_images, nb_pixels_per_row) = rows_uint8.shape
     if nb_pixels_per_row != 3*height_image*width_image:
         raise ValueError('`rows_uint8.shape[1]` is not equal to `3*height_image*width_image`.')
@@ -1399,8 +1392,6 @@ def visualize_images(images_uint8, nb_vertically, path):
     TypeError
         If `images_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
-        If `images_uint8.ndim` is not equal to 4.
-    ValueError
         If `images_uint8.shape[2]` is not equal to 3.
     ValueError
         If `images_uint8.shape[3]` is not
@@ -1409,8 +1400,6 @@ def visualize_images(images_uint8, nb_vertically, path):
     """
     if images_uint8.dtype != numpy.uint8:
         raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
-    if images_uint8.ndim != 4:
-        raise ValueError('`images_uint8.ndim` is not equal to 4.')
     (height_image, width_image, nb_channels, nb_images) = images_uint8.shape
     if nb_channels != 3:
         raise ValueError('`images_uint8.shape[2]` is not equal to 3.')

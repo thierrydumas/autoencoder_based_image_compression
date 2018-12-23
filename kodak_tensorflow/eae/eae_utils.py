@@ -33,14 +33,9 @@ def decode_mini_batches(quantized_y_float32, sess, isolated_decoder, batch_size)
         Reconstruction of the luminance images. The
         4th array dimension is equal to 1.
     
-    Raises
-    ------
-    ValueError
-        If `quantized_y_float32.ndim` is not equal to 4.
-    
     """
-    if quantized_y_float32.ndim != 4:
-        raise ValueError('`quantized_y_float32.ndim` is not equal to 4.')
+    # If `quantized_y_float32.ndim` is not equal to 4,
+    # the unpacking below raises a `ValueError` exception.
     (nb_images, h_in, w_in, _) = quantized_y_float32.shape
     nb_batches = tls.subdivide_set(nb_images, batch_size)
     
@@ -86,14 +81,13 @@ def encode_mini_batches(luminances_uint8, sess, entropy_ae, batch_size):
     ------
     TypeError
         If `luminances_uint8.dtype` is not equal to `numpy.uint8`.
-    ValueError
-        If `luminances_uint8.ndim` is not equal to 4.
     
     """
     if luminances_uint8.dtype != numpy.uint8:
         raise TypeError('`luminances_uint8.dtype` is not equal to `numpy.uint8`.')
-    if luminances_uint8.ndim != 4:
-        raise ValueError('`luminances_uint8.ndim` is not equal to 4.')
+    
+    # If `luminances_uint8.ndim` is not equal to 4,
+    # the unpacking below raises a `ValueError` exception.
     (nb_images, h_in, w_in, _) = luminances_uint8.shape
     nb_batches = tls.subdivide_set(nb_images, batch_size)
     y_float32 = numpy.zeros((nb_images, h_in//csts.STRIDE_PROD, w_in//csts.STRIDE_PROD, csts.NB_MAPS_3), dtype=numpy.float32)

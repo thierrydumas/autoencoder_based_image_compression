@@ -240,15 +240,15 @@ def std_mean_chunks(images_uint8, nb_chunks):
     TypeError
         If `images_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
-        If `images_uint8.ndim` is not equal to 2.
-    ValueError
         If `images_uint8.shape[0]` is not divisible by `nb_chunks`.
     
     """
     if images_uint8.dtype != numpy.uint8:
         raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
-    if images_uint8.ndim != 2:
-        raise ValueError('`images_uint8.ndim` is not equal to 2.')
+    
+    # If `images_uint8.ndim` is not equal to 2,
+    # the unpacking below raises a `ValueError`
+    # exception.
     (nb_images, nb_visible) = images_uint8.shape
     if nb_images % nb_chunks != 0:
         raise ValueError('`images_uint8.shape[0]` is not divisible by `nb_chunks`.')

@@ -183,14 +183,9 @@ def compute_rate_psnr(luminances_uint8, path_to_before_hevc, path_to_after_hevc,
             the compression of the ith luminance image
             via HEVC.
     
-    Raises
-    ------
-    ValueError
-        If `luminances_uint8.ndim` is not equal to 3.
-    
     """
-    if luminances_uint8.ndim != 3:
-        raise ValueError('`luminances_uint8.ndim` is not equal to 3.')
+    # If `luminances_uint8.ndim` is not equal to 3,
+    # the unpacking below raises a `ValueError` exception.
     (nb_images, height, width) = luminances_uint8.shape
     rate = numpy.zeros(nb_images)
     psnr = numpy.zeros(nb_images)
