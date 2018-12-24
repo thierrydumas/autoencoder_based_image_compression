@@ -1354,15 +1354,11 @@ def visualize_dead(quantized_samples, path):
         Path to the saved map. The path
         must end with ".png".
     
-    Raises
-    ------
-    ValueError
-        If `quantized_samples.ndim` is not equal to 2.
-    
     """
-    if quantized_samples.ndim != 2:
-        raise ValueError('`quantized_samples.ndim` is not equal to 2.')
-    black_uint8 = numpy.zeros((quantized_samples.shape[0], quantized_samples.shape[1], 1), dtype=numpy.uint8)
+    # If `quantized_samples.ndim` is not equal to 2,
+    # the unpacking below raises a `ValueError` exception.
+    (height_quantized_samples, width_quantized_samples) = quantized_samples.shape
+    black_uint8 = numpy.zeros((height_quantized_samples, width_quantized_samples, 1), dtype=numpy.uint8)
     blue_uint8 = black_uint8.copy()
     blue_uint8[quantized_samples < 0.] = 255
     red_uint8 = black_uint8.copy()

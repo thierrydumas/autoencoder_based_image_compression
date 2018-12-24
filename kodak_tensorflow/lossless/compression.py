@@ -53,6 +53,9 @@ def compress_lossless_maps(ref_int16, path_to_binary_probabilities, idx_map_exce
     """
     if ref_int16.dtype != numpy.int16:
         raise TypeError('`ref_int16.dtype` is not equal to `numpy.int16`.')
+    
+    # If `ref_int16.ndim` is not equal to 3, the
+    # unpacking below raises a `ValueError` exception.
     (height_map, width_map, nb_maps) = ref_int16.shape
     binary_probabilities = numpy.load(path_to_binary_probabilities)
     if binary_probabilities.ndim != 2:

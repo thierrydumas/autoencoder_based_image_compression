@@ -311,6 +311,10 @@ def crop_repeat_2d(image_uint8, row_top_left, column_top_left):
     """
     if image_uint8.dtype != numpy.uint8:
         raise TypeError('`image_uint8.dtype` is not equal to `numpy.uint8`.')
+    
+    # If `image_uint8.ndim` is not equal to 2,
+    # the unpacking below raises a `ValuError`
+    # exception.
     (height_image, width_image) = image_uint8.shape
     if row_top_left + 80 >= height_image:
         raise ValueError('`image_uint8.shape[0]` is not strictly larger than `row_top_left + 80`.')
@@ -773,6 +777,9 @@ def rate_3d(quantized_latent_float32, bin_widths, h_in, w_in):
     """
     if bin_widths.ndim != 1:
         raise ValueError('`bin_widths.ndim` is not equal to 1.')
+    
+    # If `quantized_latent_float32.ndim` is not equal to 3,
+    # the unpacking below raises a `ValueError` exception.
     (height_map, width_map, nb_maps) = quantized_latent_float32.shape
     if bin_widths.size != nb_maps:
         raise ValueError('`bin_widths.size` is not equal to `quantized_latent_float32.shape[2]`.')
@@ -996,18 +1003,16 @@ def visualize_crops(image_uint8, positions_top_left, paths):
     Raises
     ------
     ValueError
-        If `positions_top_left.ndim` is not equal to 2.
-    ValueError
         If `positions_top_left.shape[0]` is not equal to 2.
     ValueError
         If `len(paths)` is not equal to `positions_top_left.shape[1]`.
     
     """
-    if positions_top_left.ndim != 2:
-        raise ValueError('`positions_top_left.ndim` is not equal to 2.')
-    if positions_top_left.shape[0] != 2:
+    # If `positions_top_left.ndim` is not equal to 2,
+    # the unpacking below raises a `ValueError` exception.
+    (nb_rows, nb_crops) = positions_top_left.shape
+    if nb_rows != 2:
         raise ValueError('`positions_top_left.shape[0]` is not equal to 2.')
-    nb_crops = positions_top_left.shape[1]
     if len(paths) != nb_crops:
         raise ValueError('`len(paths)` is not equal to `positions_top_left.shape[1]`.')
     for i in range(nb_crops):
