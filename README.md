@@ -51,7 +51,7 @@ python creating_kodak.py
 python reconstructing_eae_kodak.py
 ```
 
-After running 1. and 2., the reconstructions of the luminance images in the Kodak test set and the rates and the PSNRs associated to the compression of the luminance images via the different compression algorithms are stored in the folder "eae/visualization/test/checking_reconstructing/kodak/".
+After running 1. and 2., the reconstructions of the luminance images in the Kodak test set and the rates and the PSNRs associated to the compression of the luminance images via the trained autoencoders, JPEG2000, and H.265 are stored in the folder "eae/visualization/test/checking_reconstructing/kodak/".
 
 ## Quick start: training an autoencoder
 1. First of all, ImageNet images must be downloaded. In our case, it is sufficient to download the ILSVRC2012 validation images, "ILSVRC2012_img_val.tar" (6.3 GB), see [ImageNetDownloadWebPage](http://image-net.org/download). Let's say that, in your computer, the path to "ILSVRC2012_img_val.tar" is "path/to/folder_0/ILSVRC2012_img_val.tar" and you want the unpacked images to be put into the folder "path/to/folder_1/" before the script "creating_imagenet.py" preprocesses them. The creation of the ImageNet training and validaton sets of luminance images is then done via
