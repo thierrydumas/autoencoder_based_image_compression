@@ -49,8 +49,8 @@ if __name__ == '__main__':
     # restriction makes the online checks very fast.
     batch_size = 10
     nb_display = 5
-    path_to_training_data = 'imagenet/results/training_data.npy'
-    path_to_validation_data = 'imagenet/results/validation_data.npy'
+    path_to_training_data = 'datasets/imagenet/results/training_data.npy'
+    path_to_validation_data = 'datasets/imagenet/results/validation_data.npy'
     if args.learn_bin_widths:
         suffix = 'learning_bw_{0}_{1}'.format(tls.float_to_str(args.bin_width_init), tls.float_to_str(args.gamma_scaling))
     else:

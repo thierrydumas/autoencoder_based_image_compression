@@ -3,7 +3,7 @@
 import argparse
 import numpy
 
-import imagenet.imagenet
+import datasets.imagenet.imagenet
 import parsing.parsing
 import tools.tools as tls
 
@@ -32,19 +32,19 @@ if __name__ == '__main__':
                         metavar='')
     args = parser.parse_args()
     
-    path_to_training = 'imagenet/results/training_data.npy'
-    path_to_validation = 'imagenet/results/validation_data.npy'
+    path_to_training = 'datasets/imagenet/results/training_data.npy'
+    path_to_validation = 'datasets/imagenet/results/validation_data.npy'
     
-    imagenet.imagenet.create_imagenet(args.path_to_root,
-                                      args.width_crop,
-                                      args.nb_training,
-                                      args.nb_validation,
-                                      path_to_training,
-                                      path_to_validation,
-                                      path_to_tar=args.path_to_tar)
+    datasets.imagenet.imagenet.create_imagenet(args.path_to_root,
+                                               args.width_crop,
+                                               args.nb_training,
+                                               args.nb_validation,
+                                               path_to_training,
+                                               path_to_validation,
+                                               path_to_tar=args.path_to_tar)
     training_uint8 = numpy.load(path_to_training)
     tls.visualize_luminances(training_uint8[0:24, :, :, :],
                              4,
-                             'imagenet/visualization/sample_training.png')
+                             'datasets/imagenet/visualization/sample_training.png')
 
 

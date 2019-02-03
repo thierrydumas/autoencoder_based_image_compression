@@ -122,7 +122,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     batch_size = 4
-    path_to_kodak = 'kodak/results/kodak.npy'
     if args.learn_bin_widths:
         suffix = 'learning_bw_{0}_{1}'.format(tls.float_to_str(args.bin_width_init), tls.float_to_str(args.gamma_scaling))
     else:
@@ -138,7 +137,7 @@ if __name__ == '__main__':
     # does not exist.
     if not os.path.exists(path_to_checking_f):
         os.makedirs(path_to_checking_f)
-    reference_uint8 = numpy.load(path_to_kodak)
+    reference_uint8 = numpy.load('datasets/kodak/results/kodak.npy')
     (_, h_in, w_in) = reference_uint8.shape
     luminances_uint8 = numpy.expand_dims(reference_uint8, axis=3)
     

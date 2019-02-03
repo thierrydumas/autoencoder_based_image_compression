@@ -463,12 +463,19 @@ if __name__ == '__main__':
         str_set = 'kodak'
         positions_top_left = numpy.array([[300, 200], [200, 300]], dtype=numpy.int32)
         title = 'Mean rate-distortion curves over the 24 Kodak luminance images'
-    path_to_list_rotation = '{}/results/list_rotation.pkl'.format(str_set)
-    path_to_checking_r = 'eae/visualization/test/checking_reconstructing/{}/'.format(str_set)
+    path_to_list_rotation = os.path.join('datasets',
+                                         str_set,
+                                         'results/list_rotation.pkl')
+    path_to_checking_r = os.path.join('eae/visualization/test/checking_reconstructing/',
+                                      str_set)
     
     # The block below is dedicated to JPEG2000.
-    path_to_before_jpeg2000 = 'jpeg2000/visualization/{}/reference/'.format(str_set)
-    path_to_after_jpeg2000 = 'jpeg2000/visualization/{}/reconstruction/'.format(str_set)
+    path_to_before_jpeg2000 = os.path.join('jpeg2000/visualization/',
+                                           str_set,
+                                           'reference')
+    path_to_after_jpeg2000 = os.path.join('jpeg2000/visualization/',
+                                          str_set,
+                                          'reconstruction')
     qualities = [24, 26, 28, 30, 32, 34, 36, 38, 40]
     
     # The block below is dedicated to HEVC.
@@ -477,10 +484,11 @@ if __name__ == '__main__':
     path_to_cfg = 'hevc_utils/configuration/intra.cfg'
     path_to_bitstream = 'hevc_utils/temp/bitstream.bin'
     qps = numpy.array([22, 27, 32, 37, 42, 47], dtype=numpy.int32)
-    path_to_hevc_vis = 'hevc_utils/visualization/{}/'.format(str_set)
+    path_to_hevc_vis = os.path.join('hevc_utils/visualization/',
+                                    str_set)
     
     # `reference_uint8.dtype` is equal to `numpy.uint8`.
-    reference_uint8 = numpy.load('{0}/results/{0}.npy'.format(str_set))
+    reference_uint8 = numpy.load(os.path.join('datasets', str_set, 'results', '{}.npy'.format(str_set)))
     with open(path_to_list_rotation, 'rb') as file:
         list_rotation = pickle.load(file)
     if args.write_ref:

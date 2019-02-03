@@ -3,7 +3,7 @@
 import argparse
 import numpy
 
-import bsds.bsds
+import datasets.bsds.bsds
 import tools.tools as tls
 
 if __name__ == '__main__':
@@ -16,17 +16,16 @@ if __name__ == '__main__':
                         metavar='')
     args = parser.parse_args()
     
-    path_to_bsds = 'bsds/results/bsds.npy'
-    path_to_list_rotation = 'bsds/results/list_rotation.pkl'
+    path_to_bsds = 'datasets/bsds/results/bsds.npy'
     
-    bsds.bsds.create_bsds(args.path_to_root,
-                          path_to_bsds,
-                          path_to_list_rotation,
-                          path_to_tar=args.path_to_tar)
+    datasets.bsds.bsds.create_bsds(args.path_to_root,
+                                   path_to_bsds,
+                                   'datasets/bsds/results/list_rotation.pkl',
+                                   path_to_tar=args.path_to_tar)
     reference_uint8 = numpy.load(path_to_bsds)
-    tls.save_image('bsds/visualization/luminance_7.png',
+    tls.save_image('datasets/bsds/visualization/luminance_7.png',
                    reference_uint8[7, :, :])
-    tls.save_image('bsds/visualization/luminance_39.png',
+    tls.save_image('datasets/bsds/visualization/luminance_39.png',
                    reference_uint8[39, :, :])
 
 
