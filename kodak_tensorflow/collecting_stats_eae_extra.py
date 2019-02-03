@@ -42,7 +42,6 @@ if __name__ == '__main__':
     
     batch_size = 20
     multipliers = numpy.array([1., 1.25, 1.5, 2., 3., 4., 6., 8., 10.], dtype=numpy.float32)
-    path_to_extra = 'lossless/results/extra_data.npy'
     if args.learn_bin_widths:
         suffix = 'learning_bw_{0}_{1}'.format(tls.float_to_str(args.bin_width_init), tls.float_to_str(args.gamma_scaling))
     else:
@@ -66,7 +65,7 @@ if __name__ == '__main__':
     
     # `extra_uint8.dtype` is equal to `numpy.uint8`.
     # The 4th dimension of `extra_uint8` is equal to 1.
-    extra_uint8 = numpy.load(path_to_extra)
+    extra_uint8 = numpy.load('datasets/extra/results/extra_data.npy')
     (_, h_in, w_in, _) = extra_uint8.shape
     entropy_ae = EntropyAutoencoder(batch_size,
                                     h_in,

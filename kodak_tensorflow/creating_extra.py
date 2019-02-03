@@ -9,7 +9,7 @@ autoencoders.
 import argparse
 import numpy
 
-import lossless.stats
+import datasets.extra.extra
 import parsing.parsing
 import tools.tools as tls
 
@@ -37,17 +37,17 @@ if __name__ == '__main__':
                         metavar='')
     args = parser.parse_args()
     
-    path_to_extra = 'lossless/results/extra_data.npy'
+    path_to_extra = 'datasets/extra/results/extra_data.npy'
     
-    lossless.stats.create_extra(args.path_to_root,
-                                args.width_crop,
-                                args.nb_extra,
-                                path_to_extra)
+    datasets.extra.extra.create_extra(args.path_to_root,
+                                      args.width_crop,
+                                      args.nb_extra,
+                                      path_to_extra)
     extra_uint8 = numpy.load(path_to_extra)
     
     # The 4th dimension of `extra_uint8` is equal to 1.
     tls.visualize_luminances(extra_uint8[0:9, :, :, :],
                              3,
-                             'lossless/visualization/sample_extra.png')
+                             'datasets/extra/visualization/sample_extra.png')
 
 

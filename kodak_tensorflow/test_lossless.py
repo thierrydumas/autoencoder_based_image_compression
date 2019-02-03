@@ -278,38 +278,6 @@ class TesterLossless(object):
         print('Number of occurrences of 1 for each binary decision computed by hand:')
         print(numpy.array([4, 4, 2, 1, 1, 1, 1]))
     
-    def test_create_extra(self):
-        """Tests the function `create_extra` in the file "lossless/stats.py".
-        
-        A 1st image is saved at
-        "lossless/pseudo_visualization/create_extra/crop_0.png".
-        A 2nd image is saved at
-        "lossless/pseudo_visualization/create_extra/crop_1.png".
-        A 3rd image is saved at
-        "lossless/pseudo_visualization/create_extra/crop_2.png".
-        The test is successful if each saved
-        image is the luminance central crop of
-        a different RGB image in the folder
-        "lossless/pseudo_data/".
-        
-        """
-        path_to_root = 'lossless/pseudo_data/'
-        width_crop = 256
-        nb_extra = 3
-        path_to_extra = 'lossless/pseudo_data/pseudo_extra.npy'
-        
-        # The images in the folder "lossless/pseudo_data/"
-        # are large. Therefore, none of them is dumped during
-        # the preprocessing.
-        lossless.stats.create_extra(path_to_root,
-                                    width_crop,
-                                    nb_extra,
-                                    path_to_extra)
-        pseudo_extra = numpy.load(path_to_extra)
-        for i in range(nb_extra):
-            tls.save_image('lossless/pseudo_visualization/create_extra/crop_{}.png'.format(i),
-                           pseudo_extra[i, :, :, 0])
-    
     def test_find_index_map_exception(self):
         """Tests the function `find_index_map_exception` in the file "lossless/stats.py".
         

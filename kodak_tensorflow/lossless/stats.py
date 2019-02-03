@@ -128,69 +128,6 @@ def count_binary_decisions(abs_centered_quantized_data, bin_width_test, truncate
             cumulated_ones += hist[i]
     return (cumulated_zeros, cumulated_ones)
 
-def create_extra(path_to_root, width_crop, nb_extra, path_to_extra):
-    """Creates the extra set.
-    
-    RGB images are converted into luminance images.
-    Then, the luminance images are cropped. Finally,
-    the extra set is filled with the luminance crops
-    and it is saved.
-    
-    Parameters
-    ----------
-    path_to_root : str
-        Path to the folder containing RGB images.
-    width_crop : int
-        Width of the crop.
-    nb_extra : int
-        Number of luminance crops in the
-        extra set.
-    path_to_extra : str
-        Path to the file in which the extra set
-        is saved. The path must end with ".npy".
-    
-    Raises
-    ------
-    RuntimeError
-        If there are not enough RGB images
-        to create the extra set.
-    
-    """
-    if os.path.isfile(path_to_extra):
-        print('"{}" already exists.'.format(path_to_extra))
-        print('Delete it manually to recreate the extra set.')
-    else:
-        luminances_uint8 = numpy.zeros((nb_extra, width_crop, width_crop, 1), dtype=numpy.uint8)
-        list_names = os.listdir(path_to_root)
-        i = 0
-        extensions = ('jpg', 'JPEG', 'png')
-        for name in list_names:
-            if name.endswith(extensions):
-                path_to_rgb = os.path.join(path_to_root, name)
-                try:
-                    rgb_uint8 = tls.read_image_mode(path_to_rgb,
-                                                    'RGB')
-                    crop_uint8 = tls.crop_option_2d(tls.rgb_to_ycbcr(rgb_uint8)[:, :, 0],
-                                                    width_crop,
-                                                    False)
-                except (TypeError, ValueError) as err:
-                    print(err)
-                    print('"{}" is skipped.\n'.format(path_to_rgb))
-                    continue
-                luminances_uint8[i, :, :, 0] = crop_uint8
-                i += 1
-                if i == nb_extra:
-                    break
-        
-        # If the previous loop was not broken,
-        # `luminances_uint8` is not full. In
-        # this case, the program crashes as the
-        # extra set should not contain any "zero"
-        # luminance crop.
-        if i != nb_extra:
-            raise RuntimeError('There are not enough RGB images at "{}" to create the extra set.'.format(path_to_root))
-        numpy.save(path_to_extra, luminances_uint8)
-
 def find_index_map_exception(y_float32):
     """Finds the index of the latent variable feature map that is not compressed as the other maps.
     
@@ -253,17 +190,17 @@ def find_index_map_exception(y_float32):
             divergences[i] = 1.
     return numpy.argmin(divergences).item()
 
-def save_statistics(extra_uint8, sess, entropy_ae, batch_size, multipliers, truncated_unary_length,
+def save_statistics(luminances_uint8, sess, entropy_ae, batch_size, multipliers, truncated_unary_length,
                     path_to_map_mean, path_to_idx_map_exception, paths_to_binary_probabilities):
     """Saves some statistics on the latent variable feature maps in the entropy autoencoder.
     
     Parameters
     ----------
-    extra_uint8 : numpy.ndarray
+    luminances_uint8 : numpy.ndarray
         4D array with data-type `numpy.uint8`.
-        Extra set. `extra_uint8[i, :, :, :]` is the
-        ith extra luminance image. The last dimension
-        of `extra_uint8` is equal to 1.
+        Luminance images. `luminances_uint8[i, :, :, :]`
+        is the ith luminance image. The last dimension of
+        `luminances_uint8` is equal to 1.
     sess : Session
         Session that runs the graph.
     entropy_ae : EntropyAutoencoder
@@ -311,8 +248,8 @@ def save_statistics(extra_uint8, sess, entropy_ae, batch_size, multipliers, trun
     else:
         
         # The function `eaeuls.encode_mini_batches` checks
-        # that `extra_uint8.dtype` is equal to `numpy.uint8`.
-        y_float32 = eaeuls.encode_mini_batches(extra_uint8,
+        # that `luminances_uint8.dtype` is equal to `numpy.uint8`.
+        y_float32 = eaeuls.encode_mini_batches(luminances_uint8,
                                                sess,
                                                entropy_ae,
                                                batch_size)
