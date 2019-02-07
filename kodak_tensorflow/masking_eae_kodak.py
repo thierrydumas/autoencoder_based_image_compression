@@ -9,7 +9,7 @@ import numpy
 import os
 import tensorflow as tf
 
-import eae.eae_utils as eaeuls
+import eae.batching
 import parsing.parsing
 import tools.tools as tls
 from eae.graph.EntropyAutoencoder import EntropyAutoencoder
@@ -129,10 +129,10 @@ if __name__ == '__main__':
                                     args.learn_bin_widths)
     with tf.Session() as sess:
         entropy_ae.initialization(sess, path_to_restore)
-        y_float32 = eaeuls.encode_mini_batches(luminances_uint8,
-                                               sess,
-                                               entropy_ae,
-                                               batch_size)
+        y_float32 = eae.batching.encode_mini_batches(luminances_uint8,
+                                                     sess,
+                                                     entropy_ae,
+                                                     batch_size)
         
         # `bin_widths` are the quantization bin widths
         # at the end of the training.

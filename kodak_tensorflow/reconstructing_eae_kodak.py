@@ -20,8 +20,8 @@ import os
 import pickle
 import tensorflow as tf
 
-import eae.eae_utils as eaeuls
-import hevc_utils.hevc_utils as hevculs
+import eae.batching
+import hevc.hevc
 import jpeg2000.jpeg2000
 import lossless.compression
 import tools.tools as tls
@@ -142,10 +142,10 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
                                     are_bin_widths_learned)
     with tf.Session() as sess:
         entropy_ae.initialization(sess, path_to_restore)
-        y_float32 = eaeuls.encode_mini_batches(numpy.expand_dims(reference_uint8, axis=3),
-                                               sess,
-                                               entropy_ae,
-                                               batch_size)
+        y_float32 = eae.batching.encode_mini_batches(numpy.expand_dims(reference_uint8, axis=3),
+                                                     sess,
+                                                     entropy_ae,
+                                                     batch_size)
         
         # `bin_widths` are the quantization bin widths
         # at the end of the training.
@@ -180,10 +180,10 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
             bin_widths_test = multiplier*bin_widths
             centered_quantized_y_float32 = tls.quantize_per_map(centered_y_float32, bin_widths_test)
             off_centered_quantized_y_float32 = centered_quantized_y_float32 + tiled_map_mean
-            expanded_reconstruction_uint8 = eaeuls.decode_mini_batches(off_centered_quantized_y_float32,
-                                                                       sess,
-                                                                       isolated_decoder,
-                                                                       batch_size)
+            expanded_reconstruction_uint8 = eae.batching.decode_mini_batches(off_centered_quantized_y_float32,
+                                                                             sess,
+                                                                             isolated_decoder,
+                                                                             batch_size)
             
             # The elements of span `reconstruction_uint8`
             # the range [|16, 235|].
@@ -332,10 +332,10 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
                                         False)
         with tf.Session() as sess:
             entropy_ae.initialization(sess, path_to_restore)
-            y_float32 = eaeuls.encode_mini_batches(numpy.expand_dims(reference_uint8, axis=3),
-                                                   sess,
-                                                   entropy_ae,
-                                                   batch_size)
+            y_float32 = eae.batching.encode_mini_batches(numpy.expand_dims(reference_uint8, axis=3),
+                                                         sess,
+                                                         entropy_ae,
+                                                         batch_size)
             
             # `bin_widths` are the quantization bin widths
             # at training time.
@@ -353,10 +353,10 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
         quantized_y_float32 = tls.quantize_per_map(y_float32, bin_widths)
         with tf.Session() as sess:
             isolated_decoder.initialization(sess, path_to_restore)
-            expanded_reconstruction_uint8 = eaeuls.decode_mini_batches(quantized_y_float32,
-                                                                       sess,
-                                                                       isolated_decoder,
-                                                                       batch_size)
+            expanded_reconstruction_uint8 = eae.batching.decode_mini_batches(quantized_y_float32,
+                                                                             sess,
+                                                                             isolated_decoder,
+                                                                             batch_size)
             
         # The elements of `reconstruction_uint8` span
         # the range [|16, 235|].
@@ -479,12 +479,12 @@ if __name__ == '__main__':
     qualities = [24, 26, 28, 30, 32, 34, 36, 38, 40]
     
     # The block below is dedicated to HEVC.
-    path_to_before_hevc = 'hevc_utils/temp/luminance_before_hevc.yuv'
-    path_to_after_hevc = 'hevc_utils/temp/luminance_after_hevc.yuv'
-    path_to_cfg = 'hevc_utils/configuration/intra.cfg'
-    path_to_bitstream = 'hevc_utils/temp/bitstream.bin'
+    path_to_before_hevc = 'hevc/temp/luminance_before_hevc.yuv'
+    path_to_after_hevc = 'hevc/temp/luminance_after_hevc.yuv'
+    path_to_cfg = 'hevc/configuration/intra.cfg'
+    path_to_bitstream = 'hevc/temp/bitstream.bin'
     qps = numpy.array([22, 27, 32, 37, 42, 47], dtype=numpy.int32)
-    path_to_hevc_vis = os.path.join('hevc_utils/visualization/',
+    path_to_hevc_vis = os.path.join('hevc/visualization/',
                                     str_set)
     
     # `reference_uint8.dtype` is equal to `numpy.uint8`.
@@ -589,15 +589,15 @@ if __name__ == '__main__':
         print('Delete them manually to re-compute them.')
     else:
         print('For HEVC, the rates and the PSNRs are computed.')
-        (rate_hevc, psnr_hevc) = hevculs.evaluate_hevc(reference_uint8,
-                                                       path_to_before_hevc,
-                                                       path_to_after_hevc,
-                                                       path_to_cfg,
-                                                       path_to_bitstream,
-                                                       qps,
-                                                       path_to_hevc_vis,
-                                                       list_rotation,
-                                                       positions_top_left)
+        (rate_hevc, psnr_hevc) = hevc.hevc.evaluate_hevc(reference_uint8,
+                                                         path_to_before_hevc,
+                                                         path_to_after_hevc,
+                                                         path_to_cfg,
+                                                         path_to_bitstream,
+                                                         qps,
+                                                         path_to_hevc_vis,
+                                                         list_rotation,
+                                                         positions_top_left)
         numpy.save(path_to_rate_hevc,
                    rate_hevc)
         numpy.save(path_to_psnr_hevc,

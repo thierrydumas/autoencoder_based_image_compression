@@ -12,7 +12,7 @@ import numpy
 import scipy.stats.distributions
 import tensorflow as tf
 
-import tf_utils.tf_utils as tfuls
+import tfutils.tfutils as tfuls
 import tools.tools as tls
 
 
@@ -197,9 +197,9 @@ class TesterTfUtils(object):
         """Tests the function `area_under_piecewise_linear_functions`.
         
         A 1st plot is saved at
-        "tf_utils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_0.png".
+        "tfutils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_0.png".
         A 2nd plot is saved at
-        "tf_utils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_1.png".
+        "tfutils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_1.png".
         The test is successful if, for each plot, the area
         under the piecewise linear function computed by hand
         is almost equal to the area computed by the function.
@@ -230,11 +230,11 @@ class TesterTfUtils(object):
         print('Area under the 2nd piecewise linear function computed by hand: {}'.format(28.0))
         plt.plot(grid, parameters[0, :], color='blue')
         plt.title('1st piecewise linear function of integral {}'.format(area[0]))
-        plt.savefig('tf_utils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_0.png')
+        plt.savefig('tfutils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_0.png')
         plt.clf()
         plt.plot(grid, parameters[1, :], color='blue')
         plt.title('2nd piecewise linear function of integral {}'.format(area[1]))
-        plt.savefig('tf_utils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_1.png')
+        plt.savefig('tfutils/pseudo_visualization/area_under_piecewise_linear_functions/piecewise_linear_function_1.png')
         plt.clf()
     
     def test_differential_entropy(self):
@@ -462,7 +462,7 @@ class TesterTfUtils(object):
         """Tests the function `initialize_weights_gdn`.
         
         An image is saved at
-        "tf_utils/pseudo_visualization/initialize_weights_gdn.png".
+        "tfutils/pseudo_visualization/initialize_weights_gdn.png".
         The test is successful if the image
         contains a symmetric matrix. Besides,
         the GDN/IGDN weights must belong to the
@@ -481,7 +481,7 @@ class TesterTfUtils(object):
         print('Minimum of the GDN/IGDN weights: {}'.format(minimum))
         print('Maximum of the GDN/IGDN weights: {}'.format(maximum))
         image_uint8 = numpy.round(255.*(gamma - minimum)/(maximum - minimum)).astype(numpy.uint8)
-        tls.save_image('tf_utils/pseudo_visualization/initialize_weights_gdn.png',
+        tls.save_image('tfutils/pseudo_visualization/initialize_weights_gdn.png',
                        image_uint8)
     
     def test_inverse_gdn(self):

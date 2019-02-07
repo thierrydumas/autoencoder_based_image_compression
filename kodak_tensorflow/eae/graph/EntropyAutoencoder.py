@@ -6,7 +6,7 @@ import tensorflow as tf
 
 import eae.graph.components
 import eae.graph.constants as csts
-import tf_utils.tf_utils as tfuls
+import tfutils.tfutils as tfuls
 import tools.tools as tls
 
 

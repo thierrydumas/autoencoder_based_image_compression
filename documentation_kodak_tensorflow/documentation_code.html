@@ -53,13 +53,13 @@
                     <ul>
                         <li>
                             <p>For Linux,</p>
-                             <div class="code"><b>cd HM-16.15/build/linux/</b><br>
+                             <div class="code"><b>cd hevc/HM-16.15/build/linux/</b><br>
                              <b>make</b><br>
-                             <b>cd ../../../</b></div>
+                             <b>cd ../../../../</b></div>
                         </li>
                         <li>
                             <p>For Windows, use Visual Studio 2015 and the solution
-                            file at "HM-16.15/build/HM_vc2015.sln". For more information,
+                            file at "hevc/HM-16.15/build/HM_vc2015.sln". For more information,
                             see <a href="https://hevc.hhi.fraunhofer.de/" target="_blank">HEVCSoftwareWebPage</a>.</p>
                         </li>
                     </ul>
@@ -68,7 +68,7 @@
             <h2 class="compilation_functionalities">Main functionalities</h2>
             <ol>
                 <li>
-                    <h3>How to test the library that contains tool functions?</h3>
+                    <h3>How to test the library that contains common functions?</h3>
                     <p>Each function in this library can be tested by passing
                     its name as the argument of the script "test_tools.py". For instance,</p>
                     <div class="code"><b>python test_tools.py average_entropies</b></div>
@@ -76,16 +76,15 @@
                 <li>
                     <h3>How to test the library that contains Tensorflow utilities?</h3>
                     <p>Each function in this library can be tested by passing
-                    its name as the argument of the script "test_tf_utils.py".
+                    its name as the argument of the script "test_tfutils.py".
                     For instance,</p>
-                    <div class="code"><b>python test_tf_utils.py differential_entropy</b></div>
+                    <div class="code"><b>python test_tfutils.py differential_entropy</b></div>
                 </li>
                 <li>
                     <h3>How to test the library that contains HEVC/H.265 utilities?</h3>
                     <p>Each function in this library can be tested by passing
-                    its name as the argument of the script "test_hevc_utils.py".
-                    For instance,</p>
-                    <div class="code"><b>python test_hevc_utils.py compute_rate_psnr</b></div>
+                    its name as the argument of the script "test_hevc.py". For instance,</p>
+                    <div class="code"><b>python test_hevc.py compute_rate_psnr</b></div>
                 </li>
                 <li>
                     <h3>How to test the libraries in the folder "lossless"?</h3>

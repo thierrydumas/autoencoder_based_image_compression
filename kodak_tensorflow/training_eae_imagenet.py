@@ -11,8 +11,8 @@ import os
 import tensorflow as tf
 import time
 
+import eae.batching
 import eae.graph.constants as csts
-import eae.eae_utils as eaeuls
 import parsing.parsing
 import tools.tools as tls
 from eae.graph.EntropyAutoencoder import EntropyAutoencoder
@@ -155,11 +155,11 @@ if __name__ == '__main__':
                                               ['Noisy latent variables {} before the fitting'.format(index_map) for index_map in range(nb_display)],
                                               [os.path.join(path_to_checking_a, 'noisy_latent_{}_before_fitting.png'.format(index_map)) for index_map in range(nb_display)])
             print('\nThe preliminary fitting of the parameters of the piecewise linear functions starts.')
-            eaeuls.preliminary_fitting(training_uint8,
-                                       sess,
-                                       entropy_ae,
-                                       batch_size,
-                                       args.nb_epochs_fitting)
+            eae.batching.preliminary_fitting(training_uint8,
+                                             sess,
+                                             entropy_ae,
+                                             batch_size,
+                                             args.nb_epochs_fitting)
             print('The preliminary fitting is completed.')
             entropy_ae.checking_activations_1(sess,
                                               validation_float32,
@@ -202,11 +202,11 @@ if __name__ == '__main__':
             
             # The training set is shuffled at the
             # beginning of the function `run_epoch_training`.
-            eaeuls.run_epoch_training(training_uint8,
-                                      sess,
-                                      entropy_ae,
-                                      batch_size,
-                                      nb_batches)
+            eae.batching.run_epoch_training(training_uint8,
+                                            sess,
+                                            entropy_ae,
+                                            batch_size,
+                                            nb_batches)
             str_epoch = str(i + 1)
             if i == 4 or i == 19 or i == args.nb_epochs_training - 1:
                 entropy_ae.checking_activations_1(sess,

@@ -9,11 +9,11 @@ import warnings
 import tools.tools as tls
 
 if sys.platform.startswith('linux'):
-    PATH_TO_EXE = 'HM-16.15/bin/TAppEncoderStatic'
+    PATH_TO_EXE = 'hevc/HM-16.15/bin/TAppEncoderStatic'
 elif sys.platform in ('win32', 'cygwin'):
-    PATH_TO_EXE = 'HM-16.15/bin/vc2015/Win32/Release/TAppEncoder.exe'
+    PATH_TO_EXE = 'hevc/HM-16.15/bin/vc2015/Win32/Release/TAppEncoder.exe'
 else:
-    PATH_TO_EXE = 'HM-16.15/bin/TAppEncoderStatic'
+    PATH_TO_EXE = 'hevc/HM-16.15/bin/TAppEncoderStatic'
     warnings.warn('The OS is neither Windows nor Linux. If the HEVC executable is not at "{}", change `PATH_TO_EXE`.'.format(PATH_TO_EXE))
 
 # The functions are sorted in

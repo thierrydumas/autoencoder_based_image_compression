@@ -4,7 +4,7 @@ import numpy
 import os
 import pickle
 
-import eae.eae_utils as eaeuls
+import eae.batching
 import tools.tools as tls
 
 # The functions are sorted in
@@ -247,12 +247,12 @@ def save_statistics(luminances_uint8, sess, entropy_ae, batch_size, multipliers,
         print('Delete them manually to recompute them.')
     else:
         
-        # The function `eaeuls.encode_mini_batches` checks
+        # The function `eae.batching.encode_mini_batches` checks
         # that `luminances_uint8.dtype` is equal to `numpy.uint8`.
-        y_float32 = eaeuls.encode_mini_batches(luminances_uint8,
-                                               sess,
-                                               entropy_ae,
-                                               batch_size)
+        y_float32 = eae.batching.encode_mini_batches(luminances_uint8,
+                                                     sess,
+                                                     entropy_ae,
+                                                     batch_size)
         map_mean = numpy.mean(y_float32, axis=(0, 1, 2))
         numpy.save(path_to_map_mean, map_mean)
         idx_map_exception = find_index_map_exception(y_float32)
