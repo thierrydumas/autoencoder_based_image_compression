@@ -112,7 +112,7 @@ def compute_rate_psnr(quality, list_rotation, index, path_to_before_jpeg2000, pa
                                           'quality_{}'.format(quality),
                                           'reconstruction_{}.jp2'.format(index))
     reference_uint8 = tls.read_image_mode(path_to_reference,
-                                          'RGB')
+                                          'L')
     
     # `Glymur` is needed to read JPEG2000 images.
     file = glymur.Jp2k(path_to_reconstruction)
