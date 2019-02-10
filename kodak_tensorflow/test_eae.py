@@ -184,9 +184,11 @@ class TesterEntropyAutoencoder(object):
                                            h_in,
                                            w_in,
                                            False)
-        quantized_y_float32 = numpy.random.randint(low=-3,
-                                                   high=4,
-                                                   size=(batch_size, h_in//csts.STRIDE_PROD, w_in//csts.STRIDE_PROD, csts.NB_MAPS_3)).astype(numpy.float32)
+        quantized_y_float32 = numpy.random.randint(
+            low=-3,
+            high=4,
+            size=(batch_size, h_in//csts.STRIDE_PROD, w_in//csts.STRIDE_PROD, csts.NB_MAPS_3)
+        ).astype(numpy.float32)
         with tf.Session() as sess:
             isolated_decoder.initialization(sess, path_to_restore)
             reconstruction_float32 = sess.run(

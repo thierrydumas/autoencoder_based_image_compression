@@ -17,7 +17,7 @@ import numpy
 import os
 import pickle
 
-import eae.eae_utils as eaeuls
+import eae.utils
 import jpeg.jpeg
 import tools.tools as tls
 
@@ -112,13 +112,13 @@ def fix_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_wi
             os.makedirs(path_to_directory_reconstruction)
         path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                               'reconstruction.png')
-        (rate[i], psnr[i]) = eaeuls.compute_rate_psnr(reference_uint8,
-                                                      mean_training,
-                                                      std_training,
-                                                      entropy_ae,
-                                                      bin_width_test,
-                                                      10,
-                                                      path_to_reconstruction)
+        (rate[i], psnr[i]) = eae.utils.compute_rate_psnr(reference_uint8,
+                                                         mean_training,
+                                                         std_training,
+                                                         entropy_ae,
+                                                         bin_width_test,
+                                                         10,
+                                                         path_to_reconstruction)
     return (rate, psnr)
 
 def vary_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_width_init,
@@ -205,13 +205,13 @@ def vary_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_w
             os.makedirs(path_to_directory_reconstruction)
         path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                               'reconstruction.png')
-        (rate[i], psnr[i]) = eaeuls.compute_rate_psnr(reference_uint8,
-                                                      mean_training,
-                                                      std_training,
-                                                      entropy_ae,
-                                                      bin_width_init,
-                                                      10,
-                                                      path_to_reconstruction)
+        (rate[i], psnr[i]) = eae.utils.compute_rate_psnr(reference_uint8,
+                                                         mean_training,
+                                                         std_training,
+                                                         entropy_ae,
+                                                         bin_width_init,
+                                                         10,
+                                                         path_to_reconstruction)
     return (rate, psnr)
 
 def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin_width_init,
@@ -297,13 +297,13 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
             os.makedirs(path_to_directory_reconstruction)
         path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                               'reconstruction.png')
-        (rate[i], psnr[i]) = eaeuls.compute_rate_psnr(reference_uint8,
-                                                      mean_training,
-                                                      std_training,
-                                                      entropy_ae,
-                                                      bin_width_test,
-                                                      10,
-                                                      path_to_reconstruction)
+        (rate[i], psnr[i]) = eae.utils.compute_rate_psnr(reference_uint8,
+                                                         mean_training,
+                                                         std_training,
+                                                         entropy_ae,
+                                                         bin_width_test,
+                                                         10,
+                                                         path_to_reconstruction)
     return (rate, psnr)
 
 if __name__ == '__main__':

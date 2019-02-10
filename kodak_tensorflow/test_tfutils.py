@@ -141,8 +141,6 @@ class TesterTfUtils(object):
         probability of the sample computed by the function.
         
         """
-        numpy.random.seed(0)
-        tf.set_random_seed(0)
         nb_points_per_interval = 4
         nb_itvs_per_side = 2
         nb_intervals_per_side = tf.constant(nb_itvs_per_side, dtype=tf.int64)
@@ -157,20 +155,28 @@ class TesterTfUtils(object):
         # piecewise linear functions to approximate the
         # probability density functions from which `samples`
         # are sampled.
-        parameters = tf.Variable(tf.random_uniform([nb_maps, nb_points], minval=0., maxval=1., dtype=tf.float32),
+        parameters_np = numpy.array(
+            [
+                [0.01, 0.1, 0.14, 0.16, 0.18, 0.10, 0.02, 0.04, 0.06, 0.04, 0.04, 0.02, 0.4, 0.1, 0.12, 0.12, 0.14],
+                [0.3, 0.2, 0.1, 0.2, 0.3, 0.2, 0.1, 0.2, 0.3, 0.01, 0.3, 0.02, 0.1, 0.2, 0.1, 0.12, 0.17],
+                [0.1, 0.01, 0.2, 0.01, 0.09, 0.2, 0.9, 0.7, 0.8, 0.2, 0.7, 0.3, 0.1, 0.1, 0.4, 0.1, 0.12]
+            ],
+            dtype=numpy.float32
+        )
+        parameters = tf.Variable(parameters_np,
                                  dtype=tf.float32,
                                  trainable=False)
-        samples = numpy.random.normal(loc=0.,
-                                      scale=0.4,
-                                      size=(nb_maps, 4)).astype(numpy.float32)
-        node_samples = tf.placeholder(tf.float32, shape=(nb_maps, 4))
+        samples = numpy.array([[-1.11, 1.21], [-1.01, 0.24], [0.43, -0.43]],
+                              dtype=numpy.float32)
+        node_samples = tf.placeholder(tf.float32, shape=(nb_maps, samples.shape[1]))
         node_approximate_prob = tfuls.approximate_probability(node_samples,
                                                               parameters,
                                                               nb_points_per_interval,
                                                               nb_intervals_per_side)
-        approximate_prob_hand = numpy.array([[0.879491, 0.619454, 0.634988, 0.873688],
-                                             [0.373638, 0.669101, 0.276398, 0.696577],
-                                             [0.889826, 0.824482, 0.857850, 0.494299]], dtype=numpy.float32)
+        approximate_prob_hand = numpy.array(
+            [[0.171200, 0.148000], [0.296000, 0.021600], [0.560000, 0.844000]],
+            dtype=numpy.float32
+        )
         with tf.Session() as sess:
             
             # For details on the condition below, see

@@ -11,7 +11,7 @@ import os
 import pickle
 import time
 
-import eae.eae_utils as eaeuls
+import eae.utils
 import parsing.parsing
 import svhn.svhn
 import tools.tools as tls
@@ -127,12 +127,12 @@ if __name__ == '__main__':
                                     os.path.join(path_to_checking_a, 'ae_noisy_latent_before_fitting.png'),
                                     os.path.join(path_to_checking_a, 'image_dead_zone_before_fitting.png'))
     print('\nThe preliminary fitting of the parameters of the piecewise linear function starts.')
-    eaeuls.preliminary_fitting(training_uint8,
-                               mean_training,
-                               std_training,
-                               entropy_ae,
-                               args.batch_size,
-                               args.nb_epochs_fitting)
+    eae.utils.preliminary_fitting(training_uint8,
+                                  mean_training,
+                                  std_training,
+                                  entropy_ae,
+                                  args.batch_size,
+                                  args.nb_epochs_fitting)
     print('The preliminary fitting is completed.')
     entropy_ae.checking_activations(validation_float64[0:args.batch_size, :],
                                     'Activations encoder l1 after the fitting',

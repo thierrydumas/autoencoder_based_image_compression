@@ -194,7 +194,6 @@ class TesterTools(object):
         computed by the function.
         
         """
-        numpy.random.seed(0)
         nb_points_per_interval = 4
         nb_intervals_per_side = 2
         
@@ -207,12 +206,10 @@ class TesterTools(object):
         # piecewise linear function to approximate the
         # probability density function from which `samples`
         # is sampled.
-        parameters = numpy.random.uniform(low=0.,
-                                          high=1.,
-                                          size=nb_points)
-        samples = numpy.random.normal(loc=0.,
-                                      scale=0.4,
-                                      size=3)
+        parameters = numpy.array(
+            [0.01, 0.1, 0.14, 0.16, 0.18, 0.10, 0.02, 0.04, 0.06, 0.04, 0.04, 0.02, 0.40, 0.1, 0.12, 0.12, 0.14]
+        )
+        samples = numpy.array([-0.7, 0.3, 1.0, -1.99])
         print('Number of sampling points per unit interval in the grid: {}'.format(nb_points_per_interval))
         print('Number of unit intervals in the right half of the grid: {}'.format(nb_intervals_per_side))
         print('Grid:')
@@ -228,7 +225,7 @@ class TesterTools(object):
         print('Approximate probability of each sample computed by the function:')
         print(approximate_prob)
         print('Approximate probability of each sample computed by hand:')
-        print([0.514050, 0.426015, 0.942776])
+        print([0.084000, 0.040000, 0.400000, 0.013600])
 
     def test_area_under_piecewise_linear_function(self):
         """Tests the function `area_under_piecewise_linear_function`.

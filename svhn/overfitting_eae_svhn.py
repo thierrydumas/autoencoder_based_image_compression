@@ -5,7 +5,7 @@ import numpy
 import os
 import time
 
-import eae.eae_utils as eaeuls
+import eae.utils
 import parsing.parsing
 import tools.tools as tls
 import svhn.svhn
@@ -88,12 +88,12 @@ if __name__ == '__main__':
                                     lr_eae=1.e-5)
     
     print('\nThe preliminary fitting of the parameters of the piecewise linear function starts.')
-    eaeuls.preliminary_fitting(training_uint8,
-                               mean_training,
-                               std_training,
-                               entropy_ae,
-                               args.nb_training,
-                               args.nb_epochs_fitting)
+    eae.utils.preliminary_fitting(training_uint8,
+                                  mean_training,
+                                  std_training,
+                                  entropy_ae,
+                                  args.nb_training,
+                                  args.nb_epochs_fitting)
     print('The preliminary fitting is completed.')
     
     # The function `svhn.svhn.preprocess_svhn` checks
@@ -168,13 +168,13 @@ if __name__ == '__main__':
         bin_width_test = round(entropy_ae.bin_width, 1)
     else:
         bin_width_test = args.bin_width_init
-    (rate, psnr) = eaeuls.compute_rate_psnr(training_uint8,
-                                            mean_training,
-                                            std_training,
-                                            entropy_ae,
-                                            bin_width_test,
-                                            2,
-                                            os.path.join(path_to_checking_c, 'reconstruction.png'))
+    (rate, psnr) = eae.utils.compute_rate_psnr(training_uint8,
+                                               mean_training,
+                                               std_training,
+                                               entropy_ae,
+                                               bin_width_test,
+                                               2,
+                                               os.path.join(path_to_checking_c, 'reconstruction.png'))
     print('\nMean rate over the {0} training RGB digits: {1}'.format(args.nb_training, rate))
     print('Mean PSNR over the {0} training RGB digits: {1}'.format(args.nb_training, psnr))
 
