@@ -51,13 +51,14 @@ def fitting_eae_kodak(y_float32, path_to_idx_map_exception, path_to_checking_f):
         idx_map_exception = pickle.load(file)
     for i in range(y_float32.shape[3]):
         map_float32 = y_float32[:, :, :, i]
-        max_abs_map = numpy.ceil(numpy.amax(numpy.absolute(map_float32))).item()
+        edge_left = numpy.floor(numpy.amin(map_float32)).item()
+        edge_right = numpy.ceil(numpy.amax(map_float32)).item()
         
         # The grid below contains 50 points
         # per unit interval.
-        grid = numpy.linspace(-max_abs_map,
-                              max_abs_map,
-                              num=100*int(max_abs_map) + 1)
+        grid = numpy.linspace(edge_left,
+                              edge_right,
+                              num=50*int(edge_right - edge_left) + 1)
         
         # Let's assume that `map_float32` contains i.i.d samples
         # from an unknown probability density function. The two

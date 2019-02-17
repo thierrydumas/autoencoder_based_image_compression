@@ -43,13 +43,14 @@ def fitting_eae_svhn(reference_float64, entropy_ae, title, path):
     
     """
     y = entropy_ae.encoder(reference_float64)[1]
-    max_abs_y = numpy.ceil(numpy.amax(numpy.absolute(y))).item()
+    edge_left = numpy.floor(numpy.amin(y)).item()
+    edge_right = numpy.ceil(numpy.amax(y)).item()
     
-    # The grid below contains 20 points
+    # The grid below contains 50 points
     # per unit interval.
-    grid = numpy.linspace(-max_abs_y,
-                          max_abs_y,
-                          num=40*int(max_abs_y) + 1)
+    grid = numpy.linspace(edge_left,
+                          edge_right,
+                          num=50*int(edge_right - edge_left) + 1)
     
     # Let's assume that `y` contains i.i.d samples from
     # an unknown probability density function. The two

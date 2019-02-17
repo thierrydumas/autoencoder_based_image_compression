@@ -67,6 +67,72 @@ def compute_binary_probabilities(y_float32, bin_widths_test, map_mean, truncated
     binary_probabilities[binary_probabilities == 1.] = 0.99
     return binary_probabilities
 
+def compute_probabilities_intervals(data, size_interval):
+    """Computes the probability that a data value belongs to an axis interval.
+    
+    Parameters
+    ----------
+    data : numpy.ndarray
+        1D array.
+        Data values.
+    size_interval : float
+        Size of the intervals in the axis.
+    
+    Returns
+    -------
+    tuple
+        numpy.ndarray
+            1D array with data-type `numpy.float64`.
+            Axis.
+        numpy.ndarray
+            1D array with data-type `numpy.float64`.
+            Probability that a data value belongs to an
+            axis interval, for each axis interval.
+    
+    Raises
+    ------
+    ValueError
+        If the interval size exceeds the range of the data values.
+    ValueError
+        If the range of the data values cannot be split into an
+        integer number of intervals of size `size_interval`.
+    
+    """
+    edge_left = numpy.floor(numpy.amin(data)).item()
+    edge_right = numpy.ceil(numpy.amax(data)).item()
+    difference_edges = edge_right - edge_left
+    if difference_edges < size_interval:
+        raise ValueError('The interval size exceeds the range of the data values.')
+    nb_edges_minus_1_float = difference_edges/size_interval
+    if nb_edges_minus_1_float.is_integer():
+        nb_edges = int(nb_edges_minus_1_float) + 1
+    else:
+        raise ValueError('The range of the data values cannot be split into '
+                         + 'an integer number of intervals of size {}.'.format(size_interval))
+    
+    # The left edge of the histogram is smaller than the
+    # smallest element of `data`. The right edge of the
+    # histogram is larger than the largest element of
+    # `data`.
+    bin_edges = numpy.linspace(edge_left,
+                               edge_right,
+                               num=nb_edges)
+    
+    # In the function `numpy.histogram`, `data`
+    # is flattened to compute the histogram.
+    hist = numpy.histogram(data,
+                           bins=bin_edges,
+                           density=True)[0]
+    
+    # The probability that a data value belongs to
+    # [`bin_edges[i]`, `bin_edges[i + 1]`] is the integral
+    # over [`bin_edges[i]`, `bin_edges[i + 1]`] of the estimated
+    # probability density function of the data.
+    # Warning! `hist[i]` is the value of the probability
+    # density function of the data at the middle of
+    # [`bin_edges[i]`, `bin_edges[i + 1]`].
+    return (bin_edges, hist*size_interval)
+
 def count_binary_decisions(abs_centered_quantized_data, bin_width_test, truncated_unary_length):
     """Counts the number of occurrences of 0 for each binary decision in the truncated unary prefix of the absolute centered-quantized data.
     
@@ -156,36 +222,20 @@ def find_index_map_exception(y_float32):
         that is not compressed as the other maps.
     
     """
-    nb_maps = y_float32.shape[3]
-    divergences = numpy.zeros(nb_maps)
-    for i in range(nb_maps):
-        map_float32 = y_float32[:, :, :, i]
-        middle_1st_bin = numpy.round(numpy.amin(map_float32)).item()
-        middle_last_bin = numpy.round(numpy.amax(map_float32)).item()
-        nb_edges = int(middle_last_bin - middle_1st_bin) + 2
-        
-        # The 1st edge of the histogram is smaller than the
-        # smallest element of `map_float32`. The last edge
-        # of the histogram is larger than the largest element
-        # of `map_float32`.
-        bin_edges = numpy.linspace(middle_1st_bin - 0.5,
-                                   middle_last_bin + 0.5,
-                                   num=nb_edges)
-        
-        # In the function `numpy.histogram`, `map_float32`
-        # is flattened to compute the histogram.
-        hist = numpy.histogram(map_float32,
-                               bins=bin_edges,
-                               density=True)[0]
-        hist_non_zero = numpy.extract(hist != 0., hist)
-        nb_remaining_bins = hist_non_zero.size
+    divergences = numpy.zeros(y_float32.shape[3])
+    for i in range(y_float32.shape[3]):
+        probs = compute_probabilities_intervals(y_float32[:, :, :, i], 1.)[1]
+        probs_non_zero = numpy.extract(probs != 0.,
+                                       probs)
+        nb_remaining_probs = probs_non_zero.size
         
         # If a latent variable feature map contains
         # exclusively elements very close to 0.0,
-        # `nb_remaining_bins` is equal to 1.
-        if nb_remaining_bins > 1:
-            uniform_probs = (1./nb_remaining_bins)*numpy.ones(nb_remaining_bins)
-            divergences[i] = tls.jensen_shannon_divergence(hist_non_zero, uniform_probs)
+        # `nb_remaining_probs` is equal to 1.
+        if nb_remaining_probs > 1:
+            uniform_probs = (1./nb_remaining_probs)*numpy.ones(nb_remaining_probs)
+            divergences[i] = tls.jensen_shannon_divergence(probs_non_zero,
+                                                           uniform_probs)
         else:
             divergences[i] = 1.
     return numpy.argmin(divergences).item()

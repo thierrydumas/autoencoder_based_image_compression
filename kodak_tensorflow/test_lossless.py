@@ -235,6 +235,28 @@ class TesterLossless(object):
         print('Binary probabilities computed by hand:')
         print([0.1560, 0.3006, 0.2724, 0.2306])
     
+    def test_compute_probabilities_intervals(self):
+        """Tests the function `compute_probabilities_intervals` in the file "lossless/stats.py".
+        
+        The test is successful if the probabilities computed
+        by the function are approximatively equal to the
+        probabilities computed by hand.
+        
+        """
+        data = numpy.random.uniform(low=1.2,
+                                    high=2.2,
+                                    size=20000)
+        size_interval = 0.2
+        
+        (bin_edges, probs) = lossless.stats.compute_probabilities_intervals(data,
+                                                                            size_interval)
+        print('Axis split into intervals of size {}:'.format(size_interval))
+        print(bin_edges)
+        print('Probability that a data value belongs to an axis interval computed by the function:')
+        print(probs)
+        print('Probability that a data value belongs to an axis interval computed by hand:')
+        print(numpy.array([0., 0.2, 0.2, 0.2, 0.2, 0.2, 0., 0., 0., 0.]))
+    
     def test_count_binary_decisions(self):
         """Tests the function `count_binary_decisions` in the file "lossless/stats.py".
         
