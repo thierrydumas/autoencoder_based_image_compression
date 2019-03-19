@@ -1,23 +1,20 @@
-"""A script to test the libraries in the folder "eae/graph"."""
+"""A script to test the libraries in the folder "eae"."""
 
 import argparse
 import numpy
 import tensorflow as tf
 
+import eae.batching
 import eae.graph.components
 import eae.graph.constants as csts
 import tfutils.tfutils as tfuls
+import tools.tools as tls
 from eae.graph.EntropyAutoencoder import EntropyAutoencoder
 from eae.graph.IsolatedDecoder import IsolatedDecoder
 
 
 class TesterEntropyAutoencoder(object):
-    """Class for testing the libraries in the folder "eae/graph".
-    
-    The libraries in the folder "eae/graph" are
-    all related to the entropy autoencoder.
-    
-    """
+    """Class for testing the libraries in the folder "eae"."""
     
     def test_decoder(self):
         """Tests the function `decoder` in the file "eae/graph/components.py".
@@ -88,6 +85,43 @@ class TesterEntropyAutoencoder(object):
         print(node_y_tilde.get_shape())
         print('Shape of the reconstruction of the visible units:')
         print(node_reconstruction.get_shape())
+    
+    def test_decode_mini_batches(self):
+        """Tests the function `decode_mini_batches` in the file "eae/batching.py".
+        
+        For i = 0 ... 3, an histogram is saved at
+        "eae/pseudo_visualization/decode_mini_batches/reconstructed_pixels_i.png".
+        The test is successful if, in the first histogram,
+        all the values are the same.
+        
+        """
+        batch_size = 2
+        h_in = 64
+        w_in = 48
+        path_to_restore = ''
+        
+        # 2 batches of quantized latent variables will be created
+        # by the function `decode_mini_batches`.
+        quantized_y_float32 = numpy.random.randint(
+            -6,
+            high=6,
+            size=(2*batch_size, h_in//csts.STRIDE_PROD, w_in//csts.STRIDE_PROD, csts.NB_MAPS_3)
+        ).astype(numpy.float32)
+        quantized_y_float32[0, :, :, :] = 0.
+        isolated_decoder = IsolatedDecoder(batch_size,
+                                           h_in,
+                                           w_in,
+                                           False)
+        with tf.Session() as sess:
+            isolated_decoder.initialization(sess, path_to_restore)
+            reconstruction_uint8 = eae.batching.decode_mini_batches(quantized_y_float32,
+                                                                    sess,
+                                                                    isolated_decoder,
+                                                                    batch_size)
+        for i in range(reconstruction_uint8.shape[0]):
+            tls.histogram(reconstruction_uint8[i, :, :, :].flatten(),
+                          'Pixel distribution for the reconstructed image of index {}'.format(i),
+                          'eae/pseudo_visualization/decode_mini_batches/reconstructed_pixels_{}.png'.format(i))
     
     def test_encoder(self):
         """Tests the function `encoder` in the file "eae/graph/components.py".
@@ -160,6 +194,53 @@ class TesterEntropyAutoencoder(object):
         print('Shape of the latent variables:')
         print(node_y.get_shape())
     
+    def test_encode_mini_batches(self):
+        """Tests the function `encode_mini_batches` in the file "eae/batching.py".
+        
+        For i = 0 ... 3, an histogram is saved at
+        "eae/pseudo_visualization/encode_mini_batches/latent_variables_i.png".
+        The test is successful if, in the first histogram,
+        all the values are around 0. In the third histogram,
+        most of the values must be around 0.
+        
+        """
+        batch_size = 2
+        h_in = 64
+        w_in = 48
+        path_to_nb_itvs_per_side_load = ''
+        path_to_restore = ''
+        
+        # 2 batches of luminance images will be created
+        # by the function `encode_mini_batches`.
+        luminances_uint8 = numpy.random.randint(0,
+                                                high=256,
+                                                size=(2*batch_size, h_in, w_in, 1),
+                                                dtype=numpy.uint8)
+        luminances_uint8[0, :, :, :] = 0
+        luminances_uint8[1, :, :, :] = 255
+        luminances_uint8[2, :, :, :] = 0
+        
+        # Only a portion of the luminance image of index
+        # 2 is white.
+        luminances_uint8[2, 0:2, 0:2, :] = 255
+        entropy_ae = EntropyAutoencoder(batch_size,
+                                        h_in,
+                                        w_in,
+                                        1.,
+                                        12000.,
+                                        path_to_nb_itvs_per_side_load,
+                                        False)
+        with tf.Session() as sess:
+            entropy_ae.initialization(sess, path_to_restore)
+            y_float32 = eae.batching.encode_mini_batches(luminances_uint8,
+                                                         sess,
+                                                         entropy_ae,
+                                                         batch_size)
+        for i in range(luminances_uint8.shape[0]):
+            tls.histogram(y_float32[i, :, :, :].flatten(),
+                          'Latent variables distribution for the image of index {}'.format(i),
+                          'eae/pseudo_visualization/encode_mini_batches/latent_variables_{}.png'.format(i))
+    
     def test_isolated_decoder(self):
         """Tests the class `IsolatedDecoder` in the file "eae/graph/IsolatedDecoder.py".
         
@@ -185,7 +266,7 @@ class TesterEntropyAutoencoder(object):
                                            w_in,
                                            False)
         quantized_y_float32 = numpy.random.randint(
-            low=-3,
+            -3,
             high=4,
             size=(batch_size, h_in//csts.STRIDE_PROD, w_in//csts.STRIDE_PROD, csts.NB_MAPS_3)
         ).astype(numpy.float32)
@@ -331,7 +412,7 @@ class TesterEntropyAutoencoder(object):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Tests the libraries in the folder "eae/graph".')
+    parser = argparse.ArgumentParser(description='Tests the libraries in the folder "eae".')
     parser.add_argument('name', help='name of the function/method to be tested')
     args = parser.parse_args()
     
