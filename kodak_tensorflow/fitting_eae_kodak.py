@@ -139,13 +139,12 @@ if __name__ == '__main__':
     if not os.path.exists(path_to_checking_f):
         os.makedirs(path_to_checking_f)
     reference_uint8 = numpy.load('datasets/kodak/results/kodak.npy')
-    (_, h_in, w_in) = reference_uint8.shape
     luminances_uint8 = numpy.expand_dims(reference_uint8, axis=3)
     
     # A single entropy autoencoder is created.
     entropy_ae = EntropyAutoencoder(batch_size,
-                                    h_in,
-                                    w_in,
+                                    luminances_uint8.shape[1],
+                                    luminances_uint8.shape[2],
                                     args.bin_width_init,
                                     args.gamma_scaling,
                                     path_to_nb_itvs_per_side_load,

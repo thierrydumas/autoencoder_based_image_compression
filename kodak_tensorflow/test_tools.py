@@ -40,7 +40,8 @@ class TesterTools(object):
         theoretical_diff_entropy_0 = (0.5 + numpy.log(scale_norm_0*numpy.sqrt(2.*numpy.pi)))/numpy.log(2.)
         theoretical_diff_entropy_1 = (0.5 + numpy.log(scale_norm_1*numpy.sqrt(2.*numpy.pi)))/numpy.log(2.)
         mean_diff_entropy = 0.5*(theoretical_diff_entropy_0 + theoretical_diff_entropy_1)
-        data = numpy.concatenate((data_0, data_1), axis=3)
+        data = numpy.concatenate((data_0, data_1),
+                                 axis=3)
         avg_entropies = tls.average_entropies(data, bin_widths)
         
         # When the quantization bin widths are equal
@@ -465,39 +466,39 @@ class TesterTools(object):
     def test_rate_3d(self):
         """Tests the function `rate_3d`.
         
-        The test is successful if the rate
-        computed by the function is close to
-        the theoretical rate.
+        The test is successful if the rate computed
+        by the function is close to the approximate
+        theoretical rate.
         
         """
         h_in = 768
         w_in = 512
         height_map = 256
         width_map = 256
-        
-        # The quantization bin widths are small
-        # so that the comparison between the
-        # theoretical rate and the rate computed
-        # by the function is precise enough.
         bin_widths = numpy.array([0.2, 0.5], dtype=numpy.float32)
         expanded_latent_float32 = numpy.random.normal(loc=0.,
                                                       scale=1.,
                                                       size=(1, height_map, width_map, 2)).astype(numpy.float32)
         expanded_quantized_latent_float32 = tls.quantize_per_map(expanded_latent_float32, bin_widths)
-        quantized_latent_float32 = numpy.squeeze(expanded_quantized_latent_float32, axis=0)
+        quantized_latent_float32 = numpy.squeeze(expanded_quantized_latent_float32,
+                                                 axis=0)
         rate = tls.rate_3d(quantized_latent_float32,
                            bin_widths,
                            h_in,
                            w_in)
         
-        # The equation below is derived from the
-        # theorem 8.3.1 in the book
-        # "Elements of information theory", 2nd edition,
-        # written by Thomas M. Cover and Joy A. Thomas.
-        theoretical_entropy = -numpy.log2(bin_widths[0]) - numpy.log2(bin_widths[1]) + (numpy.log(2.*numpy.pi) + 1.)/numpy.log(2.)
-        theoretical_rate = theoretical_entropy*height_map*width_map/(h_in*w_in)
+        # The formula below is derived from the
+        # theorem 8.3.1 in the book "Elements of information theory",
+        # 2nd edition, written by Thomas M. Cover and Joy A. Thomas.
+        # Warning! The quantization in this theorem is not the
+        # uniform scalar quantization. But, the two quantizations
+        # get close as the quantization bin width tends to 0.
+        approx_theoretical_entropy = -numpy.log2(bin_widths[0]) \
+                                     - numpy.log2(bin_widths[1]) \
+                                     + (numpy.log(2.*numpy.pi) + 1.)/numpy.log(2.)
+        approx_theoretical_rate = approx_theoretical_entropy*height_map*width_map/(h_in*w_in)
         print('Rate computed by the function: {}'.format(rate))
-        print('Theoretical rate: {}'.format(theoretical_rate))
+        print('Approximate theoretical rate: {}'.format(approx_theoretical_rate))
     
     def test_read_image_mode(self):
         """Tests the function `read_image_mode`.

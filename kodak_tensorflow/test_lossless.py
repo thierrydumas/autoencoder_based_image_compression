@@ -18,22 +18,14 @@ class TesterLossless(object):
     def test_compress_lossless_maps(self):
         """Tests the function `compress_lossless_maps` in the file "lossless/compression.py".
         
-        The test is successful if, for each
-        centered-quantized latent variable feature
-        map, the coding cost computed by the function
-        is larger than the theoretical (minimum)
-        coding cost while being relatively close
-        to the theoretical coding cost.
+        The test is successful if, for each centered quantized
+        latent variable feature map, the coding cost computed
+        by the function is slightly larger than the approximate
+        theoretical coding cost.
         
         """
         height_map = 384
         width_map = 384
-        
-        # The quantization bin widths are small
-        # so that the comparison between the
-        # theoretical (minimum) coding cost and
-        # the coding cost computed by the function
-        # is precise enough.
         bin_widths_test = numpy.array([0.5, 0.25], dtype=numpy.float32)
         laplace_scales = numpy.array([0.5, 3.], dtype=numpy.float32)
         
@@ -41,7 +33,7 @@ class TesterLossless(object):
         # "lossless/pseudo_data/binary_probabilities_compress_maps_0.npy"
         # and those saved at
         # "lossless/pseudo_data/binary_probabilities_compress_maps_1.npy"
-        # are specific to the three Laplace distributions
+        # are specific to the two Laplace distributions
         # below. This means that the binary probabilities
         # must be modified if `laplace_scales` is modified.
         paths_to_binary_probabilities = [
@@ -76,19 +68,21 @@ class TesterLossless(object):
                                    rec_int16_1,
                                    err_msg='The test fails as the lossless compression alters the signed integers.')
         
-        # The equation below is derived from the
-        # theorem 8.3.1 in the book
-        # "Elements of information theory", 2nd edition,
-        # written by Thomas M. Cover and Joy A. Thomas.
-        theoretical_entropies = -numpy.log2(bin_widths_test) + (numpy.log(2.*laplace_scales) + 1.)/numpy.log(2.)
+        # The formula below is derived from the
+        # theorem 8.3.1 in the book "Elements of information theory",
+        # 2nd edition, written by Thomas M. Cover and Joy A. Thomas.
+        # Warning! The quantization in this theorem is not the
+        # uniform scalar quantization. But, the two quantizations
+        # get close as the quantization bin width tends to 0.
+        approx_theoretical_entropies = -numpy.log2(bin_widths_test) + (numpy.log(2.*laplace_scales) + 1.)/numpy.log(2.)
         print('B0 denotes the binary probabilities saved at "{}".'.format(paths_to_binary_probabilities[0]))
         print('B1 denotes the binary probabilities saved at "{}".'.format(paths_to_binary_probabilities[1]))
-        print('\n1st centered-quantized latent variable feature map.')
-        print('Theoretical coding cost: {} bits.'.format(theoretical_entropies[0]*height_map*width_map))
+        print('\n1st centered quantized latent variable feature map.')
+        print('Approximate theoretical coding cost: {} bits.'.format(approx_theoretical_entropies[0]*height_map*width_map))
         print('Coding cost computed by the function via B0: {} bits.'.format(nb_bits_each_map_0[0]))
         print('Coding cost computed by the function via B1: {} bits.'.format(nb_bits_each_map_1[0]))
-        print('\n2nd centered-quantized latent variable feature map.')
-        print('Theoretical coding cost: {} bits.'.format(theoretical_entropies[1]*height_map*width_map))
+        print('\n2nd centered quantized latent variable feature map.')
+        print('Approximate theoretical coding cost: {} bits.'.format(approx_theoretical_entropies[1]*height_map*width_map))
         print('Coding cost computed by the function via B0: {} bits.'.format(nb_bits_each_map_0[1]))
         print('Coding cost computed by the function via B1: {} bits.'.format(nb_bits_each_map_1[1]))
     
@@ -111,7 +105,7 @@ class TesterLossless(object):
         
         The test is successful if, for each set of
         test quantization bin widths, for each absolute
-        centered-quantized latent variable feature map,
+        centered quantized latent variable feature map,
         the binary probabilities computed by the function
         are close to the binary probabilities computed
         by hand.
@@ -140,7 +134,7 @@ class TesterLossless(object):
                                                                              truncated_unary_length)
         print('1st set of test quantization bin widths:')
         print(bin_widths_test_0)
-        print('1st absolute centered-quantized latent variable feature map.')
+        print('1st absolute centered quantized latent variable feature map.')
         print('Binary probabilities computed by the function:')
         print(binary_probabilities_0[0, :])
         
@@ -156,7 +150,7 @@ class TesterLossless(object):
         # function of the uniform distribution of support [-10.0, 10.0].
         print('Binary probabilities computed by hand:')
         print([1./10, 2./9, 2./7, 2./5])
-        print('2nd absolute centered-quantized latent variable feature map.')
+        print('2nd absolute centered quantized latent variable feature map.')
         print('Binary probabilities computed by the function:')
         print(binary_probabilities_0[1, :])
         
@@ -174,7 +168,7 @@ class TesterLossless(object):
         # function of the Laplace distribution of mean 0 and scale 2.5.
         print('Binary probabilities computed by hand:')
         print([0.3297, 0.5507, 0.5507, 0.5507])
-        print('3rd absolute centered-quantized latent variable feature map.')
+        print('3rd absolute centered quantized latent variable feature map.')
         print('Binary probabilities computed by the function:')
         print(binary_probabilities_0[2, :])
         
@@ -196,7 +190,7 @@ class TesterLossless(object):
                                                                              truncated_unary_length)
         print('\n2nd set of test quantization bin widths:')
         print(bin_widths_test_1)
-        print('1st absolute centered-quantized latent variable feature map.')
+        print('1st absolute centered quantized latent variable feature map.')
         print('Binary probabilities computed by the function:')
         print(binary_probabilities_1[0, :])
         
@@ -210,7 +204,7 @@ class TesterLossless(object):
         # p(0.75 <= |x| <= 1.25)/p(|x| >= 0.75) = (2.0/40)/(37.0/40) = 2.0/37.
         print('Binary probabilities computed by hand:')
         print([1./40, 2./39, 2./37, 2./35])
-        print('2nd absolute centered-quantized latent variable feature map.')
+        print('2nd absolute centered quantized latent variable feature map.')
         print('Binary probabilities computed by the function:')
         print(binary_probabilities_1[1, :])
         
@@ -224,7 +218,7 @@ class TesterLossless(object):
         # p(0.75 <= |x| <= 1.25)/p(|x| >= 0.75) = 0.1343/0.7408 = 0.1813.
         print('Binary probabilities computed by hand:')
         print([0.0952, 0.1813, 0.1813, 0.1813])
-        print('3rd absolute centered-quantized latent variable feature map.')
+        print('3rd absolute centered quantized latent variable feature map.')
         print('Binary probabilities computed by the function:')
         print(binary_probabilities_1[2, :])
         
