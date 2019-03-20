@@ -99,7 +99,6 @@ class TesterTools(object):
         # `scale_normal`, `scale_logistic`, and `scale_laplace`
         # are the scales of respectively the normal distribution,
         # the logistic, and the Laplace distribution.
-        # distribution.
         scale_normal = 2.
         scale_logistic = 1.
         scale_laplace = 1.
