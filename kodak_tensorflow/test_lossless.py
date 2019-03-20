@@ -2,11 +2,14 @@
 
 import argparse
 import numpy
+import os
+import tensorflow as tf
 
 import lossless.compression
 import lossless.interface_cython
 import lossless.stats
 import tools.tools as tls
+from eae.graph.EntropyAutoencoder import EntropyAutoencoder
 
 
 class TesterLossless(object):
@@ -376,6 +379,55 @@ class TesterLossless(object):
                                                                       bin_widths_test,
                                                                       path_to_binary_probabilities)
         print('Number of bits in the bitstream: {}'.format(nb_bits))
+    
+    def test_save_statistics(self):
+        """Tests the function `save_statistics` in the file "lossless/stats.py".
+        
+        The test is successful if the directory at "lossless/pseudo_data/save_statistics/"
+        contains the files "'map_mean.npy", "idx_map_exception.pkl", "binary_probabilities_0dot5.npy",
+        and "binary_probabilities_20.npy".
+        
+        """
+        batch_size = 2
+        multipliers = numpy.array([0.5, 20.], dtype=numpy.float32)
+        
+        # The entropy autoencoder is randomly initialized.
+        path_to_nb_itvs_per_side_load = ''
+        path_to_restore = ''
+        path_to_stats = 'lossless/pseudo_data/save_statistics/'
+        path_to_map_mean = os.path.join(path_to_stats,
+                                        'map_mean.npy')
+        path_to_idx_map_exception = os.path.join(path_to_stats,
+                                                 'idx_map_exception.pkl')
+        paths_to_binary_probabilities = [
+            os.path.join(path_to_stats, 'binary_probabilities_{}.npy'.format(tls.float_to_str(multipliers[i].item()))) for i in range(multipliers.size)
+        ]
+        luminances_uint8 = numpy.random.randint(0,
+                                                high=256,
+                                                size=(2*batch_size, 32, 64, 1),
+                                                dtype=numpy.uint8)
+        
+        # The 4th, 5th, and 7th arguments have no importance.
+        entropy_ae = EntropyAutoencoder(batch_size,
+                                        luminances_uint8.shape[1],
+                                        luminances_uint8.shape[2],
+                                        1.,
+                                        10000.,
+                                        path_to_nb_itvs_per_side_load,
+                                        False)
+        with tf.Session() as sess:
+            entropy_ae.initialization(sess, path_to_restore)
+            lossless.stats.save_statistics(luminances_uint8,
+                                           sess,
+                                           entropy_ae,
+                                           batch_size,
+                                           multipliers,
+                                           10,
+                                           path_to_map_mean,
+                                           path_to_idx_map_exception,
+                                           paths_to_binary_probabilities)
+        print('Files in the directory at {}:'.format(path_to_stats))
+        print(os.listdir(path_to_stats))
 
 
 if __name__ == '__main__':

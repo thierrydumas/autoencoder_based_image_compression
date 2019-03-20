@@ -66,10 +66,9 @@ if __name__ == '__main__':
     # `extra_uint8.dtype` is equal to `numpy.uint8`.
     # The 4th dimension of `extra_uint8` is equal to 1.
     extra_uint8 = numpy.load('datasets/extra/results/extra_data.npy')
-    (_, h_in, w_in, _) = extra_uint8.shape
     entropy_ae = EntropyAutoencoder(batch_size,
-                                    h_in,
-                                    w_in,
+                                    extra_uint8.shape[1],
+                                    extra_uint8.shape[2],
                                     args.bin_width_init,
                                     args.gamma_scaling,
                                     path_to_nb_itvs_per_side_load,
