@@ -121,8 +121,8 @@ class TesterTfUtils(object):
             else:
                 tf.global_variables_initializer().run()
             for i in range(nb_epochs_fitting):
-                _ = sess.run(node_opt_fct, feed_dict={node_y_tilde:y_tilde})
-                _ = sess.run(node_projection_parameters_fct)
+                sess.run(node_opt_fct, feed_dict={node_y_tilde:y_tilde})
+                sess.run(node_projection_parameters_fct)
             approx_entropy = sess.run(node_approx_entropy, feed_dict={node_y_tilde:y_tilde})
         cumulated_entropy = 0.
         for i in range(nb_maps):
@@ -347,7 +347,7 @@ class TesterTfUtils(object):
             print(grid.eval())
             print('Parameters of the piecewise linear functions before the expansion:')
             print(parameters.eval())
-            _ = sess.run(node_expansion)
+            sess.run(node_expansion)
             print('Number of unit intervals in the right half of the grid after the expansion: {}'.format(nb_intervals_per_side.eval()))
             print('Grid after the expansion:')
             print(grid.eval())
@@ -391,7 +391,7 @@ class TesterTfUtils(object):
             print('Number of unit intervals added to each side of the grid: {}'.format(nb_added_per_side.eval()))
             print('Parameters of the piecewise linear functions before the expansion:')
             print(parameters.eval())
-            _ = sess.run(node_expansion)
+            sess.run(node_expansion)
             print('Parameters of the piecewise linear functions after the expansion:')
             print(parameters.eval())
     

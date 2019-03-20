@@ -266,6 +266,9 @@ class EntropyAutoencoder(object):
                              csts.NB_POINTS_PER_INTERVAL,
                              nb_intervals_per_side,
                              tf.reduce_max(tf.abs(self.node_y)) + 0.5*tf.reduce_max(bin_widths))
+        
+        # The operation `tf.assign` outputs a tensor holding
+        # the new value of its first argument after the assignment.
         self.node_expansion = [
             tf.assign(grid, grid_exp, validate_shape=False),
             tf.assign(parameters, parameters_exp, validate_shape=False),
@@ -498,9 +501,9 @@ class EntropyAutoencoder(object):
             `visible_units` is equal to 1.
         
         """
-        _ = sess.run(self.node_expansion, feed_dict={self.node_visible_units:visible_units})
-        _ = sess.run(self.node_opt_fct, feed_dict={self.node_visible_units:visible_units})
-        _ = sess.run(self.node_projection_parameters_fct)
+        sess.run(self.node_expansion, feed_dict={self.node_visible_units:visible_units})
+        sess.run(self.node_opt_fct, feed_dict={self.node_visible_units:visible_units})
+        sess.run(self.node_projection_parameters_fct)
     
     def training_eae_bw(self, sess, visible_units):
         """"Trains the parameters of the entropy autoencoder and the quantization bin widths if required.
@@ -528,13 +531,13 @@ class EntropyAutoencoder(object):
             # fetched via two separate graph runs, we would have
             # to check whether the condition of expansion is met
             # between the two separate runs.
-            _, _ = sess.run([self.node_opt_eae, self.node_opt_bw], feed_dict={self.node_visible_units:visible_units})
-            _ = sess.run(self.node_projection_bw)
+            sess.run([self.node_opt_eae, self.node_opt_bw], feed_dict={self.node_visible_units:visible_units})
+            sess.run(self.node_projection_bw)
         else:
-            _ = sess.run(self.node_opt_eae, feed_dict={self.node_visible_units:visible_units})
-        _ = sess.run(self.node_projection_beta)
-        _ = sess.run(self.node_projection_gamma)
-        _ = sess.run(self.node_symmetric_gamma)
+            sess.run(self.node_opt_eae, feed_dict={self.node_visible_units:visible_units})
+        sess.run(self.node_projection_beta)
+        sess.run(self.node_projection_gamma)
+        sess.run(self.node_symmetric_gamma)
     
     def evaluation(self, sess, visible_units):
         """Computes 4 indicators to assess how the training advances.
@@ -573,7 +576,7 @@ class EntropyAutoencoder(object):
         # When feeding `visible_units` into the
         # graph of the entropy autoencoder, is
         # the condition of expansion met?
-        _ = sess.run(self.node_expansion, feed_dict={self.node_visible_units:visible_units})
+        sess.run(self.node_expansion, feed_dict={self.node_visible_units:visible_units})
         scaled_approx_entropy, rec_error, loss_density_approx, y = sess.run(
             [self.node_scaled_approx_entropy, self.node_rec_error, self.node_loss_density_approx, self.node_y],
             feed_dict={self.node_visible_units:visible_units}
