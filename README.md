@@ -1,22 +1,22 @@
 # Autoencoder based image compression: can the learning be quantization independent?
 
-This repository is a Tensorflow implementation of the paper "Autoencoder based image compression: can the learning be quantization independent?", *ICASSP 2018*.
+This repository is a Tensorflow implementation of the paper "Autoencoder based image compression: can the learning be quantization independent?", *ICASSP*, 2018.
 
-[ICASSP 2018 paper](https://arxiv.org/abs/1802.09371) | [Project page with visualizations](https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm)
+<a href="https://arxiv.org/abs/1802.09371" target="_blank">ICASSP 2018 paper</a> | <a href="https://www.irisa.fr/temics/demos/visualization_ae/visualizationAE.htm" target="_blank">Project page with visualizations</a>
 
 The code is tested on Linux and Windows.
 
 ## Prerequisites
   * Python (the code was tested using Python 2.7.9 and Python 3.6.3)
   * numpy (version >= 1.11.0)
-  * tensorflow (optional GPU support), see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0; the code must thus work using any Tensorflow 0.x or 1.x, x being the subversion index)
+  * tensorflow (optional GPU support), see <a href="https://www.tensorflow.org/install/" target="_blank">TensorflowInstallationWebPage</a> (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0; the code must thus work using any Tensorflow 0.x or 1.x, x being the subversion index)
   * cython
   * matplotlib
   * pillow
   * scipy
   * six
-  * glymur, see [GlymurAdvancedInstallationWebPage](https://glymur.readthedocs.io/en/v0.8.14/detailed_installation.html)
-  * ImageMagick, see [ImageMagickWebPage](https://www.imagemagick.org)
+  * glymur, see <a href="https://glymur.readthedocs.io/en/lts/" target="_blank">GlymurAdvancedInstallationWebPage</a>
+  * ImageMagick, see <a href="https://www.imagemagick.org" target="_blank">ImageMagickWebPage</a>
   
 ## Cloning the code
 Clone this repository into the current folder.
@@ -39,7 +39,7 @@ cd ../
       make
       cd ../../../../
       ```
-    * For Windows, use Visual Studio 2015 and the solution file at "hevc/HM-16.15/build/HM_vc2015.sln". For more information, see [HEVCSoftwareWebPage](https://hevc.hhi.fraunhofer.de/).
+    * For Windows, use Visual Studio 2015 and the solution file at "hevc/HM-16.15/build/HM_vc2015.sln". For more information, see <a href="https://hevc.hhi.fraunhofer.de/" target="_blank">HEVCSoftwareWebPage</a>.
 
 ## Quick start: reproducing the main results of the paper
 1. Creation of the Kodak test set containing 24 luminance images.
@@ -54,7 +54,7 @@ python reconstructing_eae_kodak.py
 After running 2., the reconstructions of the luminance images in the Kodak test set and the rates and the PSNRs associated to the compression of the luminance images via the trained autoencoders, JPEG2000, and H.265 are stored in the folder "eae/visualization/test/checking_reconstructing/kodak/".
 
 ## Quick start: training an autoencoder
-1. First of all, ImageNet images must be downloaded. In our case, it is sufficient to download the ILSVRC2012 validation images, "ILSVRC2012_img_val.tar" (6.3 GB), see [ImageNetDownloadWebPage](http://image-net.org/download). Let's say that, in your computer, the path to "ILSVRC2012_img_val.tar" is "path/to/folder_0/ILSVRC2012_img_val.tar" and you want the unpacked images to be put into the folder "path/to/folder_1/" before the script "creating_imagenet.py" preprocesses them. The creation of the ImageNet training and validaton sets of luminance images is then done via
+1. First of all, ImageNet images must be downloaded. In our case, it is sufficient to download the ILSVRC2012 validation images, "ILSVRC2012_img_val.tar" (6.3 GB), see <a href="http://image-net.org/download" target="_blank">ImageNetDownloadWebPage</a>. Let's say that, in your computer, the path to "ILSVRC2012_img_val.tar" is "path/to/folder_0/ILSVRC2012_img_val.tar" and you want the unpacked images to be put into the folder "path/to/folder_1/" before the script "creating_imagenet.py" preprocesses them. The creation of the ImageNet training and validaton sets of luminance images is then done via
 ```sh
 python creating_imagenet.py path/to/folder_1/ --path_to_tar=path/to/folder_0/ILSVRC2012_img_val.tar
 ```
