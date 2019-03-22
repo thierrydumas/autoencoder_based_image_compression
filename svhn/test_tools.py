@@ -14,174 +14,14 @@ import warnings
 
 import tools.tools as tls
 
-def fit_piecewise_linear_function(samples, grid, low_projection, nb_points_per_interval,
-                                  nb_intervals_per_side, nb_epochs_fitting, learning_rate=0.2):
-    """Fits a piecewise linear function to the unknown probability density function.
-    
-    Parameters
-    ----------
-    samples : numpy.ndarray
-        1D array with data-type `numpy.float64`.
-        Samples from the unknown probability density
-        function.
-    grid : numpy.ndarray
-        1D array with data-type `numpy.float64`.
-        Grid storing the sampling points.
-    low_projection : float
-        Strictly positive minimum for the parameters
-        of the piecewise linear function. Thanks to
-        `low_projection`, the parameters of the piecewise
-        linear function cannot get extremely close to 0.
-        Therefore, the limited floating-point precision
-        cannot round them to 0.
-    nb_points_per_interval : int
-        Number of sampling points per unit interval
-        in the grid.
-    nb_intervals_per_side : int
-        Number of unit intervals in the right half
-        of the grid. The grid is symmetrical about 0.
-    nb_epochs_fitting : int
-        Number of fitting epochs.
-    learning_rate : float, optional
-        Learning rate for the parameters of the piecewise
-        linear function. The default value is 0.2.
-    
-    Returns
-    -------
-    numpy.ndarray
-        1D array with data-type `numpy.float64`.
-        Parameters of the piecewise linear function
-        after the fitting.
-    
-    """
-    parameters = numpy.maximum(scipy.stats.distributions.cauchy.pdf(grid),
-                               low_projection)
-    for _ in range(nb_epochs_fitting):
-        gradients = tls.gradient_density_approximation(samples,
-                                                       parameters,
-                                                       nb_points_per_interval,
-                                                       nb_intervals_per_side)
-        parameters -= learning_rate*gradients
-        parameters = numpy.maximum(parameters,
-                                   low_projection)
-    return parameters
-
 
 class TesterTools(object):
     """Class for testing the library that contains common tools."""
     
     def test_approximate_entropy(self):
-        """Tests the function `approximate_entropy`.
-        
-        The test compares two different relations between
-        the differential entropy of samples from a probability
-        density function and the entropy of the quantized
-        samples. The 1st relation is the theorem 8.3.1 in the
-        book "Elements of information theory, second edition",
-        written by Thomas M. Cover and Joy A. Thomas, page 248.
-        Note that, in this theorem, the quantization is defined
-        via the mean value theorem whereas, in our case, the
-        quantization is scalar uniform. This difference reduces
-        the accuracy of the 1st relation. The 2nd relation is
-        implemented by the function `approximate_entropy`.
-        Three plots are saved in the directory at "tools/pseudo_visualization/approximate_entropy/".
-        The test is successful if, in the three plots, for the
-        two relations, the error of entropy estimation is low
-        at low quantization bin width.
-        
-        """
-        nb_points_per_interval = 10
-        nb_intervals_per_side = 30
-        bin_widths = numpy.linspace(0.2, 6., num=30)
-        low_projection = 1.e-6
-        nb_epochs_fitting = 120
-        
-        # `scale_normal`, `scale_logistic`, and `scale_laplace`
-        # are the scales of respectively the normal distribution,
-        # the logistic, and the Laplace distribution.
-        scale_normal = 2.
-        scale_logistic = 1.
-        scale_laplace = 1.
-        
-        nb_points = 2*nb_points_per_interval*nb_intervals_per_side + 1
-        grid = numpy.linspace(-nb_intervals_per_side,
-                              nb_intervals_per_side,
-                              num=nb_points)
-        
-        def test_approximate_entropy_changing_pdf(y, theoretical_diff_entropy, path):
-            gaps = numpy.zeros((2, bin_widths.size))
-            for i in range(bin_widths.size):
-                bin_width = bin_widths[i].item()
-                approx_entropy_0 = theoretical_diff_entropy - numpy.log2(bin_width)
-                quantized_y = tls.quantization(y, bin_width)
-                disc_entropy = tls.discrete_entropy(quantized_y, bin_width)
-                gaps[0, i] = numpy.absolute(disc_entropy - approx_entropy_0)
-                samples_uniform = numpy.random.uniform(low=-0.5*bin_width,
-                                                       high=0.5*bin_width,
-                                                       size=y.size)
-                y_tilde = y + samples_uniform
-                
-                # `parameters` are the parameters of the piecewise
-                # linear function. The piecewise linear function
-                # approximates the probability density function of
-                # `y_tilde`. Note that the probability density function
-                # of `y_tilde` is the convolution between the probability
-                # density function of `y` and the probability density
-                # function of the continuous uniform distribution of
-                # support [-0.5*`bin_width`, 0.5*`bin_width`].
-                parameters = fit_piecewise_linear_function(y_tilde,
-                                                           grid,
-                                                           low_projection,
-                                                           nb_points_per_interval,
-                                                           nb_intervals_per_side,
-                                                           nb_epochs_fitting)
-                approx_entropy_1 = tls.approximate_entropy(y_tilde,
-                                                           parameters,
-                                                           nb_points_per_interval,
-                                                           nb_intervals_per_side,
-                                                           bin_width)
-                gaps[1, i] = numpy.absolute(disc_entropy - approx_entropy_1)
-            tls.plot_graphs(bin_widths,
-                            gaps,
-                            'quantization bin width',
-                            'error of entropy estimation',
-                            ['1st relation', '2nd relation'],
-                            ['r', 'b'],
-                            'Evolution of the error of entropy estimation \n with the quantization bin width',
-                            path)
-        
-        # `theoretical_diff_entropy_0` is the differential
-        # entropy of the probability density function of the
-        # normal distribution of scale `scale_normal`.
-        y_0 = numpy.random.normal(loc=1.,
-                                  scale=scale_normal,
-                                  size=60000)
-        theoretical_diff_entropy_0 = 0.5*(1. + numpy.log(2.*numpy.pi*scale_normal**2))/numpy.log(2.)
-        test_approximate_entropy_changing_pdf(y_0,
-                                              theoretical_diff_entropy_0,
-                                              'tools/pseudo_visualization/approximate_entropy/approximate_entropy_normal_{}.png'.format(tls.float_to_str(scale_normal)))
-        
-        # `theoretical_diff_entropy_1` is the differential
-        # entropy of the probability density function of the
-        # logistic distribution.
-        y_1 = numpy.random.logistic(loc=-1.,
-                                    scale=scale_logistic,
-                                    size=60000)
-        theoretical_diff_entropy_1 = 2./numpy.log(2.)
-        test_approximate_entropy_changing_pdf(y_1,
-                                              theoretical_diff_entropy_1,
-                                              'tools/pseudo_visualization/approximate_entropy/approximate_entropy_logistic.png')
-        
-        # `theoretical_diff_entropy_2` is the differential
-        # entropy of the probability density function of the
-        # Laplace distribution of scale `scale_laplace`.
-        y_2 = numpy.random.laplace(loc=0.,
-                                   scale=scale_laplace,
-                                   size=60000)
-        theoretical_diff_entropy_2 = (1. + numpy.log(2.*scale_laplace))/numpy.log(2.)
-        test_approximate_entropy_changing_pdf(y_2,
-                                              theoretical_diff_entropy_2,
-                                              'tools/pseudo_visualization/approximate_entropy/approximate_entropy_laplace_{}.png'.format(tls.float_to_str(scale_laplace)))
+        """Tests the function `approximate_entropy`."""
+        print('The function `approximate_entropy` is a slight variant of the function `differential_entropy`.')
+        print('Run the test of the function `differential_entropy`.')
     
     def test_approximate_probability(self):
         """Tests the function `approximate_probability`.
@@ -755,8 +595,8 @@ class TesterTools(object):
         """Tests the function `loss_entropy_reconstruction`.
         
         The test is successful if the entropy-reconstruction
-        loss computed by the function is almost equal
-        to its approximation.
+        loss computed by the function is equal to the entropy-reconstruction
+        loss computed by hand.
         
         """
         nb_points_per_interval = 10
@@ -765,9 +605,7 @@ class TesterTools(object):
         width_visible_units = 5
         height_y_tilde = 100
         width_y_tilde = 300
-        bin_width = 0.8
-        low_projection = 1.e-6
-        nb_epochs_fitting = 120
+        bin_width = 1.
         
         nb_points = 2*nb_points_per_interval*nb_intervals_per_side + 1
         grid = numpy.linspace(-nb_intervals_per_side,
@@ -786,12 +624,15 @@ class TesterTools(object):
                                                high=0.5*bin_width,
                                                size=(height_y_tilde, width_y_tilde))
         y_tilde = y + samples_uniform
-        parameters = fit_piecewise_linear_function(y_tilde.flatten(),
-                                                   grid,
-                                                   low_projection,
-                                                   nb_points_per_interval,
-                                                   nb_intervals_per_side,
-                                                   nb_epochs_fitting)
+        
+        # There is an intentional mismatch between
+        # the probability density function of the
+        # noisy samples and the probability density
+        # function for creating the parameters of the
+        # piecewise linear function.
+        parameters = scipy.stats.distributions.norm.pdf(grid,
+                                                        loc=-1.2,
+                                                        scale=2.)
         loss = tls.loss_entropy_reconstruction(visible_units,
                                                y_tilde,
                                                reconstruction,
@@ -799,11 +640,9 @@ class TesterTools(object):
                                                nb_points_per_interval,
                                                nb_intervals_per_side,
                                                bin_width,
-                                               1.)
-        quantized_y = tls.quantization(y, bin_width)
-        disc_entropy = tls.discrete_entropy(quantized_y, bin_width)
+                                               0.)
         print('Entropy-reconstruction loss computed by the function: {}'.format(loss))
-        print('Approximation of the entropy-reconstruction loss: {}'.format(disc_entropy))
+        print('Entropy-reconstruction loss computed by hand: 0.')
 
     def test_mean_psnr(self):
         """Tests the function `mean_psnr`.
