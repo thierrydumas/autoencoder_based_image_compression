@@ -1,4 +1,4 @@
-"""A script to compare the errors of entropy estimation via two relations."""
+"""A script to compare the errors of entropy approximation via two relations."""
 
 import argparse
 import matplotlib
@@ -14,7 +14,8 @@ import scipy.stats.distributions
 import tools.tools as tls
 
 def approximate_entropy_plot_errors(y, grid, low_projection, nb_points_per_interval, nb_intervals_per_side,
-                                    nb_epochs_fitting, bin_widths, theoretical_diff_entropy, path):
+                                    nb_epochs_fitting, bin_widths, theoretical_diff_entropy,
+                                    path_to_normed_hist_prefix, path_to_plot_errors):
     """Approximates the entropy of the quantized samples via two relations and plots the errors of entropy approximation.
     
     The 1st relation is derived from Theorem 8.3.1 in the
@@ -52,7 +53,10 @@ def approximate_entropy_plot_errors(y, grid, low_projection, nb_points_per_inter
     theoretical_diff_entropy : float
         Theoretical differential entropy of the probability
         density function of `y`.
-    path : str
+    path_to_normed_hist_prefix : str
+        Prefix of the path to the saved normed histogram
+        of the noisy samples.
+    path_to_plot_errors : str
         Path to the saved plot of the errors of entropy
         approximation. The path ends with ".png".
     
@@ -84,6 +88,15 @@ def approximate_entropy_plot_errors(y, grid, low_projection, nb_points_per_inter
                                                    nb_points_per_interval,
                                                    nb_intervals_per_side,
                                                    nb_epochs_fitting)
+        
+        # The normed histogram of the noisy samples is
+        # saved to check the reliability of the fitting.
+        if i == 0 or i == bin_widths.size - 1:
+            tls.normed_histogram(y_tilde,
+                                 grid,
+                                 parameters,
+                                 'Noisy samples after the fitting when $\delta$ = {}'.format(bin_width),
+                                 path_to_normed_hist_prefix + '_' + tls.float_to_str(bin_width) + '.png')
         approx_entropy_1 = tls.approximate_entropy(y_tilde,
                                                    parameters,
                                                    nb_points_per_interval,
@@ -92,10 +105,146 @@ def approximate_entropy_plot_errors(y, grid, low_projection, nb_points_per_inter
         gaps[1, i] = numpy.absolute(disc_entropy - approx_entropy_1)
     plot_errors(bin_widths,
                 gaps,
-                path)
+                path_to_plot_errors)
+
+def compare_errors_pdfs(grid, low_projection, nb_points_per_interval, nb_intervals_per_side,
+                        nb_epochs_fitting, bin_widths, tuples_pdf_scale, theoretical_diff_entropies,
+                        nb_samples, paths_to_normed_hist_prefix, paths_to_plot_errors):
+    """Compares the errors of entropy approximation via the two relations for different probability density functions.
+    
+    Parameters
+    ----------
+    grid : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        Grid storing the sampling points.
+    low_projection : float
+        Strictly positive minimum for the parameters
+        of the piecewise linear function. Thanks to
+        `low_projection`, the parameters of the piecewise
+        linear function cannot get extremely close to 0.
+        Therefore, the limited floating-point precision
+        cannot round them to 0.
+    nb_points_per_interval : int
+        Number of sampling points per unit interval
+        in the grid.
+    nb_intervals_per_side : int
+        Number of unit intervals in the right half
+        of the grid. The grid is symmetrical about 0.
+    nb_epochs_fitting : int
+        Number of fitting epochs.
+    bin_widths : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        Quantization bin widths.
+    tuples_pdf_scale : tuple
+        Each tuple in this tuple defines a continuous
+        probability distribution via its family and its
+        scale.
+    theoretical_diff_entropies : list
+        `theoretical_diff_entropies[i]` is the differential
+        entropy of the continuous probability distribution
+        defined by `tuples_pdf_scale[i]`.
+    nb_samples : int
+        Number of samples from each continuous probability
+        distribution.
+    paths_to_normed_hist_prefix : list
+        Each string in this list is the prefix of the path
+        to a saved normed histogram of noisy samples.
+    paths_to_plot_errors : list
+        Each string in this list is the path to a saved
+        plot of errors of entropy approximation. Each path
+        ends with ".png".
+    
+    Raises
+    ------
+    ValueError
+        If `len(theoretical_diff_entropies)` is not equal to `len(tuples_pdf_scale)`.
+    ValueError
+        If `len(paths_to_normed_hist_prefix)` is not equal to `len(tuples_pdf_scale)`.
+    ValueError
+        If `len(paths_to_plot_errors)` is not equal to `len(tuples_pdf_scale)`.
+    
+    """
+    nb_pdfs = len(tuples_pdf_scale)
+    if len(theoretical_diff_entropies) != nb_pdfs:
+        raise ValueError('`len(theoretical_diff_entropies)` is not equal to `len(tuples_pdf_scale)`.')
+    if len(paths_to_normed_hist_prefix) != nb_pdfs:
+        raise ValueError('`len(paths_to_normed_hist_prefix)` is not equal to `len(tuples_pdf_scale)`.')
+    if len(paths_to_plot_errors) != nb_pdfs:
+        raise ValueError('`len(paths_to_plot_errors)` is not equal to `len(tuples_pdf_scale)`.')
+    for i in range(nb_pdfs):
+        y = tuples_pdf_scale[i][0](loc=0.,
+                                   scale=tuples_pdf_scale[i][1],
+                                   size=nb_samples)
+        approximate_entropy_plot_errors(y,
+                                        grid,
+                                        low_projection,
+                                        nb_points_per_interval,
+                                        nb_intervals_per_side,
+                                        nb_epochs_fitting,
+                                        bin_widths,
+                                        theoretical_diff_entropies[i],
+                                        paths_to_normed_hist_prefix[i],
+                                        paths_to_plot_errors[i])
+
+def compute_diff_entropy_laplace(scale):
+    """Computes the differential entropy of the Laplace distribution.
+    
+    The difference between `compute_diff_entropy_laplace` and `scipy.stats.laplace.entropy`
+    is a factor `numpy.log(2.)`.
+    
+    Parameters
+    ----------
+    scale : float
+        Scale of the Laplace distribution.
+    
+    Returns
+    -------
+    float
+        Differential entropy of the Laplace distribution.
+    
+    """
+    return ((1. + numpy.log(2.*scale))/numpy.log(2.)).item()
+
+def compute_diff_entropy_logistic(scale):
+    """Computes the differential entropy of the logistic distribution.
+    
+    The difference between `compute_diff_entropy_logistic` and `scipy.stats.logistic.entropy`
+    is a factor `numpy.log(2.)`.
+    
+    Parameters
+    ----------
+    scale : float
+        Scale of the logistic distribution.
+    
+    Returns
+    -------
+    float
+        Differential entropy of the logistic distribution.
+    
+    """
+    return ((2. + numpy.log(scale))/numpy.log(2.)).item()
+
+def compute_diff_entropy_normal(scale):
+    """Computes the differential entropy of the normal distribution.
+    
+    The difference between `compute_diff_entropy_normal` and `scipy.stats.norm.entropy`
+    is a factor `numpy.log(2.)`.
+    
+    Parameters
+    ----------
+    scale : float
+        Scale of the normal distribution.
+    
+    Returns
+    -------
+    float
+        Differential entropy of the normal distribution.
+    
+    """
+    return (0.5*(1. + numpy.log(2.*numpy.pi*scale**2))/numpy.log(2.)).item()
 
 def fit_piecewise_linear_function(samples, grid, low_projection, nb_points_per_interval,
-                                  nb_intervals_per_side, nb_epochs_fitting, learning_rate=0.15):
+                                  nb_intervals_per_side, nb_epochs_fitting, learning_rate=0.2):
     """Fits a piecewise linear function to the unknown probability density function.
     
     Parameters
@@ -124,7 +273,7 @@ def fit_piecewise_linear_function(samples, grid, low_projection, nb_points_per_i
         Number of fitting epochs.
     learning_rate : float, optional
         Learning rate for the parameters of the piecewise
-        linear function. The default value is 0.15.
+        linear function. The default value is 0.2.
     
     Returns
     -------
@@ -201,7 +350,7 @@ def plot_errors(bin_widths, gaps, path):
     plt.ylabel('error of entropy approximation',
                fontsize=20)
     plt.legend(handle,
-               [r'A.TH:8.3.1', r'A.[2]'],
+               [r'A[1]', r'A[2]'],
                loc='upper center',
                prop={'size':20},
                frameon=False)
@@ -210,67 +359,75 @@ def plot_errors(bin_widths, gaps, path):
     plt.clf()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Compares the errors of entropy estimation via two relations.')
+    parser = argparse.ArgumentParser(description='Compares the errors of entropy approximation via two relations.')
     parser.parse_args()
     
-    nb_points_per_interval = 20
-    nb_intervals_per_side = 30
+    nb_points_per_interval = 4
+    nb_intervals_per_side = 50
     bin_widths = numpy.linspace(0.2, 6., num=30)
     low_projection = 1.e-6
-    nb_epochs_fitting = 150
+    nb_epochs_fitting = 120
     nb_samples = 200000
         
-    # `scale_normal`, `scale_logistic`, and `scale_laplace_0`
-    # are the scales of respectively the normal distribution,
-    # the logistic, and the Laplace distribution.
-    scale_normal = 3.
-    scale_logistic = 1.
-    scales_laplace = numpy.array([0.5, 1., 2.])
+    # `tuples_pdf_scale[i]` is the tuple containing
+    # the probability density function of index i and
+    # its scale.
+    tuples_pdf_scale = (
+        (numpy.random.normal, 0.5),
+        (numpy.random.normal, 1.),
+        (numpy.random.normal, 2.),
+        (numpy.random.logistic, 1.),
+        (numpy.random.logistic, 2.),
+        (numpy.random.laplace, 0.5),
+        (numpy.random.laplace, 1.),
+        (numpy.random.laplace, 2.)
+    )
+    
+    # `theoretical_diff_entropies[i]` is the differential
+    # entropy of the probability density function `tuples_pdf_scale[i][0]`
+    # with scale `tuples_pdf_scale[i][1]`.
+    theoretical_diff_entropies = [compute_diff_entropy_normal(tuples_pdf_scale[i][1]) for i in range(3)]
+    theoretical_diff_entropies += [compute_diff_entropy_logistic(tuples_pdf_scale[3 + i][1]) for i in range(2)]
+    theoretical_diff_entropies += [compute_diff_entropy_laplace(tuples_pdf_scale[5 + i][1]) for i in range(3)]
+    paths_to_normed_hist_prefix = [
+        'supplementary/normed_histogram_normal_{}'.format(tls.float_to_str(tuples_pdf_scale[i][1])) for i in range(3)
+    ]
+    paths_to_normed_hist_prefix += [
+        'supplementary/normed_histogram_logistic_{}'.format(tls.float_to_str(tuples_pdf_scale[3 + i][1])) for i in range(2)
+    ]
+    paths_to_normed_hist_prefix += [
+        'supplementary/normed_histogram_laplace_{}'.format(tls.float_to_str(tuples_pdf_scale[5 + i][1])) for i in range(3)
+    ]
+    paths_to_plot_errors = [
+        'supplementary/approx_entropy_normal_{}.png'.format(tls.float_to_str(tuples_pdf_scale[i][1])) for i in range(3)
+    ]
+    paths_to_plot_errors += [
+        'supplementary/approx_entropy_logistic_{}.png'.format(tls.float_to_str(tuples_pdf_scale[3 + i][1])) for i in range(2)
+    ]
+    paths_to_plot_errors += [
+        'supplementary/approx_entropy_laplace_{}.png'.format(tls.float_to_str(tuples_pdf_scale[5 + i][1])) for i in range(3)
+    ]
     
     nb_points = 2*nb_points_per_interval*nb_intervals_per_side + 1
     grid = numpy.linspace(-nb_intervals_per_side,
                           nb_intervals_per_side,
                           num=nb_points)
-    ys = (
-        numpy.random.normal(loc=0., scale=scale_normal, size=nb_samples),
-        numpy.random.logistic(loc=0., scale=scale_logistic, size=nb_samples),
-        numpy.random.laplace(loc=0., scale=scales_laplace[0].item(), size=nb_samples),
-        numpy.random.laplace(loc=0., scale=scales_laplace[1].item(), size=nb_samples),
-        numpy.random.laplace(loc=0., scale=scales_laplace[2].item(), size=nb_samples)
-    )
     
-    # `theoretical_diff_entropies[0]` is the differential
-    # entropy of the probability density function of the
-    # normal distribution of scale `scale_normal`.
-    # `theoretical_diff_entropies[1]` is the differential
-    # entropy of the probability density function of the
-    # logistic distribution.
-    # `theoretical_diff_entropies[2]` is the differential
-    # entropy of the probability density function of the
-    # Laplace distribution of scale `scales_laplace[0]`.
-    theoretical_diff_entropies = (
-        (0.5*(1. + numpy.log(2.*numpy.pi*scale_normal**2))/numpy.log(2.)).item(),
-        2./numpy.log(2.).item(),
-        ((1. + numpy.log(2.*scales_laplace[0]))/numpy.log(2.)).item(),
-        ((1. + numpy.log(2.*scales_laplace[1]))/numpy.log(2.)).item(),
-        ((1. + numpy.log(2.*scales_laplace[2]))/numpy.log(2.)).item()
-    )
-    paths = (
-        'supplementary/approximate_entropy_normal_{}.png'.format(tls.float_to_str(scale_normal)),
-        'supplementary/approximate_entropy_logistic_{}.png'.format(tls.float_to_str(scale_logistic)),
-        'supplementary/approximate_entropy_laplace_{}.png'.format(tls.float_to_str(scales_laplace[0].item())),
-        'supplementary/approximate_entropy_laplace_{}.png'.format(tls.float_to_str(scales_laplace[1].item())),
-        'supplementary/approximate_entropy_laplace_{}.png'.format(tls.float_to_str(scales_laplace[2].item()))
-    )
-    for i in range(len(theoretical_diff_entropies)):
-        approximate_entropy_plot_errors(ys[i],
-                                        grid,
-                                        low_projection,
-                                        nb_points_per_interval,
-                                        nb_intervals_per_side,
-                                        nb_epochs_fitting,
-                                        bin_widths,
-                                        theoretical_diff_entropies[i],
-                                        paths[i])
+    # In the function `compare_errors_pdfs`, the samples
+    # from a given continuous probability distribution are
+    # destroyed before taking a new continuous probability
+    # distribution and sampling from it.
+    compare_errors_pdfs(grid,
+                        low_projection,
+                        nb_points_per_interval,
+                        nb_intervals_per_side,
+                        nb_epochs_fitting,
+                        bin_widths,
+                        tuples_pdf_scale,
+                        theoretical_diff_entropies,
+                        nb_samples,
+                        paths_to_normed_hist_prefix,
+                        paths_to_plot_errors)
+    
 
 
