@@ -61,11 +61,11 @@ if __name__ == '__main__':
                                   tls.float_to_str(args.gamma))
     path_to_checking_l = os.path.join('eae/visualization/overfitting/checking_loss/',
                                       suffix)
-    if not os.path.exists(path_to_checking_l):
+    if not os.path.isdir(path_to_checking_l):
         os.makedirs(path_to_checking_l)
     path_to_checking_c = os.path.join('eae/visualization/overfitting/checking_compression/',
                                       suffix)
-    if not os.path.exists(path_to_checking_c):
+    if not os.path.isdir(path_to_checking_c):
         os.makedirs(path_to_checking_c)
     if args.nb_epochs_training % 100 != 0:
         raise ValueError('The number of training epochs is not divisible by 100.')

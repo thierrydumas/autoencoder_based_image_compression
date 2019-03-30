@@ -113,7 +113,7 @@ if __name__ == '__main__':
     path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, args.idx_training)
     path_to_map_mean = 'lossless/results/{}/map_mean.npy'.format(suffix_idx_training)
     path_to_checking_m = 'eae/visualization/test/checking_masking/{}/'.format(suffix_idx_training)
-    if not os.path.exists(path_to_checking_m):
+    if not os.path.isdir(path_to_checking_m):
         os.makedirs(path_to_checking_m)
     reference_uint8 = numpy.load('datasets/kodak/results/kodak.npy')
     (nb_images, h_in, w_in) = reference_uint8.shape

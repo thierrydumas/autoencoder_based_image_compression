@@ -196,7 +196,7 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
                                                             'binary_probabilities_{}.npy'.format(str_multiplier))
             path_to_storage = os.path.join(path_to_vis,
                                            'multiplier_{}'.format(str_multiplier))
-            if not os.path.exists(path_to_storage):
+            if not os.path.isdir(path_to_storage):
                 os.makedirs(path_to_storage)
             for j in range(nb_images):
                 if is_lossless:
@@ -318,7 +318,7 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
         path_to_storage = os.path.join(path_to_checking_r,
                                        'reconstruction_vary_gamma_fix_bin_widths',
                                        suffix)
-        if not os.path.exists(path_to_storage):
+        if not os.path.isdir(path_to_storage):
             os.makedirs(path_to_storage)
         
         # Every time `gamma_scaling` changes, a new

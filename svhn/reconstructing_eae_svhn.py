@@ -108,7 +108,7 @@ def fix_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_wi
         bin_width_test = multiplier*bin_width_init
         path_to_directory_reconstruction = os.path.join(path_to_storage,
                                                         'multiplier_{}'.format(tls.float_to_str(multiplier)))
-        if not os.path.exists(path_to_directory_reconstruction):
+        if not os.path.isdir(path_to_directory_reconstruction):
             os.makedirs(path_to_directory_reconstruction)
         path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                               'reconstruction.png')
@@ -201,7 +201,7 @@ def vary_gamma_fix_bin_width(reference_uint8, mean_training, std_training, bin_w
         path_to_directory_reconstruction = os.path.join(path_to_checking_r,
                                                         'reconstruction_vary_gamma_fix_bin_width',
                                                         suffix)
-        if not os.path.exists(path_to_directory_reconstruction):
+        if not os.path.isdir(path_to_directory_reconstruction):
             os.makedirs(path_to_directory_reconstruction)
         path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                               'reconstruction.png')
@@ -293,7 +293,7 @@ def vary_gamma_learn_bin_width(reference_uint8, mean_training, std_training, bin
         path_to_directory_reconstruction = os.path.join(path_to_checking_r,
                                                         'reconstruction_vary_gamma_learn_bin_width',
                                                         suffix)
-        if not os.path.exists(path_to_directory_reconstruction):
+        if not os.path.isdir(path_to_directory_reconstruction):
             os.makedirs(path_to_directory_reconstruction)
         path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                               'reconstruction.png')

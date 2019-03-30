@@ -53,7 +53,7 @@ if __name__ == '__main__':
     # The directory containing the statistics on the
     # latent variable feature maps is created if it
     # does not exist.
-    if not os.path.exists(path_to_stats):
+    if not os.path.isdir(path_to_stats):
         os.makedirs(path_to_stats)
     path_to_map_mean = os.path.join(path_to_stats,
                                     'map_mean.npy')

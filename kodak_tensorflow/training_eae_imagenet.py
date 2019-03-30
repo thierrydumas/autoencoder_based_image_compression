@@ -58,19 +58,19 @@ if __name__ == '__main__':
     suffix_idx_training = '{0}/training_index_{1}'.format(suffix, args.idx_training + 1)
     path_to_checking_a = os.path.join('eae/visualization/training/checking_activations/',
                                       suffix_idx_training)
-    if not os.path.exists(path_to_checking_a):
+    if not os.path.isdir(path_to_checking_a):
         os.makedirs(path_to_checking_a)
     path_to_checking_l = os.path.join('eae/visualization/training/checking_loss/',
                                       suffix_idx_training)
-    if not os.path.exists(path_to_checking_l):
+    if not os.path.isdir(path_to_checking_l):
         os.makedirs(path_to_checking_l)
     path_to_checking_p = os.path.join('eae/visualization/training/checking_parameters/',
                                       suffix_idx_training)
-    if not os.path.exists(path_to_checking_p):
+    if not os.path.isdir(path_to_checking_p):
         os.makedirs(path_to_checking_p)
     path_to_directory_model = os.path.join('eae/results/',
                                            suffix)
-    if not os.path.exists(path_to_directory_model):
+    if not os.path.isdir(path_to_directory_model):
         os.makedirs(path_to_directory_model)
     if args.idx_training:
         path_to_nb_itvs_per_side_load = os.path.join(path_to_directory_model,

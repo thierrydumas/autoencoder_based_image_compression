@@ -43,7 +43,7 @@ def compress_jpeg2000(qualities, nb_images, path_to_before_jpeg2000, path_to_aft
             
             # The directory containing the reconstructed images
             # is created if it does not exist.
-            if not os.path.exists(path_to_directory_reconstruction):
+            if not os.path.isdir(path_to_directory_reconstruction):
                 os.makedirs(path_to_directory_reconstruction)
             path_to_reconstruction = os.path.join(path_to_directory_reconstruction,
                                                   'reconstruction_{}.jp2'.format(i))

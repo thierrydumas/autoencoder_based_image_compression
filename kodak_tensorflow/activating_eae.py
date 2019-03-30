@@ -115,7 +115,7 @@ if __name__ == '__main__':
     path_to_map_mean = 'lossless/results/{}/map_mean.npy'.format(suffix_idx_training)
     path_to_directory_crop = os.path.join('eae/visualization/test/checking_activating/',
                                           suffix_idx_training)
-    if not os.path.exists(path_to_directory_crop):
+    if not os.path.isdir(path_to_directory_crop):
         os.makedirs(path_to_directory_crop)
     path_to_crop = os.path.join(path_to_directory_crop,
                                 'activating_map_{0}_{1}.png'.format(args.idx_map + 1, tls.float_to_str(args.activation)))

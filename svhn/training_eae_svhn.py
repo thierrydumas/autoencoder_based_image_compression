@@ -68,15 +68,15 @@ if __name__ == '__main__':
                                   tls.float_to_str(args.gamma))
     path_to_checking_a = os.path.join('eae/visualization/training/checking_activations/',
                                       suffix)
-    if not os.path.exists(path_to_checking_a):
+    if not os.path.isdir(path_to_checking_a):
         os.makedirs(path_to_checking_a)
     path_to_checking_l = os.path.join('eae/visualization/training/checking_loss/',
                                       suffix)
-    if not os.path.exists(path_to_checking_l):
+    if not os.path.isdir(path_to_checking_l):
         os.makedirs(path_to_checking_l)
     path_to_checking_p = os.path.join('eae/visualization/training/checking_parameters/',
                                       suffix)
-    if not os.path.exists(path_to_checking_p):
+    if not os.path.isdir(path_to_checking_p):
         os.makedirs(path_to_checking_p)
     path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
     if os.path.isfile(path_to_model):

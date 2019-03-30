@@ -292,7 +292,7 @@ def evaluate_hevc(luminances_uint8, path_to_before_hevc, path_to_after_hevc, pat
         
         # The directory containing the reconstructed images
         # is created if it does not exist.
-        if not os.path.exists(path_to_storage):
+        if not os.path.isdir(path_to_storage):
             os.makedirs(path_to_storage)
         (rate[i, :], psnr[i, :]) = compute_rate_psnr(luminances_uint8,
                                                      path_to_before_hevc,

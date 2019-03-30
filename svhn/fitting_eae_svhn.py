@@ -110,7 +110,7 @@ if __name__ == '__main__':
                                   tls.float_to_str(args.gamma))
     path_to_checking_f = os.path.join('eae/visualization/test/checking_fitting/',
                                       suffix)
-    if not os.path.exists(path_to_checking_f):
+    if not os.path.isdir(path_to_checking_f):
         os.makedirs(path_to_checking_f)
     path_to_model = 'eae/results/eae_svhn_{}.pkl'.format(suffix)
     

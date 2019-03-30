@@ -136,7 +136,7 @@ if __name__ == '__main__':
     # The directory containing the normed histogram of
     # each latent variable feature map is created if it
     # does not exist.
-    if not os.path.exists(path_to_checking_f):
+    if not os.path.isdir(path_to_checking_f):
         os.makedirs(path_to_checking_f)
     reference_uint8 = numpy.load('datasets/kodak/results/kodak.npy')
     luminances_uint8 = numpy.expand_dims(reference_uint8, axis=3)
