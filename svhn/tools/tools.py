@@ -1389,28 +1389,28 @@ def visualize_images(images_uint8, nb_vertically, path):
         If `images_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
         If `images_uint8.shape[2]` is not equal to 3.
-    ValueError
-        If `images_uint8.shape[3]` is not
-        divisible by `nb_vertically`.
     
     """
     if images_uint8.dtype != numpy.uint8:
         raise TypeError('`images_uint8.dtype` is not equal to `numpy.uint8`.')
+    
+    # If `images_uint8.ndim` is not equal to 4,
+    # the unpacking below raises a `ValueError`
+    # exception.
     (height_image, width_image, nb_channels, nb_images) = images_uint8.shape
     if nb_channels != 3:
         raise ValueError('`images_uint8.shape[2]` is not equal to 3.')
-    if nb_images % nb_vertically != 0:
-        raise ValueError('`images_uint8.shape[3]` is not divisible by `nb_vertically`.')
     
     # `nb_horizontally` has to be an integer.
-    nb_horizontally = nb_images//nb_vertically
-    image_uint8 = 255*numpy.ones((nb_vertically*(height_image + 1) + 1,
-        nb_horizontally*(width_image + 1) + 1, 3), dtype=numpy.uint8)
+    nb_horizontally = int(numpy.ceil(float(nb_images)/nb_vertically).item())
+    image_uint8 = 255*numpy.ones((nb_vertically*(height_image + 1) + 1, nb_horizontally*(width_image + 1) + 1, 3),
+                                 dtype=numpy.uint8)
     for i in range(nb_vertically):
         for j in range(nb_horizontally):
-            image_uint8[i*(height_image + 1) + 1:(i + 1)*(height_image + 1),
-                j*(width_image + 1) + 1:(j + 1)*(width_image + 1), :] = \
-                images_uint8[:, :, :, i*nb_horizontally + j]
+            idx_image = i*nb_horizontally + j
+            if idx_image < nb_images:
+                image_uint8[i*(height_image + 1) + 1:(i + 1)*(height_image + 1), j*(width_image + 1) + 1:(j + 1)*(width_image + 1), :] = \
+                    images_uint8[:, :, :, idx_image]
     save_image(path,
                image_uint8)
 

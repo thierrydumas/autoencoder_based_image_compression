@@ -977,14 +977,30 @@ class TesterTools(object):
     def test_visualize_images(self):
         """Tests the function `visualize_images`.
         
-        The test is successful if the images
-        "tools/pseudo_visualization/images_to_rows_i.png",
-        i = 0 ... 3, are arranged in a 4x4 grid,
-        providing the image
-        "tools/pseudo_visualization/visualize_images.png".
+        The test is successful if the image
+        "tools/pseudo_visualization/visualize_images.png"
+        contains a red square, a blue square, a green
+        square, a grey square, and a yellow square arranged
+        in a 2x3 grid.
         
         """
-        images_uint8 = numpy.load('tools/pseudo_data/images_uint8.npy')
+        images_uint8 = numpy.zeros((100, 120, 3, 5), dtype=numpy.uint8)
+        
+        # The first image is red.
+        images_uint8[:, :, 0, 0] = 255
+        
+        # The second image is green.
+        images_uint8[:, :, 1, 1] = 255
+        
+        # The third image is blue.
+        images_uint8[:, :, 2, 2] = 255
+        
+        # The fourth image is grey.
+        images_uint8[:, :, :, 3] = 100
+        
+        # The fifth image is yellow.
+        images_uint8[:, :, 0, 4] = 255
+        images_uint8[:, :, 1, 4] = 255
         tls.visualize_images(images_uint8,
                              2,
                              'tools/pseudo_visualization/visualize_images.png')

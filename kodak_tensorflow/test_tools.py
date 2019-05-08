@@ -655,11 +655,18 @@ class TesterTools(object):
         An image is saved at
         "tools/pseudo_visualization/visualize_luminances.png".
         The test is successful if this
-        image contains 4 luminance images
-        which are arranged in a 4x4 grid.
+        image contains 5 luminance images
+        which are arranged in a 2x3 grid.
         
         """
-        luminances_uint8 = numpy.load('tools/pseudo_data/luminances_uint8.npy')
+        luminances_uint8 = numpy.zeros((5, 100, 120, 1), dtype=numpy.uint8)
+        
+        # From a luminance image to the next one, the pixel
+        # intensity is increased.
+        luminances_uint8[1, :, :, :] = 49
+        luminances_uint8[2, :, :, :] = 99
+        luminances_uint8[3, :, :, :] = 149
+        luminances_uint8[4, :, :, :] = 199
         tls.visualize_luminances(luminances_uint8,
                                  2,
                                  'tools/pseudo_visualization/visualize_luminances.png')

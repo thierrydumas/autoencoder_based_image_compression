@@ -1049,9 +1049,6 @@ def visualize_luminances(luminances_uint8, nb_vertically, path):
         If `luminances_uint8.dtype` is not equal to `numpy.uint8`.
     ValueError
         If `luminances_uint8.shape[3]` is not equal to 1.
-    ValueError
-        If `luminances_uint8.shape[0]` is
-        not divisible by `nb_vertically`.
     
     """
     if luminances_uint8.dtype != numpy.uint8:
@@ -1062,18 +1059,17 @@ def visualize_luminances(luminances_uint8, nb_vertically, path):
     (nb_images, height_image, width_image, nb_channels) = luminances_uint8.shape
     if nb_channels != 1:
         raise ValueError('`luminances_uint8.shape[3]` is not equal to 1.')
-    if nb_images % nb_vertically != 0:
-        raise ValueError('`luminances_uint8.shape[0]` is not divisible by `nb_vertically`.')
     
     # `nb_horizontally` has to be an integer.
-    nb_horizontally = nb_images//nb_vertically
-    image_uint8 = 255*numpy.ones((nb_vertically*(height_image + 1) + 1,
-        nb_horizontally*(width_image + 1) + 1), dtype=numpy.uint8)
+    nb_horizontally = int(numpy.ceil(float(nb_images)/nb_vertically).item())
+    image_uint8 = 255*numpy.ones((nb_vertically*(height_image + 1) + 1, nb_horizontally*(width_image + 1) + 1),
+                                 dtype=numpy.uint8)
     for i in range(nb_vertically):
         for j in range(nb_horizontally):
-            image_uint8[i*(height_image + 1) + 1:(i + 1)*(height_image + 1),
-                j*(width_image + 1) + 1:(j + 1)*(width_image + 1)] = \
-                luminances_uint8[i*nb_horizontally + j, :, :, 0]
+            idx_luminance = i*nb_horizontally + j
+            if idx_luminance < nb_images:
+                image_uint8[i*(height_image + 1) + 1:(i + 1)*(height_image + 1), j*(width_image + 1) + 1:(j + 1)*(width_image + 1)] = \
+                    luminances_uint8[idx_luminance, :, :, 0]
     save_image(path,
                image_uint8)
 
