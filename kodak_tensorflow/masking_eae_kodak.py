@@ -9,77 +9,12 @@ import numpy
 import os
 import tensorflow as tf
 
+import eae.analysis
 import eae.batching
 import parsing.parsing
 import tools.tools as tls
 from eae.graph.EntropyAutoencoder import EntropyAutoencoder
 from eae.graph.IsolatedDecoder import IsolatedDecoder
-
-def masking_eae_kodak(y_float32, isolated_decoder, bin_widths, idx_map, path_to_restore, path_to_map_mean, paths):
-    """Masks all the latent variable feature maps except one.
-    
-    All the latent variable feature maps except one
-    are masked. Then, the latent variable feature maps
-    are quantized. Finally, the quantized latent
-    variable feature maps are passed through the
-    decoder of the entropy autoencoder.
-    
-    Parameters
-    ----------
-    y_float32 : numpy.ndarray
-        4D array with data-type `numpy.float32`.
-        Latent variables. `y_float32[i, :, :, j]`
-        is the jth latent variable feature map of
-        the ith example.
-    isolated_decoder : IsolatedDecoder
-        Decoder of the entropy autoencoder.
-    bin_widths : numpy.ndarray
-        1D array with data-type `numpy.float32`.
-        Quantization bin widths at the end of the
-        training.
-    idx_map : int
-        Index of the unmasked latent variable
-        feature map.
-    path_to_restore : str
-        Path to the model to be restored. The
-        path must end with ".ckpt".
-    path_to_map_mean : str
-        Path to the file in which the latent
-        variable feature map means are saved.
-        The path must end with ".npy".
-    paths : list
-        The ith string in this list is the
-        path to the ith saved crop of the
-        decoder output. Each path must end
-        with ".png".
-    
-    Raises
-    ------
-    ValueError
-        If `len(paths)` is not equal to `y_float32.shape[0]`.
-    
-    """
-    nb_images = y_float32.shape[0]
-    if len(paths) != nb_images:
-        raise ValueError('`len(paths)` is not equal to `y_float32.shape[0]`.')
-    map_mean = numpy.load(path_to_map_mean)
-    with tf.Session() as sess:
-        isolated_decoder.initialization(sess, path_to_restore)
-        
-        # The same latent variable feature map is
-        # iteratively overwritten in the loop below.
-        masked_y_float32 = numpy.tile(numpy.reshape(map_mean, (1, 1, 1, y_float32.shape[3])),
-                                      (1, y_float32.shape[1], y_float32.shape[2], 1))
-        for i in range(nb_images):
-            masked_y_float32[0, :, :, idx_map] = y_float32[i, :, :, idx_map]
-            quantized_y_float32 = tls.quantize_per_map(masked_y_float32, bin_widths)
-            reconstruction_float32 = sess.run(
-                isolated_decoder.node_reconstruction,
-                feed_dict={isolated_decoder.node_quantized_y:quantized_y_float32}
-            )
-            reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32), axis=(0, 3))
-            tls.save_image(paths[i],
-                           reconstruction_uint8[0:200, 0:200])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Analyzes a trained entropy autoencoder by masking all the latent variable feature maps except one.')
@@ -96,7 +31,7 @@ if __name__ == '__main__':
                         help='if given, the quantization bin widths were learned at training time',
                         action='store_true',
                         default=False)
-    parser.add_argument('--idx_map',
+    parser.add_argument('--idx_unmasked_map',
                         help='index of the unmasked latent variable feature map',
                         type=parsing.parsing.int_positive,
                         default=51,
@@ -112,12 +47,14 @@ if __name__ == '__main__':
     path_to_nb_itvs_per_side_load = 'eae/results/{0}/nb_itvs_per_side_{1}.pkl'.format(suffix, args.idx_training)
     path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, args.idx_training)
     path_to_map_mean = 'lossless/results/{}/map_mean.npy'.format(suffix_idx_training)
-    path_to_checking_m = 'eae/visualization/test/checking_masking/{}/'.format(suffix_idx_training)
+    path_to_checking_m = 'eae/visualization/test/checking_masking/{0}/unmasked_map_{1}/'.format(suffix_idx_training,
+                                                                                                args.idx_unmasked_map + 1)
     if not os.path.isdir(path_to_checking_m):
         os.makedirs(path_to_checking_m)
     reference_uint8 = numpy.load('datasets/kodak/results/kodak.npy')
     (nb_images, h_in, w_in) = reference_uint8.shape
     luminances_uint8 = numpy.expand_dims(reference_uint8, axis=3)
+    map_mean = numpy.load(path_to_map_mean)
     
     # A single entropy autoencoder is created.
     entropy_ae = EntropyAutoencoder(batch_size,
@@ -146,12 +83,16 @@ if __name__ == '__main__':
                                        h_in,
                                        w_in,
                                        args.learn_bin_widths)
-    masking_eae_kodak(y_float32,
-                      isolated_decoder,
-                      bin_widths,
-                      args.idx_map,
-                      path_to_restore,
-                      path_to_map_mean,
-                      [os.path.join(path_to_checking_m, 'masking_map_{0}_{1}.png'.format(args.idx_map + 1, i + 1)) for i in range(nb_images)])
+    with tf.Session() as sess:
+        isolated_decoder.initialization(sess, path_to_restore)
+        eae.analysis.mask_maps(y_float32,
+                               sess,
+                               isolated_decoder,
+                               bin_widths,
+                               args.idx_unmasked_map,
+                               map_mean,
+                               200,
+                               200,
+                               [os.path.join(path_to_checking_m, 'masking_map_{}.png'.format(i + 1)) for i in range(nb_images)])
 
 
