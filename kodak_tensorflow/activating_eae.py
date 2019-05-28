@@ -56,11 +56,10 @@ if __name__ == '__main__':
     path_to_restore = 'eae/results/{0}/model_{1}.ckpt'.format(suffix, args.idx_training)
     path_to_map_mean = 'lossless/results/{}/map_mean.npy'.format(suffix_idx_training)
     path_to_directory_crop = os.path.join('eae/visualization/test/checking_activating/',
-                                          suffix_idx_training)
+                                          suffix_idx_training,
+                                          '{0}_{1}'.format(args.idx_map_activation + 1, tls.float_to_str(args.activation_value)))
     if not os.path.isdir(path_to_directory_crop):
         os.makedirs(path_to_directory_crop)
-    path_to_crop = os.path.join(path_to_directory_crop,
-                                'activating_map_{0}_{1}.png'.format(args.idx_map_activation + 1, tls.float_to_str(args.activation_value)))
     map_mean = numpy.load(path_to_map_mean)
     
     # A single entropy autoencoder is created.
@@ -83,20 +82,30 @@ if __name__ == '__main__':
                                        h_in,
                                        w_in,
                                        args.learn_bin_widths)
+    
+    # Different latent variables are successively activated in a feature map
+    # to test the translation covariance of the decoder.
+    tuple_pairs_row_col = (
+        (1, 1),
+        (6, 6)
+    )
     with tf.Session() as sess:
         isolated_decoder.initialization(sess, path_to_restore)
-        eae.analysis.activate_latent_variable(sess,
-                                              isolated_decoder,
-                                              h_in,
-                                              w_in,
-                                              bin_widths,
-                                              1,
-                                              1,
-                                              args.idx_map_activation,
-                                              args.activation_value,
-                                              map_mean,
-                                              64,
-                                              64,
-                                              path_to_crop)
+        for (row_activation, col_activation) in tuple_pairs_row_col:
+            path_to_crop = os.path.join(path_to_directory_crop,
+                                        'activating_map_{0}_{1}.png'.format(row_activation, col_activation))
+            eae.analysis.activate_latent_variable(sess,
+                                                  isolated_decoder,
+                                                  h_in,
+                                                  w_in,
+                                                  bin_widths,
+                                                  row_activation,
+                                                  col_activation,
+                                                  args.idx_map_activation,
+                                                  args.activation_value,
+                                                  map_mean,
+                                                  64,
+                                                  64,
+                                                  path_to_crop)
 
 

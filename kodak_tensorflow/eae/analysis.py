@@ -64,7 +64,18 @@ def activate_latent_variable(sess, isolated_decoder, h_in, w_in, bin_widths, row
         Path to the saved crop of the decoder
         output. The path ends with ".png".
     
+    Raises
+    ------
+    ValueError
+        If `row_activation` is not strictly positive.
+    ValueError
+        If `col_activation` is not strictly positive.
+    
     """
+    if row_activation <= 0:
+        raise ValueError('`row_activation` is not strictly positive.')
+    if col_activation <= 0:
+        raise ValueError('`col_activation` is not strictly positive.')
     y_float32 = numpy.tile(numpy.reshape(map_mean, (1, 1, 1, csts.NB_MAPS_3)),
                            (1, h_in//csts.STRIDE_PROD, w_in//csts.STRIDE_PROD, 1))
     y_float32[0, row_activation, col_activation, idx_map_activation] = activation_value
@@ -74,8 +85,13 @@ def activate_latent_variable(sess, isolated_decoder, h_in, w_in, bin_widths, row
         feed_dict={isolated_decoder.node_quantized_y:quantized_y_float32}
     )
     reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32), axis=(0, 3))
+    
+    # The ratio between the feature map height and the
+    # decoded image height is equal to `csts.STRIDE_PROD`.
+    row_offset = (row_activation - 1)*csts.STRIDE_PROD
+    col_offset = (col_activation - 1)*csts.STRIDE_PROD
     tls.save_image(path_to_crop,
-                   reconstruction_uint8[0:height_crop, 0:width_crop])
+                   reconstruction_uint8[row_offset:row_offset + height_crop, col_offset:col_offset + width_crop])
 
 def fit_maps(y_float32, idx_map_exception, path_to_histogram_locations, path_to_histogram_scales, paths):
     """Fits a Laplace density to the normed histogram of each latent variable feature map.
