@@ -69,9 +69,9 @@ if __name__ == '__main__':
                                                      entropy_ae,
                                                      batch_size)
     eae.analysis.fit_maps(y_float32,
-                          idx_map_exception,
                           os.path.join(path_to_checking_f, 'laplace_locations.png'),
                           os.path.join(path_to_checking_f, 'laplace_scales.png'),
-                          [os.path.join(path_to_checking_f, 'fitting_map_{}.png'.format(i + 1)) for i in range(y_float32.shape[3])])
+                          [os.path.join(path_to_checking_f, 'fitting_map_{}.png'.format(i + 1)) for i in range(y_float32.shape[3])],
+                          idx_map_exception=idx_map_exception)
 
 

@@ -2,8 +2,10 @@
 
 import argparse
 import numpy
+import os
 import tensorflow as tf
 
+import eae.analysis
 import eae.batching
 import eae.graph.components
 import eae.graph.constants as csts
@@ -15,6 +17,56 @@ from eae.graph.IsolatedDecoder import IsolatedDecoder
 
 class TesterEntropyAutoencoder(object):
     """Class for testing the libraries in the folder "eae"."""
+    
+    def test_activate_latent_variables(self):
+        """Tests the function `activate_latent_variables` in the file "eae.analysis.py".
+        
+        The test is successful if the images saved in the directory
+        at "eae/pseudo_visualization/activate_latent_variables/" do
+        not exhibit any structure.
+        
+        """
+        h_in = 256
+        w_in = 384
+        idx_map_activation = 4
+        tuple_activation_values = (-200., -20., 20., 200.)
+        
+        isolated_decoder = IsolatedDecoder(1,
+                                           h_in,
+                                           w_in,
+                                           False)
+        
+        # As the bin widths are not learned, they are all set to 1.
+        bin_widths = numpy.ones(csts.NB_MAPS_3, dtype=numpy.float32)
+        
+        # At initialization, the feature map mean over many
+        # luminance images must be close to 0.
+        map_mean = numpy.zeros(csts.NB_MAPS_3, dtype=numpy.float32)
+        tuple_pairs_row_col = (
+            (1, 1),
+            (6, 6)
+        )
+        with tf.Session() as sess:
+            isolated_decoder.initialization(sess, '')
+            for activation_value in tuple_activation_values:
+                path_to_directory_crop = os.path.join('eae/pseudo_visualization/activate_latent_variables/',
+                                                      '{0}_{1}'.format(idx_map_activation + 1, tls.float_to_str(activation_value)))
+                if not os.path.isdir(path_to_directory_crop):
+                    os.makedirs(path_to_directory_crop)
+                for (row_activation, col_activation) in tuple_pairs_row_col:
+                    eae.analysis.activate_latent_variable(sess,
+                                                          isolated_decoder,
+                                                          h_in,
+                                                          w_in,
+                                                          bin_widths,
+                                                          row_activation,
+                                                          col_activation,
+                                                          idx_map_activation,
+                                                          activation_value,
+                                                          map_mean,
+                                                          64,
+                                                          64,
+                                                          os.path.join(path_to_directory_crop, '{0}_{1}.png'.format(row_activation, col_activation)))
     
     def test_decoder(self):
         """Tests the function `decoder` in the file "eae/graph/components.py".
@@ -241,6 +293,41 @@ class TesterEntropyAutoencoder(object):
                           'Latent variables distribution for the image of index {}'.format(i),
                           'eae/pseudo_visualization/encode_mini_batches/latent_variables_{}.png'.format(i))
     
+    def test_fit_maps(self):
+        """Tests the function `fit_maps` in the file "eae/analysis.py".
+        
+        The test is successful if, in the images saved in the
+        directory at "eae/pseudo_visualization/fit_maps/", the
+        distributions of the feature maps latent variables are
+        all similar.
+        
+        """
+        luminance_0_uint8 = tls.rgb_to_ycbcr(tls.read_image_mode('eae/pseudo_data/peppers.png', 'RGB'))[:, :, 0:1]
+        luminance_1_uint8 = tls.rgb_to_ycbcr(tls.read_image_mode('eae/pseudo_data/mandrill.png', 'RGB'))[:, :, 0:1]
+        luminances_uint8 = numpy.stack((luminance_0_uint8, luminance_1_uint8),
+                                       axis=0)
+        
+        # When the entropy autoencoder model is not a loaded one,
+        # the sixth argument of the constructor below is an empty
+        # string.
+        entropy_ae = EntropyAutoencoder(2,
+                                        luminances_uint8.shape[1],
+                                        luminances_uint8.shape[2],
+                                        1.,
+                                        8000.,
+                                        '',
+                                        False)
+        with tf.Session() as sess:
+            entropy_ae.initialization(sess, '')
+            y_float32 = sess.run(
+                entropy_ae.node_y,
+                feed_dict={entropy_ae.node_visible_units:luminances_uint8.astype(numpy.float32)}
+            )
+        eae.analysis.fit_maps(y_float32,
+                              'eae/pseudo_visualization/fit_maps/laplace_locations.png',
+                              'eae/pseudo_visualization/fit_maps/laplace_scales.png',
+                              ['eae/pseudo_visualization/fit_maps/fitting_map_{}.png'.format(i + 1) for i in range(y_float32.shape[3])])
+    
     def test_isolated_decoder(self):
         """Tests the class `IsolatedDecoder` in the file "eae/graph/IsolatedDecoder.py".
         
@@ -279,7 +366,7 @@ class TesterEntropyAutoencoder(object):
         print('Shape of the quantized latent variables:')
         print(quantized_y_float32.shape)
         print('Shape of the reconstruction of the visible units:')
-        print(reconstruction_float32.shape)
+        print(reconstruction_float32.shape)    
     
     def test_training_eae_bw(self):
         """Tests the method `training_eae_bw` of class `EntropyAutoencoder` in the file "eae/graph/EntropyAutoencoder.py".

@@ -84,7 +84,8 @@ def activate_latent_variable(sess, isolated_decoder, h_in, w_in, bin_widths, row
         isolated_decoder.node_reconstruction,
         feed_dict={isolated_decoder.node_quantized_y:quantized_y_float32}
     )
-    reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32), axis=(0, 3))
+    reconstruction_uint8 = numpy.squeeze(tls.cast_bt601(reconstruction_float32),
+                                         axis=(0, 3))
     
     # The ratio between the feature map height and the
     # decoded image height is equal to `csts.STRIDE_PROD`.
@@ -93,7 +94,7 @@ def activate_latent_variable(sess, isolated_decoder, h_in, w_in, bin_widths, row
     tls.save_image(path_to_crop,
                    reconstruction_uint8[row_offset:row_offset + height_crop, col_offset:col_offset + width_crop])
 
-def fit_maps(y_float32, idx_map_exception, path_to_histogram_locations, path_to_histogram_scales, paths):
+def fit_maps(y_float32, path_to_histogram_locations, path_to_histogram_scales, paths, idx_map_exception=None):
     """Fits a Laplace density to the normed histogram of each latent variable feature map.
     
     Parameters
@@ -103,9 +104,6 @@ def fit_maps(y_float32, idx_map_exception, path_to_histogram_locations, path_to_
         Latent variables. `y_float32[i, :, :, j]`
         is the jth latent variable feature map of
         the ith example.
-    idx_map_exception : int
-        Index of the latent variable feature map
-        that is not compressed as the other maps.
     path_to_histogram_locations : str
         Path to the histogram of the Laplace locations. The
         path ends with ".png".
@@ -116,6 +114,10 @@ def fit_maps(y_float32, idx_map_exception, path_to_histogram_locations, path_to_
         `paths[i]` is the path to the fitted normed histogram
         for the ith latent variable feature map. Each path ends
         with ".png".
+    idx_map_exception : int, optional
+        Index of the latent variable feature map that is
+        not compressed as the other maps. The default value
+        is None.
     
     Raises
     ------
@@ -170,17 +172,20 @@ def fit_maps(y_float32, idx_map_exception, path_to_histogram_locations, path_to_
                    loc=9)
         plt.savefig(paths[i])
         plt.clf()
-        if i != idx_map_exception:
+        if idx_map_exception is None:
             locations.append(laplace_location)
             scales.append(laplace_scale)
+        else:
+            if i != idx_map_exception:
+                locations.append(laplace_location)
+                scales.append(laplace_scale)
     
-    # `nb_kept` must be equal to `y_float32.shape[3] - 1`.
-    nb_kept = len(locations)
+    # `len(locations)` and `len(scales)` are equal.
     tls.histogram(numpy.array(locations),
-                  'Histogram of {} locations'.format(nb_kept),
+                  'Histogram of {} locations'.format(len(locations)),
                   path_to_histogram_locations)
     tls.histogram(numpy.array(scales),
-                  'Histogram of {} scales'.format(nb_kept),
+                  'Histogram of {} scales'.format(len(scales)),
                   path_to_histogram_scales)
 
 def mask_maps(y_float32, sess, isolated_decoder, bin_widths, idx_unmasked_map, map_mean, height_crop, width_crop, paths):
