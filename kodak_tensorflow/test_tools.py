@@ -107,6 +107,21 @@ class TesterTools(object):
         print('Number of latent variable feature maps: {}'.format(nb_maps))
         print('Mean approximate entropy: {}'.format(mean_approx_entropy))
     
+    def test_count_nb_deads(self):
+        """Tests the function `count_nb_deads`.
+        
+        The test is successful if the number of dead feature maps in each
+        first axis component in the input array is [0, 0, 0, 2].
+        
+        """
+        array_4d = numpy.random.normal(size=(4, 3, 2, 6))
+        array_4d[3, :, :, 2] = 0.
+        array_4d[3, :, :, 5] = 0.
+        
+        array_nb_deads = tls.count_nb_deads(array_4d)
+        print('Number of dead feature maps in each first axis component in the input array:')
+        print(array_nb_deads)
+    
     def test_count_symbols(self):
         """Tests the function `count_symbols`.
         

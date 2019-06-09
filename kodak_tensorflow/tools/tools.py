@@ -159,6 +159,34 @@ def convert_approx_entropy(scaled_approx_entropy, gamma_scaling, nb_maps):
     """
     return scaled_approx_entropy/(gamma_scaling*nb_maps)
 
+def count_nb_deads(array_4d):
+    """Counts the number of dead feature maps for each first axis component in the input array.
+    
+    Parameters
+    ----------
+    array_4d : numpy.ndarray
+        4D array.
+        Input array.
+    
+    Returns
+    -------
+    numpy.ndarray
+        1D array.
+        The ith element in this array is the number of dead feature
+        maps in `array_4d[i, :, :, :]`.
+    
+    Raises
+    ------
+    ValueError
+        If `array_4d.ndim` is not equal to 4.
+    
+    """
+    if array_4d.ndim != 4:
+        raise ValueError('`array_4d.ndim` is not equal to 4.')
+    sum_absolute = numpy.sum(numpy.absolute(array_4d),
+                             axis=(1, 2))
+    return numpy.sum(sum_absolute == 0, axis=1)
+
 def count_symbols(quantized_samples, bin_width):
     """Counts the number of occurrences in the quantized samples of each symbol.
     

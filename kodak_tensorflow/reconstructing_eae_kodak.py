@@ -28,9 +28,8 @@ import tools.tools as tls
 from eae.graph.EntropyAutoencoder import EntropyAutoencoder
 from eae.graph.IsolatedDecoder import IsolatedDecoder
 
-def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_scaling,
-              batch_size, are_bin_widths_learned, is_lossless, path_to_checking_r, list_rotation,
-              positions_top_left):
+def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_scaling, batch_size,
+              are_bin_widths_learned, is_lossless, path_to_checking_r, list_rotation, positions_top_left):
     """Computes a series of pairs (rate, PSNR).
     
     A single entropy autoencoder is considered.
@@ -160,14 +159,18 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
                                        w_in,
                                        are_bin_widths_learned)
     
-    # The ith element of `map_mean` is the approximate
-    # mean of the ith latent variable feature map. It
-    # was computed on the extra set.
+    # `array_nb_deads[i, j]` stores the number of dead feature
+    # maps at the rate of index i for the luminance image of
+    # index j.
+    array_nb_deads = numpy.zeros((nb_points, nb_images), dtype=numpy.int32)
+    
+    # `map_mean[i]` is the approximate mean of the latent
+    # variable feature map of index i. It was computed on
+    # the extra set.
     map_mean = numpy.load(path_to_map_mean)
     tiled_map_mean = numpy.tile(map_mean, (nb_images, y_float32.shape[1], y_float32.shape[2], 1))
     
-    # `idx_map_exception` was also computed on
-    # the extra set.
+    # `idx_map_exception` was also computed on the extra set.
     if is_lossless:
         with open(os.path.join(path_to_stats, 'idx_map_exception.pkl'), 'rb') as file:
             idx_map_exception = pickle.load(file)
@@ -179,6 +182,11 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
             str_multiplier = tls.float_to_str(multiplier)
             bin_widths_test = multiplier*bin_widths
             centered_quantized_y_float32 = tls.quantize_per_map(centered_y_float32, bin_widths_test)
+            
+            # For a given luminance image, if at least a coefficient
+            # of a feature map is different from 0.0, this feature map
+            # is viewed as not dead.
+            array_nb_deads[i, :] = tls.count_nb_deads(centered_quantized_y_float32)
             off_centered_quantized_y_float32 = centered_quantized_y_float32 + tiled_map_mean
             expanded_reconstruction_uint8 = eae.batching.decode_mini_batches(off_centered_quantized_y_float32,
                                                                              sess,
@@ -222,7 +230,58 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
     
     # The graph of the decoder is destroyed.
     tf.reset_default_graph()
+    path_to_directory_nb_dead = os.path.join(path_to_vis,
+                                             'nb_dead')
+    if not os.path.isdir(path_to_directory_nb_dead):
+        os.makedirs(path_to_directory_nb_dead)
+    plot_nb_dead_feature_maps(rate,
+                              array_nb_deads,
+                              [os.path.join(path_to_directory_nb_dead, 'nb_dead_{}.png'.format(i)) for i in range(nb_images)])
     return (rate, psnr)
+
+def plot_nb_dead_feature_maps(rate, array_nb_deads, paths):
+    """Plots the evolution of the number of dead feature maps with the rate for each luminance image.
+    
+    Parameters
+    ----------
+    rate : numpy.ndarray
+        2D array with data-type `numpy.float64`.
+        The element at the position [i, j] in this
+        array is the rate associated to the compression
+        of the jth luminance image via the single
+        entropy autoencoder and the ith set of test
+        quantization bin widths.
+    array_nb_deads : numpy.ndarray
+        2D array with data-type `numpy.int32`.
+        The element at the position [i, j] in this
+        array is the number of dead feature maps for
+        the jth luminance image and the ith set of
+        test quantization step sizes.
+    paths : list
+        `paths[i]` is the path to the plot showing the evolution
+        of the number of dead feature maps with the rate for the
+        ith luminance image. The path ends with ".png".
+    
+    Raises
+    ------
+    ValueError
+        If `array_nb_deads.shape` is not equal to `rate.shape`.
+    
+    """
+    (nb_points, nb_images) = rate.shape
+    
+    # If the check below did not exist and `array_nb_deads.shape[1]`
+    # is larger than `rate.shape[1]`, no exception would be raised.
+    if array_nb_deads.shape != (nb_points, nb_images):
+        raise ValueError('`array_nb_deads.shape` is not equal to `rate.shape`.')
+    for i in range(nb_images):
+        plt.step(rate[:, i],
+                 array_nb_deads[:, i])
+        plt.title('Evolution of the number of dead feature maps with the rate')
+        plt.xlabel('rate (bbp)')
+        plt.ylabel('number of dead feature maps')
+        plt.savefig(paths[i])
+        plt.clf()
 
 def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, gammas_scaling,
                               batch_size, path_to_checking_r, list_rotation, positions_top_left):
