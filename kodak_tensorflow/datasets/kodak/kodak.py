@@ -26,12 +26,12 @@ def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rot
         24 Kodak RGB images are saved.
     path_to_kodak : str
         Path to the file in which the Kodak test
-        set is saved. The path must end with ".npy".
+        set is saved. The path ends with ".npy".
     path_to_list_rotation : str
         Path to the file in which the list
         storing the indices of the rotated
         luminance images is saved. The path
-        must end with ".pkl".
+        ends with ".pkl".
     
     Raises
     ------
@@ -54,19 +54,19 @@ def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rot
         reference_uint8 = numpy.zeros((24, h_kodak, w_kodak), dtype=numpy.uint8)
         list_rotation = []
         for i in range(24):
-            path_to_file = os.path.join(path_to_store_rgbs, 'kodim' + str(i + 1).rjust(2, '0') + '.png')
+            path_to_file = os.path.join(path_to_store_rgbs,
+                                        'kodim' + str(i + 1).rjust(2, '0') + '.png')
             
-            # The function `tls.read_image_mode` is not put
-            # into a `try` `except` condition as each Kodak
-            # RGB image has to be read.
+            # `tls.read_image_mode` is not put into a `try`
+            # `except` condition as each Kodak RGB image has
+            # to be read.
             rgb_uint8 = tls.read_image_mode(path_to_file,
                                             'RGB')
             
-            # The function `tls.rgb_to_ycbcr` checks that
-            # the data-type of its input array is equal to
-            # `numpy.uint8`. `tls.rgb_to_ycbcr` also checks
-            # that its input array has 3 dimensions and its
-            # 3rd dimension is equal to 3.
+            # `tls.rgb_to_ycbcr` checks that the data-type of
+            # its input array is equal to `numpy.uint8`. `tls.rgb_to_ycbcr`
+            # also checks that its input array has 3 dimensions
+            # and its 3rd dimension is equal to 3.
             luminance_uint8 = tls.rgb_to_ycbcr(rgb_uint8)[:, :, 0]
             (height_image, width_image) = luminance_uint8.shape
             if height_image == h_kodak and width_image == w_kodak:
@@ -77,7 +77,8 @@ def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rot
             else:
                 raise ValueError('"{0}" is neither {1}x{2}x3 nor {2}x{1}x3.'.format(path_to_file, h_kodak, w_kodak))
         
-        numpy.save(path_to_kodak, reference_uint8)
+        numpy.save(path_to_kodak,
+                   reference_uint8)
         with open(path_to_list_rotation, 'wb') as file:
             pickle.dump(list_rotation, file, protocol=2)
 
@@ -100,7 +101,7 @@ def download_option(source_url, path_to_store_rgbs):
         if os.path.isfile(path_to_file):
             print('"{}" already exists. The image is not downloaded.'.format(path_to_file))
         else:
-            six.moves.urllib.request.urlretrieve(source_url + filename,
+            six.moves.urllib.request.urlretrieve(os.path.join(source_url, filename),
                                                  path_to_file)
             print('Successfully downloaded "{}".'.format(filename))
 

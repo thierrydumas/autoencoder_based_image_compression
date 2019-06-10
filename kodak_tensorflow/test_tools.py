@@ -88,6 +88,40 @@ class TesterTools(object):
         print('Array elements after the data-type cast:')
         print(array_int16)
     
+    def test_compute_bjontegaard(self):
+        """Tests the function `compute_bjontegaard`.
+        
+        A plot is saved at
+        "tools/pseudo_visualization/compute_bjontegaard.png".
+        The test is successful if the Bjontegaard metric
+        is positive when the 1st rate-distortion curve
+        generates bitrate savings with respect to the
+        2nd rate-distortion curve.
+        
+        """
+        rates_0 = numpy.linspace(0.15, 2.05, num=191)
+        rates_1 = numpy.linspace(0.1, 1.7, num=321)
+        psnrs_0 = 40.*numpy.sqrt(rates_0)
+        psnrs_1 = 20.*numpy.sqrt(rates_1) + 10.
+        
+        # If the Bjontegaard metric is positive, the
+        # 1st rate-distortion saves bitrate with respect
+        # to the 2nd rate-distortion curve.
+        metric_bjontegaard = tls.compute_bjontegaard(rates_0,
+                                                     psnrs_0,
+                                                     rates_1,
+                                                     psnrs_1)
+        handle = []
+        handle.append(plt.plot(rates_0, psnrs_0)[0])
+        handle.append(plt.plot(rates_1, psnrs_1)[0])
+        plt.title('Two RD curves - Bjontegaard metric: {}%'.format(metric_bjontegaard))
+        plt.legend(handle,
+                   ['1st rate-distortion curve', '2nd rate-distortion curve'])
+        plt.xlabel('rate (bbp)')
+        plt.ylabel('PSNR (dB)')
+        plt.savefig('tools/pseudo_visualization/compute_bjontegaard.png')
+        plt.clf()
+    
     def test_convert_approx_entropy(self):
         """Tests the function `convert_approx_entropy`.
         

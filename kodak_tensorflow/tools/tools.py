@@ -130,6 +130,114 @@ def cast_float_to_int16(array_float):
                                     err_msg='The rounded array elements cannot be represented as 16-bit signed integers.')
     return rounded_elements.astype(numpy.int16)
 
+def compute_bjontegaard(rates_0, psnrs_0, rates_1, psnrs_1):
+    """Compute the Bjontegaard's metric between two rate-distortion curves.
+    
+    The Bjontegaard's metric is the average per cent
+    saving in bitrate between two rate-distortion curves.
+    
+    Parameters
+    ----------
+    rates_0 : numpy.ndarray
+        1D array.
+        Rates for the 1st rate-distortion curve. `rates_0[i]`
+        is the rate of the ith point in the 1st rate-distortion
+        curve.
+    psnrs_0 : numpy.ndarray
+        1D array.
+        PSNRs for the 1st rate-distortion curve. `psnrs_0[i]`
+        is the PSNR of the ith point in the 1st rate-distortion
+        curve.
+    rates_1 : numpy.ndarray
+        1D array.
+        Rates for the 2nd rate-distortion curve. `rates_1[i]`
+        is the rate of the ith point in the 2nd rate-distortion
+        curve.
+    psnrs_1 : numpy.ndarray
+        1D array.
+        PSNRs for the 2nd rate-distortion curve. `psnrs_1[i]`
+        is the PSNR of the ith point in the 2nd rate-distortion
+        curve.
+    
+    Returns
+    -------
+    float
+        Bjontegaard's metric between the two rate-distortion curves.
+    
+    Raises
+    ------
+    ValueError
+        If rates_0.ndim` is not equal to 1.
+    ValueError
+        If `rates_1.ndim` is not equal to 1.
+    ValueError
+        If `psnrs_0.shape` is not equal to `rates_0.shape`.
+    ValueError
+        If `psnrs_1.shape` is not equal to `rates_1.shape`.
+    AssertionError
+        If an element of `rates_0` is not strictly positive.
+    AssertionError
+        If an element of `rates_1` is not strictly positive.
+    AssertionError
+        If an element of `psnrs_0` is not strictly positive.
+    AssertionError
+        If an element of `psnrs_1` is not strictly positive.
+    
+    """
+    if rates_0.ndim != 1:
+        raise ValueError('`rates_0.ndim` is not equal to 1.')
+    if rates_1.ndim != 1:
+        raise ValueError('`rates_1.ndim` is not equal to 1.')
+    if psnrs_0.shape != rates_0.shape:
+        raise ValueError('`psnrs_0.shape` is not equal to `rates_0.shape`.')
+    if psnrs_1.shape != rates_1.shape:
+        raise ValueError('`psnrs_1.shape` is not equal to `rates_1.shape`.')
+    numpy.testing.assert_array_less(0.,
+                                    rates_0,
+                                    err_msg='An element of `rates_0` is not strictly positive.')
+    numpy.testing.assert_array_less(0.,
+                                    rates_1,
+                                    err_msg='An element of `rates_1` is not strictly positive.')
+    numpy.testing.assert_array_less(0.,
+                                    psnrs_0,
+                                    err_msg='An element of `psnrs_0` is not strictly positive.')
+    numpy.testing.assert_array_less(0.,
+                                    psnrs_1,
+                                    err_msg='An element of `psnrs_1` is not strictly positive.')
+    
+    # Rates are converted into logarithmic units.
+    log_rates_0 = numpy.log(rates_0)
+    log_rates_1 = numpy.log(rates_1)
+    
+    # A polynomial of degree 3 is fitted to the points
+    # (`psnrs_0`, `log_rates_0`).
+    polynomial_coefficients_0 = numpy.polyfit(psnrs_0,
+                                              log_rates_0,
+                                              3)
+    
+    # A polynomial of degree 3 is fitted to the points
+    # (`psnrs_1`, `log_rates_1`).
+    polynomial_coefficients_1 = numpy.polyfit(psnrs_1,
+                                              log_rates_1,
+                                              3)
+    minimum = max(numpy.amin(psnrs_0).item(),
+                  numpy.amin(psnrs_1).item())
+    maximum = min(numpy.amax(psnrs_0).item(),
+                  numpy.amax(psnrs_1).item())
+    
+    # `antiderivative_0` is the antiderivative (indefinite
+    # integral) of the polynomial with polynomial coefficients
+    # `polynomial_coefficients_0`.
+    antiderivative_0 = numpy.polyint(polynomial_coefficients_0)
+    
+    # `antiderivative_1` is the antiderivative (indefinite
+    # integral) of the polynomial with polynomial coefficients
+    # `polynomial_coefficients_1`.
+    antiderivative_1 = numpy.polyint(polynomial_coefficients_1)
+    integral_0 = numpy.polyval(antiderivative_0, maximum) - numpy.polyval(antiderivative_0, minimum)
+    integral_1 = numpy.polyval(antiderivative_1, maximum) - numpy.polyval(antiderivative_1, minimum)
+    return 100.*(numpy.exp((integral_1 - integral_0)/(maximum - minimum)).item() - 1.)
+
 def convert_approx_entropy(scaled_approx_entropy, gamma_scaling, nb_maps):
     """Converts the scaled cumulated approximate entropy of the quantized latent variables into its mean form.
     

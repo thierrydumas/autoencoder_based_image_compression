@@ -109,8 +109,8 @@
                     validation images, "ILSVRC2012_img_val.tar" (6.3 GB),
                     see <a href="http://image-net.org/download" target="_blank">ImageNetDownloadWebPage</a>.
                     Let's say that, in your computer, the path to "ILSVRC2012_img_val.tar"
-                    is "path/to/folder_0/ILSVRC2012_img_val.tar" and you want
-                    the unpacked images to be put into the folder "path/to/folder_1/"
+                    is "path/to/folder_0/ILSVRC2012_img_val.tar", and you want
+                    the unpacked RGB images to be put into the folder "path/to/folder_1/"
                     before the script "creating_imagenet.py" preprocesses them,</p>
                     <div class="code"><b>python creating_imagenet.py
                     path/to/folder_1/ --path_to_tar=path/to/folder_0/ILSVRC2012_img_val.tar</b></div>
@@ -161,12 +161,11 @@
             <ol>
                 <li>
                     <h3>How to create the BSDS test set?</h3>
-                    <p>First of all, you have to download the BSDS300 dataset
-                    (22 MB), "BSDS300-images.tgz", see <a href="https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/bsds/" target="_blank">BSDSWebPage</a>.
-                    Let's say that, in your computer, the path to "BSDS300-images.tgz"
-                    is "path/to/folder_0/BSDS300-images.tgz" and you want the unpacked
-                    files to be put into the folder "path/to/folder_1/" before the
-                    preprocessing starts,</p>
+                    <p> Let's say that you want the archive "BSDS300-images.tgz"
+                    downloaded by the script "creating_bsds.py" to be stored at
+                    "path/to/folder_0/BSDS300-images.tgz", and you want this archive
+                    to be extracted to the folder at "path/to/folder_1/" before the
+                    the script "creating_bsds.py" preprocesses the extracted RGB images,</p>
                     <div class="code"><b>python creating_bsds.py
                     path/to/folder_1/ --path_to_tar=path/to/folder_0/BSDS300-images.tgz</b></div>
                 </li>

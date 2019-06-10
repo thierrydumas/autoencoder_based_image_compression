@@ -32,9 +32,9 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
               are_bin_widths_learned, is_lossless, path_to_checking_r, list_rotation, positions_top_left):
     """Computes a series of pairs (rate, PSNR).
     
-    A single entropy autoencoder is considered.
-    At training time, the quantization bin widths
-    were either fixed or learned.
+    A single entropy autoencoder is considered. At training
+    time, the quantization bin widths were either fixed or
+    learned.
     For each multiplier, the quantization bin widths
     at the end of the training are multiplied by the
     multiplier, yielding a set of test quantization bin
@@ -168,7 +168,8 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
     # variable feature map of index i. It was computed on
     # the extra set.
     map_mean = numpy.load(path_to_map_mean)
-    tiled_map_mean = numpy.tile(map_mean, (nb_images, y_float32.shape[1], y_float32.shape[2], 1))
+    tiled_map_mean = numpy.tile(map_mean,
+                                (nb_images, y_float32.shape[1], y_float32.shape[2], 1))
     
     # `idx_map_exception` was also computed on the extra set.
     if is_lossless:
@@ -181,7 +182,8 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
             multiplier = multipliers[i].item()
             str_multiplier = tls.float_to_str(multiplier)
             bin_widths_test = multiplier*bin_widths
-            centered_quantized_y_float32 = tls.quantize_per_map(centered_y_float32, bin_widths_test)
+            centered_quantized_y_float32 = tls.quantize_per_map(centered_y_float32,
+                                                                bin_widths_test)
             
             # For a given luminance image, if at least a coefficient
             # of a feature map is different from 0.0, this feature map
@@ -195,7 +197,8 @@ def fix_gamma(reference_uint8, bin_width_init, multipliers, idx_training, gamma_
             
             # The elements of span `reconstruction_uint8`
             # the range [|16, 235|].
-            reconstruction_uint8 = numpy.squeeze(expanded_reconstruction_uint8, axis=3)
+            reconstruction_uint8 = numpy.squeeze(expanded_reconstruction_uint8,
+                                                 axis=3)
             
             # The binary probabilities were also computed
             # on the extra set.
@@ -283,14 +286,125 @@ def plot_nb_dead_feature_maps(rate, array_nb_deads, paths):
         plt.savefig(paths[i])
         plt.clf()
 
+def plot_rate_distortion(mean_rate_vary_gamma_fix_bin_widths, mean_psnr_vary_gamma_fix_bin_widths, mean_rate_fix_gamma_learn_bin_widths,
+                         mean_psnr_fix_gamma_learn_bin_widths, mean_rate_fix_gamma_fix_bin_widths, mean_psnr_fix_gamma_fix_bin_widths,
+                         mean_rate_jpeg2000, mean_psnr_jpeg2000, mean_rate_hevc, mean_psnr_hevc, title, path):
+    """Plots the mean rate-distortion curve of the three deep autoencoders, JPEG2000, and HEVC.
+    
+    Parameters
+    ----------
+    mean_rate_vary_gamma_fix_bin_widths : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_rate_vary_gamma_fix_bin_widths[i]` is the mean rate associated
+        to the compression via the entropy autoencoder trained with the ith
+        scaling coefficient.
+    mean_psnr_vary_gamma_fix_bin_widths : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_psnr_vary_gamma_fix_bin_widths[i]` is the mean PSNR associated
+        to the compression via the entropy autoencoder trained with the ith
+        scaling coefficient.
+    mean_rate_fix_gamma_learn_bin_widths : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_rate_fix_gamma_learn_bin_widths[i]` is the mean rate associated
+        to the compression via the single entropy autoencoder and the ith set
+        of test quantization bin widths. The training involved learned quantization
+        bin widths.
+    mean_psnr_fix_gamma_learn_bin_widths : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_psnr_fix_gamma_learn_bin_widths[i]` is the mean PSNR associated
+        to the compression via the single entropy autoencoder and the ith set
+        of test quantization bin widths. The training involved learned quantization
+        bin widths.
+    mean_rate_fix_gamma_fix_bin_widths : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_rate_fix_gamma_fix_bin_widths[i]` is the mean rate associated
+        to the compression via the single entropy autoencoder and the ith set
+        of test quantization bin widths. The training involved fixed quantization
+        bin widths.
+    mean_psnr_fix_gamma_fix_bin_widths : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_psnr_fix_gamma_fix_bin_widths[i]` is the mean PSNR associated
+        to the compression via the single entropy autoencoder and the ith set
+        of test quantization bin widths. The training involved fixed quantization
+        bin widths.
+    mean_rate_jpeg2000 : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_rate_jpeg2000[i]` is the mean rate associated to the compression
+        via JPEG2000 at the ith compression quality.
+    mean_psnr_jpeg2000 : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_psnr_jpeg2000[i]` is the mean PSNR associated to the compression
+        via JPEG2000 at the ith compression quality.
+    mean_rate_hevc : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_rate_hevc[i]` is the mean rate associated to the compression
+        via HEVC at the ith quantization parameter.
+    mean_psnr_hevc : numpy.ndarray
+        1D array with data-type `numpy.float64`.
+        `mean_psnr_hevc[i]` is the mean PSNR associated to the compression
+        via HEVC at the ith quantization parameter.
+    title : str
+        Title of the plot.
+    path : str
+        Path to the saved plot. The path ends with ".png".
+    
+    """
+    # `plt.plot` returns a list.
+    handle = []
+    handle.append(plt.plot(mean_rate_vary_gamma_fix_bin_widths,
+                           mean_psnr_vary_gamma_fix_bin_widths,
+                           color='orange',
+                           marker='x',
+                           markersize=9.)[0])
+    handle.append(plt.plot(mean_rate_fix_gamma_learn_bin_widths,
+                           mean_psnr_fix_gamma_learn_bin_widths,
+                           color='green',
+                           markerfacecolor='None',
+                           marker='s',
+                           markeredgecolor='green',
+                           markersize=9.)[0])
+    handle.append(plt.plot(mean_rate_fix_gamma_fix_bin_widths,
+                           mean_psnr_fix_gamma_fix_bin_widths,
+                           color='red',
+                           markerfacecolor='None',
+                           marker='o',
+                           markeredgecolor='red',
+                           markersize=9.)[0])
+    handle.append(plt.plot(mean_rate_jpeg2000,
+                           mean_psnr_jpeg2000,
+                           color='black',
+                           marker='>',
+                           markersize=9.)[0])
+    handle.append(plt.plot(mean_rate_hevc,
+                           mean_psnr_hevc,
+                           color='blue',
+                           marker='<',
+                           markersize=9.)[0])
+    plt.title(title)
+    plt.xlabel('mean rate (bbp)')
+    plt.ylabel('mean PSNR (dB)')
+    legend = [
+        r'one learning per rate, $\{ \varphi_e, \varphi_d \}$ learned',
+        r'unique learning, $\delta_i$ learned',
+        r'unique learning, $\{ \varphi_e, \varphi_d \}$ learned',
+        'JPEG2000',
+        'H.265'
+    ]
+    plt.legend(handle,
+               legend,
+               loc='lower right',
+               prop={'size': 14},
+               frameon=False)
+    plt.savefig(path)
+    plt.clf()
+
 def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, gammas_scaling,
                               batch_size, path_to_checking_r, list_rotation, positions_top_left):
     """Computes a series of pairs (rate, PSNR).
     
-    Several entropy autoencoders, each trained
-    with a different scaling coefficient, are
-    considered. At training time, the quantization
-    bin widths were fixed.
+    Several entropy autoencoders, each trained with a
+    different scaling coefficient, are considered. At
+    training time, the quantization bin widths were fixed.
     For each scaling coefficient, for each luminance
     image, the pair (rate, PSNR) associated to the
     compression of the luminance image via the entropy
@@ -409,7 +523,8 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
                                            h_in,
                                            w_in,
                                            False)
-        quantized_y_float32 = tls.quantize_per_map(y_float32, bin_widths)
+        quantized_y_float32 = tls.quantize_per_map(y_float32,
+                                                   bin_widths)
         with tf.Session() as sess:
             isolated_decoder.initialization(sess, path_to_restore)
             expanded_reconstruction_uint8 = eae.batching.decode_mini_batches(quantized_y_float32,
@@ -419,11 +534,11 @@ def vary_gamma_fix_bin_widths(reference_uint8, bin_width_init, idxs_training, ga
             
         # The elements of `reconstruction_uint8` span
         # the range [|16, 235|].
-        reconstruction_uint8 = numpy.squeeze(expanded_reconstruction_uint8, axis=3)
+        reconstruction_uint8 = numpy.squeeze(expanded_reconstruction_uint8,
+                                             axis=3)
         
         # The graph of the decoder is destroyed.
         tf.reset_default_graph()
-        
         for j in range(nb_images):
             rate[i, j] = tls.rate_3d(quantized_y_float32[j, :, :, :],
                                      bin_widths,
@@ -556,19 +671,30 @@ if __name__ == '__main__':
                         list_rotation,
                         positions_top_left)
     
-    (rate_vary_gamma_fix_bin_widths, psnr_vary_gamma_fix_bin_widths) = \
-        vary_gamma_fix_bin_widths(reference_uint8,
-                                  dict_vary_gamma_fix_bin_widths['bin_width_init'],
-                                  dict_vary_gamma_fix_bin_widths['idxs_training'],
-                                  dict_vary_gamma_fix_bin_widths['gammas_scaling'],
-                                  batch_size,
-                                  path_to_checking_r,
-                                  list_rotation,
-                                  positions_top_left)
-    numpy.save(os.path.join(path_to_checking_r, 'rate_vary_gamma_fix_bin_widths.npy'),
-               rate_vary_gamma_fix_bin_widths)
-    numpy.save(os.path.join(path_to_checking_r, 'psnr_vary_gamma_fix_bin_widths.npy'),
-               psnr_vary_gamma_fix_bin_widths)
+    path_to_rate_vary_gamma_fix_bin_widths = os.path.join(path_to_checking_r,
+                                                          'rate_vary_gamma_fix_bin_widths.npy')
+    path_to_psnr_vary_gamma_fix_bin_widths = os.path.join(path_to_checking_r,
+                                                          'psnr_vary_gamma_fix_bin_widths.npy')
+    if os.path.isfile(path_to_rate_vary_gamma_fix_bin_widths) and os.path.isfile(path_to_psnr_vary_gamma_fix_bin_widths):
+        rate_vary_gamma_fix_bin_widths = numpy.load(path_to_rate_vary_gamma_fix_bin_widths)
+        psnr_vary_gamma_fix_bin_widths = numpy.load(path_to_psnr_vary_gamma_fix_bin_widths)
+        print('For the orange curve, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_vary_gamma_fix_bin_widths, path_to_psnr_vary_gamma_fix_bin_widths))
+        print('Delete them manually to re-compute them.')
+    else:
+        print('For the orange curve, the rates and the PSNRs are computed.')
+        (rate_vary_gamma_fix_bin_widths, psnr_vary_gamma_fix_bin_widths) = \
+            vary_gamma_fix_bin_widths(reference_uint8,
+                                      dict_vary_gamma_fix_bin_widths['bin_width_init'],
+                                      dict_vary_gamma_fix_bin_widths['idxs_training'],
+                                      dict_vary_gamma_fix_bin_widths['gammas_scaling'],
+                                      batch_size,
+                                      path_to_checking_r,
+                                      list_rotation,
+                                      positions_top_left)
+        numpy.save(path_to_rate_vary_gamma_fix_bin_widths,
+                   rate_vary_gamma_fix_bin_widths)
+        numpy.save(path_to_psnr_vary_gamma_fix_bin_widths,
+                   psnr_vary_gamma_fix_bin_widths)
     
     # `str_code` enables to save the rate-distortion
     # performances of the approach below with/without
@@ -577,44 +703,62 @@ if __name__ == '__main__':
         str_code = 'lossless'
     else:
         str_code = 'approx'
-    (rate_fix_gamma_learn_bin_widths, psnr_fix_gamma_learn_bin_widths) = \
-        fix_gamma(reference_uint8,
-                  dict_fix_gamma_learn_bin_widths['bin_width_init'],
-                  dict_fix_gamma_learn_bin_widths['multipliers'],
-                  dict_fix_gamma_learn_bin_widths['idx_training'],
-                  dict_fix_gamma_learn_bin_widths['gamma_scaling'],
-                  batch_size,
-                  True,
-                  args.code_lossless,
-                  path_to_checking_r,
-                  list_rotation,
-                  positions_top_left)
-    numpy.save(os.path.join(path_to_checking_r, 'rate_fix_gamma_learn_bin_widths_{}.npy'.format(str_code)),
-               rate_fix_gamma_learn_bin_widths)
-    numpy.save(os.path.join(path_to_checking_r, 'psnr_fix_gamma_learn_bin_widths_{}.npy'.format(str_code)),
-               psnr_fix_gamma_learn_bin_widths)
+    path_to_rate_fix_gamma_learn_bin_widths = os.path.join(path_to_checking_r,
+                                                           'rate_fix_gamma_learn_bin_widths_{}.npy'.format(str_code))
+    path_to_psnr_fix_gamma_learn_bin_widths = os.path.join(path_to_checking_r,
+                                                           'psnr_fix_gamma_learn_bin_widths_{}.npy'.format(str_code))
+    if os.path.isfile(path_to_rate_fix_gamma_learn_bin_widths) and os.path.isfile(path_to_psnr_fix_gamma_learn_bin_widths):
+        rate_fix_gamma_learn_bin_widths = numpy.load(path_to_rate_fix_gamma_learn_bin_widths)
+        psnr_fix_gamma_learn_bin_widths = numpy.load(path_to_psnr_fix_gamma_learn_bin_widths)
+        print('For the green curve, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_fix_gamma_learn_bin_widths, path_to_psnr_fix_gamma_learn_bin_widths))
+        print('Delete them manually to re-compute them.')
+    else:
+        print('For the green curve, the rates and the PSNRs are computed.')
+        (rate_fix_gamma_learn_bin_widths, psnr_fix_gamma_learn_bin_widths) = \
+            fix_gamma(reference_uint8,
+                      dict_fix_gamma_learn_bin_widths['bin_width_init'],
+                      dict_fix_gamma_learn_bin_widths['multipliers'],
+                      dict_fix_gamma_learn_bin_widths['idx_training'],
+                      dict_fix_gamma_learn_bin_widths['gamma_scaling'],
+                      batch_size,
+                      True,
+                      args.code_lossless,
+                      path_to_checking_r,
+                      list_rotation,
+                      positions_top_left)
+        numpy.save(path_to_rate_fix_gamma_learn_bin_widths,
+                   rate_fix_gamma_learn_bin_widths)
+        numpy.save(path_to_psnr_fix_gamma_learn_bin_widths,
+                   psnr_fix_gamma_learn_bin_widths)
     
-    (rate_fix_gamma_fix_bin_widths, psnr_fix_gamma_fix_bin_widths) = \
-        fix_gamma(reference_uint8,
-                  dict_fix_gamma_fix_bin_widths['bin_width_init'],
-                  dict_fix_gamma_fix_bin_widths['multipliers'],
-                  dict_fix_gamma_fix_bin_widths['idx_training'],
-                  dict_fix_gamma_fix_bin_widths['gamma_scaling'],
-                  batch_size,
-                  False,
-                  args.code_lossless,
-                  path_to_checking_r,
-                  list_rotation,
-                  positions_top_left)
-    numpy.save(os.path.join(path_to_checking_r, 'rate_fix_gamma_fix_bin_widths_{}.npy'.format(str_code)),
-               rate_fix_gamma_fix_bin_widths)
-    numpy.save(os.path.join(path_to_checking_r, 'psnr_fix_gamma_fix_bin_widths_{}.npy'.format(str_code)),
-               psnr_fix_gamma_fix_bin_widths)
+    path_to_rate_fix_gamma_fix_bin_widths = os.path.join(path_to_checking_r,
+                                                         'rate_fix_gamma_fix_bin_widths_{}.npy'.format(str_code))
+    path_to_psnr_fix_gamma_fix_bin_widths = os.path.join(path_to_checking_r,
+                                                         'psnr_fix_gamma_fix_bin_widths_{}.npy'.format(str_code))
+    if os.path.isfile(path_to_rate_fix_gamma_fix_bin_widths) and os.path.isfile(path_to_psnr_fix_gamma_fix_bin_widths):
+        rate_fix_gamma_fix_bin_widths = numpy.load(path_to_rate_fix_gamma_fix_bin_widths)
+        psnr_fix_gamma_fix_bin_widths = numpy.load(path_to_psnr_fix_gamma_fix_bin_widths)
+        print('For the red curve, the rates at "{0}" and the PSNRs at "{1}" are loaded.'.format(path_to_rate_fix_gamma_fix_bin_widths, path_to_psnr_fix_gamma_fix_bin_widths))
+        print('Delete them manually to re-compute them.')
+    else:
+        print('For the red curve, the rates and the PSNRs are computed.')
+        (rate_fix_gamma_fix_bin_widths, psnr_fix_gamma_fix_bin_widths) = \
+            fix_gamma(reference_uint8,
+                      dict_fix_gamma_fix_bin_widths['bin_width_init'],
+                      dict_fix_gamma_fix_bin_widths['multipliers'],
+                      dict_fix_gamma_fix_bin_widths['idx_training'],
+                      dict_fix_gamma_fix_bin_widths['gamma_scaling'],
+                      batch_size,
+                      False,
+                      args.code_lossless,
+                      path_to_checking_r,
+                      list_rotation,
+                      positions_top_left)
+        numpy.save(path_to_rate_fix_gamma_fix_bin_widths,
+                   rate_fix_gamma_fix_bin_widths)
+        numpy.save(path_to_psnr_fix_gamma_fix_bin_widths,
+                   psnr_fix_gamma_fix_bin_widths)
     
-    # JPEG2000 and HEVC takes time to compress
-    # luminance images. That is why, if the rates
-    # and the PSNRs for JPEG2000 and HEVC have
-    # already been computed, they are loaded.
     path_to_rate_jpeg2000 = os.path.join(path_to_checking_r,
                                          'rate_jpeg2000.npy')
     path_to_psnr_jpeg2000 = os.path.join(path_to_checking_r,
@@ -662,53 +806,53 @@ if __name__ == '__main__':
         numpy.save(path_to_psnr_hevc,
                    psnr_hevc)
     
-    # The function `plt.plot` returns a list.
-    handle = []
-    handle.append(plt.plot(numpy.mean(rate_vary_gamma_fix_bin_widths, axis=1),
-                           numpy.mean(psnr_vary_gamma_fix_bin_widths, axis=1),
-                           color='orange',
-                           marker='x',
-                           markersize=9.)[0])
-    handle.append(plt.plot(numpy.mean(rate_fix_gamma_learn_bin_widths, axis=1),
-                           numpy.mean(psnr_fix_gamma_learn_bin_widths, axis=1),
-                           color='green',
-                           markerfacecolor='None',
-                           marker='s',
-                           markeredgecolor='green',
-                           markersize=9.)[0])
-    handle.append(plt.plot(numpy.mean(rate_fix_gamma_fix_bin_widths, axis=1),
-                           numpy.mean(psnr_fix_gamma_fix_bin_widths, axis=1),
-                           color='red',
-                           markerfacecolor='None',
-                           marker='o',
-                           markeredgecolor='red',
-                           markersize=9.)[0])
-    handle.append(plt.plot(numpy.mean(rate_jpeg2000, axis=1),
-                           numpy.mean(psnr_jpeg2000, axis=1),
-                           color='black',
-                           marker='>',
-                           markersize=9.)[0])
-    handle.append(plt.plot(numpy.mean(rate_hevc, axis=1),
-                           numpy.mean(psnr_hevc, axis=1),
-                           color='blue',
-                           marker='<',
-                           markersize=9.)[0])
-    plt.title(title)
-    plt.xlabel('mean rate (bbp)')
-    plt.ylabel('mean PSNR (dB)')
-    legend = [
-        r'one learning per rate, $\{ \varphi_e, \varphi_d \}$ learned',
-        r'unique learning, $\delta_i$ learned',
-        r'unique learning, $\{ \varphi_e, \varphi_d \}$ learned',
-        'JPEG2000',
-        'H.265'
-    ]
-    plt.legend(handle,
-               legend,
-               loc='lower right',
-               prop={'size': 14},
-               frameon=False)
-    plt.savefig(os.path.join(path_to_checking_r, 'rate_distortion.png'))
-    plt.clf()
+    # For each compression algorithm, a mean rate-distortion curve is plotted.
+    mean_rate_vary_gamma_fix_bin_widths = numpy.mean(rate_vary_gamma_fix_bin_widths, axis=1)
+    mean_psnr_vary_gamma_fix_bin_widths = numpy.mean(psnr_vary_gamma_fix_bin_widths, axis=1)
+    mean_rate_fix_gamma_learn_bin_widths = numpy.mean(rate_fix_gamma_learn_bin_widths, axis=1)
+    mean_psnr_fix_gamma_learn_bin_widths = numpy.mean(psnr_fix_gamma_learn_bin_widths, axis=1)
+    mean_rate_fix_gamma_fix_bin_widths = numpy.mean(rate_fix_gamma_fix_bin_widths, axis=1)
+    mean_psnr_fix_gamma_fix_bin_widths = numpy.mean(psnr_fix_gamma_fix_bin_widths, axis=1)
+    mean_rate_jpeg2000 = numpy.mean(rate_jpeg2000, axis=1)
+    mean_psnr_jpeg2000 = numpy.mean(psnr_jpeg2000, axis=1)
+    mean_rate_hevc = numpy.mean(rate_hevc, axis=1)
+    mean_psnr_hevc = numpy.mean(psnr_hevc, axis=1)
+    plot_rate_distortion(mean_rate_vary_gamma_fix_bin_widths,
+                         mean_psnr_vary_gamma_fix_bin_widths,
+                         mean_rate_fix_gamma_learn_bin_widths,
+                         mean_psnr_fix_gamma_learn_bin_widths,
+                         mean_rate_fix_gamma_fix_bin_widths,
+                         mean_psnr_fix_gamma_fix_bin_widths,
+                         mean_rate_jpeg2000,
+                         mean_psnr_jpeg2000,
+                         mean_rate_hevc,
+                         mean_psnr_hevc,
+                         title,
+                         os.path.join(path_to_checking_r, 'rate_distortion_{}.png'.format(str_code)))
+     
+    # For the compression algorithm based on several entropy autoencoders,
+    # each trained with a different scaled coefficient, the Bjontegaard's
+    # metric is not computed as the number of rate-distortion points is
+    # equal to 7, not 9 as the two others.
+    dict_bjontegaard = {
+       'fix_gamma_learn_bin_widths_jpeg2000': tls.compute_bjontegaard(mean_rate_fix_gamma_learn_bin_widths,
+                                                                      mean_psnr_fix_gamma_learn_bin_widths,
+                                                                      mean_rate_jpeg2000,
+                                                                      mean_psnr_jpeg2000),
+       'fix_gamma_learn_bin_widths_hevc': tls.compute_bjontegaard(mean_rate_fix_gamma_learn_bin_widths,
+                                                                  mean_psnr_fix_gamma_learn_bin_widths,
+                                                                  mean_rate_hevc,
+                                                                  mean_psnr_hevc),
+       'fix_gamma_fix_bin_widths_jpeg2000': tls.compute_bjontegaard(mean_rate_fix_gamma_fix_bin_widths,
+                                                                    mean_psnr_fix_gamma_fix_bin_widths,
+                                                                    mean_rate_jpeg2000,
+                                                                    mean_psnr_jpeg2000),
+       'fix_gamma_fix_bin_widths_hevc': tls.compute_bjontegaard(mean_rate_fix_gamma_fix_bin_widths,
+                                                                mean_psnr_fix_gamma_fix_bin_widths,
+                                                                mean_rate_hevc,
+                                                                mean_psnr_hevc)
+    }
+    with open(os.path.join(path_to_checking_r, 'dictionary_bjontegaard_{}.pkl'.format(str_code)), 'wb') as file:
+        pickle.dump(dict_bjontegaard, file, protocol=2)
 
 
