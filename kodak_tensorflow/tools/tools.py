@@ -13,8 +13,10 @@ except ImportError:
 import matplotlib.pyplot as plt
 import matplotlib.ticker
 import numpy
+import os
 import PIL.Image
 import scipy.stats.distributions
+import six.moves.urllib
 import tarfile
 
 # The functions are sorted in
@@ -129,6 +131,28 @@ def cast_float_to_int16(array_float):
                                     32768.,
                                     err_msg='The rounded array elements cannot be represented as 16-bit signed integers.')
     return rounded_elements.astype(numpy.int16)
+
+def clean_sort_list_strings(list_strings, extension):
+    """Removes from the list the strings that do not end with the given extensions and sorts the list.
+    
+    Parameters
+    ----------
+    list_strings : list
+        List of strings.
+    extension : str or tuple of strs
+        Given extensions.
+    
+    Returns
+    -------
+    list
+        New list which contains the strings that
+        end with the given extensions. This list
+        is sorted.
+    
+    """
+    list_strings_extension = [string for string in list_strings if string.endswith(extension)]
+    list_strings_extension.sort()
+    return list_strings_extension
 
 def compute_bjontegaard(rates_0, psnrs_0, rates_1, psnrs_1):
     """Compute the Bjontegaard's metric between two rate-distortion curves.
@@ -512,6 +536,37 @@ def discrete_entropy(quantized_samples, bin_width):
         raise ValueError('The entropy is not smaller than its upper bound.')
     return disc_entropy
 
+def download_untar_archive(source_url, path_to_folder_extraction, path_to_tar):
+    """Downloads the archive if it does not exist at the given path and extracts it.
+    
+    Parameters
+    ----------
+    source_url : str
+        URL of the archive to be downloaded.
+    path_to_folder_extraction : str
+        Path to the folder to which the downloaded archive is extracted.
+    path_to_tar : str
+        Path to the downloaded archive.
+    
+    Returns
+    -------
+    bool
+        Is the archive downloaded?
+    
+    """
+    if os.path.isfile(path_to_tar):
+        is_downloaded = False
+    else:
+        six.moves.urllib.request.urlretrieve(source_url,
+                                             path_to_tar)
+        is_downloaded = True
+    
+    # If the same extraction is run two times in a row,
+    # the result of the first extraction is overwritten.
+    untar_archive(path_to_folder_extraction,
+                  path_to_tar)
+    return is_downloaded
+
 def float_to_str(float_in):
     """Converts the float into a string.
     
@@ -549,7 +604,7 @@ def histogram(data, title, path):
         Title of the histogram.
     path : str
         Path to the saved histogram. The
-        path must end with ".png".
+        path ends with ".png".
     
     """
     plt.hist(data, bins=60)
@@ -639,7 +694,7 @@ def normed_histogram(data, grid, pdfs, titles, paths):
     paths : list
         `paths[i]` is the path to the ith 
         saved normed histogram. Each path
-        must end with ".png".
+        ends with ".png".
     
     Raises
     ------
@@ -722,7 +777,7 @@ def plot_graphs(x_values, y_values, x_label, y_label, legend, colors, title, pat
         Title of the plot.
     path : str
         Path to the saved plot. The path
-        must end with ".png".
+        ends with ".png".
     
     Raises
     ------
@@ -1099,20 +1154,20 @@ def tile_cauchy(grid, reps):
     pdf_float32 = scipy.stats.distributions.cauchy.pdf(grid).astype(numpy.float32)
     return numpy.tile(numpy.expand_dims(pdf_float32, axis=0), (reps, 1))
 
-def untar_archive(path_to_root, path_to_tar):
+def untar_archive(path_to_folder_extraction, path_to_tar):
     """Extracts the archive to the given folder.
     
     Parameters
     ----------
-    path_to_root : str
+    path_to_folder_extraction : str
         Path to the given folder.
     path_to_tar : str
         Path to the archive to be extracted.
-        The path must end with ".tar".
+        The path ends with ".tar".
     
     """
     with tarfile.open(path_to_tar, 'r') as file:
-        file.extractall(path=path_to_root)
+        file.extractall(path=path_to_folder_extraction)
 
 def visualize_crops(image_uint8, positions_top_left, paths):
     """Crops the image several times, repeats the pixels of each crop and saves the resulting crops.
@@ -1134,7 +1189,7 @@ def visualize_crops(image_uint8, positions_top_left, paths):
         pixel at the top-left of the ith crop.
     paths : list
         `paths[i]` is the path to the ith saved
-        crop. Each path must end with ".png".
+        crop. Each path ends with ".png".
     
     Raises
     ------
@@ -1171,13 +1226,13 @@ def visualize_luminances(luminances_uint8, nb_vertically, path):
         4D array with data-type `numpy.uint8`.
         Luminance images. `luminances_uint8[i, :, :, :]`
         is the ith luminance image. The 4th dimension
-        of `luminances_uint8` must be equal to 1.
+        of `luminances_uint8` is equal to 1.
     nb_vertically : int
         Number of luminance images per column
         in the single image.
     path : str
         Path to the saved single image. The path
-        must end with ".png".
+        ends with ".png".
     
     Raises
     ------
@@ -1223,7 +1278,7 @@ def visualize_representation(representation_float32, nb_vertically, path):
         per column in the single image.
     path : str
         Path to the saved single image. The path
-        must end with ".png".
+        ends with ".png".
     
     """
     min_r = numpy.amin(representation_float32)
@@ -1256,8 +1311,8 @@ def visualize_rotated_luminance(luminance_before_rotation_uint8, is_rotated, pos
         The 1st string in this list is the path
         to the saved rotated luminance image. Each
         string in this list from the 2nd to the last
-        is the path to a saved crop. Each path must
-        end with ".png".
+        is the path to a saved crop. Each path ends
+        with ".png".
     
     """
     if is_rotated:
@@ -1283,13 +1338,13 @@ def visualize_weights(weights, nb_vertically, path):
         4D array with data-type `numpy.float32`.
         Weight filters. `weights[:, :, :, i]` is
         the ith weight filter. The 3rd dimension
-        of `weights` must be equal to 1.
+        of `weights` is equal to 1.
     nb_vertically : int
         Number of weight filters per column
         in the single image.
     path : str
         Path to the saved single image. The path
-        must end with ".png".
+        ends with ".png".
     
     """
     min_w = numpy.amin(weights)

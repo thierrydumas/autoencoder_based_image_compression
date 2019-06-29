@@ -4,38 +4,12 @@ import argparse
 import numpy
 import os
 
-import datasets.extra.extra
 import datasets.imagenet.imagenet
 import tools.tools as tls
 
 
 class TesterDatasets(object):
     """Class for testing the libraries in the folder "datasets"."""
-    
-    def test_create_extra(self):
-        """Tests the function `create_extra` in the file "datasets/extra/extra.py".
-        
-        An image is saved at
-        "lossless/pseudo_visualization/create_extra/crop_i.png",
-        i in {0, 1, 2}.
-        The test is successful if each saved
-        image is the luminance central crop of
-        a different RGB image in the folder
-        "datasets/extra/pseudo_data/".
-        
-        """
-        width_crop = 256
-        nb_extra = 3
-        path_to_extra = 'datasets/extra/pseudo_data/pseudo_extra.npy'
-        
-        datasets.extra.extra.create_extra('datasets/extra/pseudo_data/',
-                                          width_crop,
-                                          nb_extra,
-                                          path_to_extra)
-        pseudo_extra = numpy.load(path_to_extra)
-        for i in range(nb_extra):
-            tls.save_image('datasets/extra/pseudo_visualization/crop_{}.png'.format(i),
-                           pseudo_extra[i, :, :, 0])
     
     def test_create_imagenet(self):
         """Tests the function `create_imagenet` in the file "datasets/imagenet/imagenet.py".

@@ -43,17 +43,17 @@ def compress_hevc(luminance_before_hevc_uint8, path_to_before_hevc, path_to_afte
     path_to_before_hevc : str
         Path to the 1st file which stores the
         luminance image/video before it is compressed
-        via HEVC. The path must end with ".yuv".
+        via HEVC. The path ends with ".yuv".
     path_to_after_hevc : str
         Path to the 2nd file which stores the
         luminance image/video after it is compressed
-        via HEVC. The path must end with ".yuv".
+        via HEVC. The path ends with ".yuv".
     path_to_cfg : str
         Path to the configuration file. The path
-        must end with ".cfg".
+        ends with ".cfg".
     path_to_bitstream : str
         Path to the bitstream file. The path
-        must end with ".bin".
+        ends with ".bin".
     qp : int
         Quantization parameter.
     is_bitstream_cleaned : bool
@@ -140,17 +140,17 @@ def compute_rate_psnr(luminances_uint8, path_to_before_hevc, path_to_after_hevc,
     path_to_before_hevc : str
         Path to the file storing the luminance
         image before it is compressed via HEVC.
-        The path must end with ".yuv".
+        The path ends with ".yuv".
     path_to_after_hevc : str
         Path to the file storing the luminance
         image after it is compressed via HEVC.
-        The path must end with ".yuv".
+        The path ends with ".yuv".
     path_to_cfg : str
         Path to the configuration file. The path
-        must end with ".cfg".
+        ends with ".cfg".
     path_to_bitstream : str
         Path to the bitstream file. The path
-        must end with ".bin".
+        ends with ".bin".
     qp : int
         Quantization parameter.
     path_to_storage : str
@@ -234,17 +234,17 @@ def evaluate_hevc(luminances_uint8, path_to_before_hevc, path_to_after_hevc, pat
     path_to_before_hevc : str
         Path to the file storing a luminance
         image before it is compressed via HEVC.
-        The path must end with ".yuv".
+        The path ends with ".yuv".
     path_to_after_hevc : str
         Path to the file storing a luminance
         image after it is compressed via HEVC.
-        The path must end with ".yuv".
+        The path ends with ".yuv".
     path_to_cfg : str
         Path to the configuration file. The path
-        must end with ".cfg".
+        ends with ".cfg".
     path_to_bitstream : str
         Path to the bitstream file. The path
-        must end with ".bin".
+        ends with ".bin".
     qps : numpy.ndarray
         1D array with data-type `numpy.int32`.
         Quantization parameters.
@@ -313,7 +313,7 @@ def read_400(path, height, width, nb_frames, data_type):
     path : str
         Path to the binary file from which
         the luminance video in 4:0:0 is
-        read. The path must end with ".yuv".
+        read. The path ends with ".yuv".
     height : int
         Height of the luminance video.
     width : int
@@ -373,7 +373,7 @@ def write_400(luminance_uint8or16, path):
     path : str
         Path to binary file in which the
         luminance video in 4:0:0 is saved.
-        The path must endwith ".yuv".
+        The path ends with ".yuv".
     
     Raises
     ------

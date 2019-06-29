@@ -20,7 +20,7 @@ def compress_lossless_maps(ref_int16, path_to_binary_probabilities, idx_map_exce
         be compressed without loss.
     path_to_binary_probabilities : str
         Path to the file storing the binary
-        probabilities. The path must end with ".npy".
+        probabilities. The path ends with ".npy".
     idx_map_exception : int, optional
         Index of the map that is not compressed
         as the other maps. The default value is -1,
@@ -99,7 +99,7 @@ def rescale_compress_lossless_maps(centered_quantized_data, bin_widths_test, pat
         data, giving rise to `centered_quantized_data[:, :, i]`.
     path_to_binary_probabilities : str
         Path to the file storing the binary
-        probabilities. The path must end with ".npy".
+        probabilities. The path ends with ".npy".
     idx_map_exception : int, optional
         Index of the map that is not compressed
         as the other maps. The default value is -1,

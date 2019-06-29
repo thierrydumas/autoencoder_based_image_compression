@@ -7,7 +7,7 @@ import six.moves.urllib
 
 import tools.tools as tls
 
-def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rotation):
+def create_kodak(source_url, path_to_folder_rgbs, path_to_kodak, path_to_list_rotation):
     """Creates the Kodak test set.
     
     The 24 Kodak RGB images are downloaded and
@@ -21,7 +21,7 @@ def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rot
     source_url : str
         URL of the folder that contains the
         24 Kodak RGB images.
-    path_to_store_rgbs : str
+    path_to_folder_rgbs : str
         Path to the folder in which the downloaded
         24 Kodak RGB images are saved.
     path_to_kodak : str
@@ -44,21 +44,21 @@ def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rot
         print('"{0}" and "{1}" already exist.'.format(path_to_kodak, path_to_list_rotation))
         print('Delete them manually to recreate the Kodak test set.')
     else:
-        
-        # If the Kodak test set already exists, there is
-        # no need to download the Kodak RGB images.
         download_option(source_url,
-                        path_to_store_rgbs)
-        h_kodak = 512
-        w_kodak = 768
-        reference_uint8 = numpy.zeros((24, h_kodak, w_kodak), dtype=numpy.uint8)
+                        path_to_folder_rgbs)
+        
+        # The height and width of the luminance images we
+        # feed into the autoencoders has to be divisible by 16.
+        height_kodak = 512
+        width_kodak = 768
+        reference_uint8 = numpy.zeros((24, height_kodak, width_kodak), dtype=numpy.uint8)
         list_rotation = []
         for i in range(24):
-            path_to_file = os.path.join(path_to_store_rgbs,
+            path_to_file = os.path.join(path_to_folder_rgbs,
                                         'kodim' + str(i + 1).rjust(2, '0') + '.png')
             
             # `tls.read_image_mode` is not put into a `try`
-            # `except` condition as each Kodak RGB image has
+            # `except` clause as each Kodak RGB image has
             # to be read.
             rgb_uint8 = tls.read_image_mode(path_to_file,
                                             'RGB')
@@ -69,20 +69,20 @@ def create_kodak(source_url, path_to_store_rgbs, path_to_kodak, path_to_list_rot
             # and its 3rd dimension is equal to 3.
             luminance_uint8 = tls.rgb_to_ycbcr(rgb_uint8)[:, :, 0]
             (height_image, width_image) = luminance_uint8.shape
-            if height_image == h_kodak and width_image == w_kodak:
+            if height_image == height_kodak and width_image == width_kodak:
                 reference_uint8[i, :, :] = luminance_uint8
-            elif width_image == h_kodak and height_image == w_kodak:
+            elif width_image == height_kodak and height_image == width_kodak:
                 reference_uint8[i, :, :] = numpy.rot90(luminance_uint8)
                 list_rotation.append(i)
             else:
-                raise ValueError('"{0}" is neither {1}x{2}x3 nor {2}x{1}x3.'.format(path_to_file, h_kodak, w_kodak))
+                raise ValueError('"{0}" is neither {1}x{2}x3 nor {2}x{1}x3.'.format(path_to_file, height_kodak, width_kodak))
         
         numpy.save(path_to_kodak,
                    reference_uint8)
         with open(path_to_list_rotation, 'wb') as file:
             pickle.dump(list_rotation, file, protocol=2)
 
-def download_option(source_url, path_to_store_rgbs):
+def download_option(source_url, path_to_folder_rgbs):
     """Downloads the 24 Kodak RGB images.
     
     Parameters
@@ -90,14 +90,15 @@ def download_option(source_url, path_to_store_rgbs):
     source_url : str
         URL of the folder that contains the
         24 Kodak RGB images.
-    path_to_store_rgbs : str
+    path_to_folder_rgbs : str
         Path to the folder in which the downloaded
         24 Kodak RGB images are saved.
     
     """
     for i in range(24):
         filename = 'kodim' + str(i + 1).rjust(2, '0') + '.png'
-        path_to_file = os.path.join(path_to_store_rgbs, filename)
+        path_to_file = os.path.join(path_to_folder_rgbs,
+                                    filename)
         if os.path.isfile(path_to_file):
             print('"{}" already exists. The image is not downloaded.'.format(path_to_file))
         else:

@@ -117,7 +117,7 @@ class IsolatedDecoder(object):
             Path to a previous model. If
             it is an empty string, all
             variables are initialized. The
-            path must end with ".ckpt".
+            path ends with ".ckpt".
         
         """
         if path_to_restore:

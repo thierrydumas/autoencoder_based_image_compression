@@ -269,17 +269,17 @@ def save_statistics(luminances_uint8, sess, entropy_ae, batch_size, multipliers,
     path_to_map_mean : str
         Path to the file in which the latent
         variable feature map means are saved.
-        The path must end with ".npy".
+        The path ends with ".npy".
     path_to_idx_map_exception : str
         Path to the file in which the index
         of the map that is not compressed as
         the other maps is saved. The path
-        must end with ".pkl".
+        ends with ".pkl".
     paths_to_binary_probabilities : list
         The ith string in this list is the path
         to the file in which the binary probabilities
         associated to the ith multiplier are saved.
-        Each path must end with ".npy".
+        Each path ends with ".npy".
     
     Raises
     ------

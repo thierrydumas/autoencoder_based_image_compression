@@ -448,7 +448,7 @@ class EntropyAutoencoder(object):
             Path to a previous model. If
             it is an empty string, all
             variables are initialized. The
-            path must end with ".ckpt".
+            path ends with ".ckpt".
         
         """
         if path_to_restore:
@@ -471,7 +471,7 @@ class EntropyAutoencoder(object):
             Session that runs the graph.
         path_to_model : str
             Path to the saved Tensorflow model.
-            The path must end with ".ckpt".
+            The path ends with ".ckpt".
         path_to_nb_itvs_per_side_save : str
             Path to the number of unit intervals
             in the right half of the grid.
@@ -612,8 +612,8 @@ class EntropyAutoencoder(object):
         paths : list
             The ith string in this list is the
             path to the ith saved normed histogram.
-            Each path must end with ".png". `len(paths)`
-            must be equal to `len(titles)`.
+            Each path ends with ".png". `len(paths)`
+            is equal to `len(titles)`.
         
         """
         with tf.variable_scope('piecewise_linear_function', reuse=True):
@@ -642,8 +642,8 @@ class EntropyAutoencoder(object):
             in the ith image.
         paths : list
             The ith string in this list is the path
-            to the ith saved image. Each path must
-            end with ".png".
+            to the ith saved image. Each path ends
+            with ".png".
         
         """
         y = sess.run(self.node_y, feed_dict={self.node_visible_units:visible_units})
@@ -663,7 +663,7 @@ class EntropyAutoencoder(object):
             Title of the histogram.
         path : str
             Path to the saved histogram. The
-            path must end with ".png".
+            path ends with ".png".
         
         """
         area = sess.run(self.node_area)
@@ -684,7 +684,7 @@ class EntropyAutoencoder(object):
             Title of the histogram.
         path : str
             Path to the saved histogram. The
-            path must end with ".png".
+            path ends with ".png".
         
         """
         with tf.variable_scope(str_scope, reuse=True):
@@ -708,7 +708,7 @@ class EntropyAutoencoder(object):
             in the single image.
         path : str
             Path to the saved single image. The
-            path must end with ".png".
+            path ends with ".png".
         
         """
         if is_encoder:
@@ -733,7 +733,7 @@ class EntropyAutoencoder(object):
             index belongs to [|1, 6|].
         path : str
             Path to the saved image. The path
-            must end with ".png".
+            ends with ".png".
         
         """
         with tf.variable_scope(str_scope, reuse=True):

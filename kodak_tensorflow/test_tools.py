@@ -88,6 +88,24 @@ class TesterTools(object):
         print('Array elements after the data-type cast:')
         print(array_int16)
     
+    def test_clean_sort_list_strings(self):
+        """Tests the function `clean_sort_list_strings`.
+        
+        The test is successful if the cleaned and sorted list of
+        strings is ['file_1.png', 'file_3.pgm'].
+        
+        """
+        list_strings = ['file_0.jpg', 'file_1.png', 'file_2.pkl', 'file_3.pgm']
+        extension = ('.png', '.pgm')
+        
+        list_strings_cleaned_sorted = tls.clean_sort_list_strings(list_strings,
+                                                                  extension)
+        print('List of strings:')
+        print(list_strings)
+        print('Extensions: {}'.format(extension))
+        print('Cleaned and sorted list of strings:')
+        print(list_strings_cleaned_sorted)
+    
     def test_compute_bjontegaard(self):
         """Tests the function `compute_bjontegaard`.
         
@@ -666,10 +684,11 @@ class TesterTools(object):
         contains "rgb_tree.jpg" and "rgb_artificial.png".
         
         """
-        path_to_root = 'tools/pseudo_visualization/untar_archive/'
+        path_to_folder_extraction = 'tools/pseudo_visualization/untar_archive/'
         path_to_tar = 'tools/pseudo_data/pseudo_archive.tar'
         
-        tls.untar_archive(path_to_root, path_to_tar)
+        tls.untar_archive(path_to_folder_extraction,
+                          path_to_tar)
     
     def test_visualize_crops(self):
         """Tests the function `visualize_crops`.
