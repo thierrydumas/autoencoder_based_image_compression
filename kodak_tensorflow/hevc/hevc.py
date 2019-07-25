@@ -10,8 +10,13 @@ import tools.tools as tls
 
 if sys.platform.startswith('linux'):
     PATH_TO_EXE = 'hevc/HM-16.15/bin/TAppEncoderStatic'
+
+# In Windows, the HEVC encoder executable can be built
+# in "Win32" or "x64".
 elif sys.platform in ('win32', 'cygwin'):
     PATH_TO_EXE = 'hevc/HM-16.15/bin/vc2015/Win32/Release/TAppEncoder.exe'
+    if not os.path.isfile(PATH_TO_EXE):
+        PATH_TO_EXE = 'hevc/HM-16.15/bin/vc2015/x64/Release/TAppEncoder.exe'
 else:
     PATH_TO_EXE = 'hevc/HM-16.15/bin/TAppEncoderStatic'
     warnings.warn('The OS is neither Windows nor Linux. If the HEVC executable is not at "{}", change `PATH_TO_EXE`.'.format(PATH_TO_EXE))
