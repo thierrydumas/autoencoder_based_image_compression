@@ -72,7 +72,7 @@ Another piece of code is a simple example for introducing the code of the paper.
 ## Citing
 ```
 @InProceedings{autoencoder_based_icassp2018,
-  author = {Dumas, Thierry and Roumy, Aline and Gullemot, Christine},
+  author = {Dumas, Thierry and Roumy, Aline and Guillemot, Christine},
   title = {Autoencoder based image compression: can the learning be quantization independent?},
   booktitle = {ICASSP},
   year = {2018}
