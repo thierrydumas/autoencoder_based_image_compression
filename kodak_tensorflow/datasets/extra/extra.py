@@ -137,11 +137,6 @@ def group_shuffle_paths_to_rgbs(path_to_folder_rgbs_ilsvrc2012, path_to_folder_r
     paths_to_rgbs_1 = [os.path.join(path_to_folder_inria_holidays_jpg, name) for name in list_names_1]
     paths_to_rgbs = paths_to_rgbs_0 + paths_to_rgbs_1
     
-    # `os.listdir` returns a list whose order depends on the OS.
-    # To make `paths_to_rgbs` independent of the OS, the output of
-    # `os.listdir` is sorted.
-    paths_to_rgbs.sort()
-    
     # To make `group_shuffle_paths_to_rgbs` deterministic, the random
     # seed should be set in the script calling `group_shuffle_paths_to_rgbs`.
     random.shuffle(paths_to_rgbs)
