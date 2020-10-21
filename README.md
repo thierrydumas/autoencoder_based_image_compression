@@ -10,7 +10,7 @@ The code is tested on Linux and Windows.
   * Python (code tested using Python 2.7.9 and Python 3.6.3)
   * numpy (version >= 1.11.0)
   * tensorflow (optional GPU support), see [TensorflowInstallationWebPage](https://www.tensorflow.org/install/) (for Python 2.7.9, the code was tested using Tensorflow 0.11.0; for Python 3.6.3, the code was tested using Tensorflow 1.4.0; the code must thus work using any Tensorflow 0.x or 1.x, x being the subversion index)
-  * cython (code tested with Cython 0.25.2)
+  * cython (code tested with cython 0.25.2)
   * matplotlib (code tested with matplotlib 1.5.3)
   * pillow (code tested with pillow 3.4.2)
   * scipy (code tested wth scipy 0.18.1)
